@@ -46,7 +46,7 @@ LayoutKey _CAPSLSH_    = {KEY_CAPS_SLASH,  &Special};     LayoutKey* CAPSLSH = &
 LayoutKey _CAPSESC_    = {KEY_CAPS_ESC,    &Special};     LayoutKey* CAPSESC = &_CAPSESC_;
 LayoutKey _ALTL_       = {KEY_ALTL,        &Special};     LayoutKey* ALTL    = &_ALTL_;
 LayoutKey _ALTR_       = {KEY_ALTR,        &Special};     LayoutKey* ALTR    = &_ALTR_;
-LayoutKey _LYR0_       = {LAYER_0,         &Special};     LayoutKey* LYR0    = &_LYR0_;
+LayoutKey _LYR0_       = {LAYER_0,         &Layer};       LayoutKey* LYR0    = &_LYR0_;
 
 LayoutKey _RLEASE_     = {KEY_RELEASE,     &Special};     LayoutKey* RLEASE  = &_RLEASE_;
 LayoutKey _SET0_       = {KEY_SET0,        &Special};     LayoutKey* SET0    = &_SET0_;

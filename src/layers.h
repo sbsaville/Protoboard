@@ -25,11 +25,11 @@ LayoutKey* layout1[rowsCount][columnsCount] = {
 
 LayoutKey* layout1_2[rowsCount][columnsCount] = {
   {ESC,    F13,   F14,   F15,   F16,   F17,   F18,   F19,   F20,   F21,   F22,   F23,   F24,   DEL},
-  {LPAR,   PMUL,  PDIV,  PADD,  PSUB,  RPAR,  NUL,   NUL,   NUL,   NUL,   NUL,   PLSMNS,DNEQL, NUL},
-  {TAB,    PAD7,  PAD8,  PAD9,  CARAT, SQRT,  NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL},
-  {NUL,    PAD4,  PAD5,  PAD6,  EQUAL, DBLQ,  NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   ENTER, NUL},
-  {LSHFT,  PAD1,  PAD2,  PAD3,  PENT,  NUL,   NUL,   NUL,   LSEQL, GREQL, NUL,   NUL,   UP,    NMLCK},
-  {L12L,   PAD0,  PDOT,  LYR1,  LYR2,  SPC,   BKSPC, LYR0,  NUL,   RALT,  RCRTL, LEFT,  DOWN,  RIGHT}
+  {LPAR,   PMUL,  PDIV,  PADD,  PSUB,  RPAR,  NUL,   NUL,   PMUL,  PDIV,  PADD,  PSUB,  DNEQL, NUL},
+  {TAB,    PAD7,  PAD8,  PAD9,  CARAT, SQRT,  NUL,   NUL,   PAD7,  PAD8,  PAD9,  CARAT, NUL,   NUL},
+  {NUL,    PAD4,  PAD5,  PAD6,  EQUAL, DBLQ,  NUL,   NUL,   PAD4,  PAD5,  PAD6,  NUL,   ENTER, NUL},
+  {LSHFT,  PAD1,  PAD2,  PAD3,  PENT,  NUL,   NUL,   NUL,   PAD1,  PAD2,  PAD3,  NUL,   UP,    NMLCK},
+  {L12L,   PAD0,  PDOT,  PAD0,  LYR0,  SPC,   BKSPC, LYR0,  PAD0,  PDOT,  PAD0,  LEFT,  DOWN,  L12L}
 };
 
 LayoutKey* layout2[rowsCount][columnsCount] = {
