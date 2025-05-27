@@ -1,0 +1,152 @@
+#ifndef RGBLEDS_H
+#define RGBLEDS_H
+#define FASTLED_INTERNAL
+
+#include <WS2812Serial.h>
+#define USE_WS2812SERIAL
+#include <FastLED.h>
+#include <cmath>
+#include <algorithm>
+
+#include "main.h"
+#include "layers.h"
+
+class rgbleds {
+  public:
+    static void setup();
+    static void loop();
+};
+
+#define NUM_LEDS 84
+#define DATA_PIN 1
+
+bool isNumOn(){
+  return (keyboard_leds & 1) == 1;
+}
+bool isCapsOn(){
+  return (keyboard_leds & 2) == 2;
+}
+bool isScrollOn(){
+  return (keyboard_leds & 4) == 4;
+}
+
+bool numLockFound = false;
+bool capsLockFound = false;
+bool scrollLockFound = false;
+
+int brightness = 20;
+const int brt0 = 0;
+const int brt1 = 1;
+const int brt2 = 2;
+const int brt3 = 3;
+const int brt4 = 6;
+const int brt5 = 9;
+const int brt6 = 12;
+const int brt7 = 16;
+const int brt8 = 20;
+const int brt9 = 24;
+const int brt10 = 32;
+
+
+inline void ledsINC () {
+  int maxStep = 128; // You can tweak this value
+  float norm = brightness / 255.0f;
+  int step = std::max(1, static_cast<int>(pow(norm, 2) * maxStep));
+  brightness = std::min(brightness + step, 255);
+  LEDS.setBrightness(brightness);
+}
+inline void ledsDEC () {
+  int maxStep = 128;
+  float norm = brightness / 255.0f;
+  int step = std::max(1, static_cast<int>(pow(norm, 2) * maxStep));
+  brightness = std::max(brightness - step, 1);
+  LEDS.setBrightness(brightness);
+}
+
+CRGB leds[NUM_LEDS];
+
+int XYMatrix[rowsCount][columnsCount] = {
+  {13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0},
+  {14,15,16,17,18,19,20,21,22,23,24,25,26,27},
+  {41,40,39,38,37,36,35,34,33,32,31,30,29,28},
+  {42,43,44,45,46,47,48,49,50,51,52,53,54,55},
+  {69,68,67,66,65,64,63,62,61,60,59,58,57,56},
+  {70,71,72,73,74,75,76,77,78,79,80,83,81,82}
+};
+
+void updateLockStates() {
+  Capslock = (keyboard_leds & 2) ? CRGB(0xFFFF00) : CRGB(0xFF0000);
+  Numlock = (keyboard_leds & 1) ? CRGB(0xFFFF00) : CRGB(0x00FF00);
+  Numnav  = (keyboard_leds & 1) ? CRGB(0x0000FF) : CRGB(0xFFFF00);
+  Scrllock = (keyboard_leds & 4) ? CRGB(0xFFFF00) : CRGB(0x00FF00);
+}
+
+
+void scanLEDs(LayoutKey* layout[rowsCount][columnsCount]) {
+  for (int row = 0; row < rowsCount; row++) {
+    for (int col = 0; col < columnsCount; col++) {
+      int ledIndex = XYMatrix[row][col];
+      
+      // Check if there's an active key being held from another layer
+      bool isKeyPressed = physicalKeyStates[row][col].isPressed;
+      LayoutKey* activeKey = physicalKeyStates[row][col].activeKey;
+      
+      // Use the active key if available (for keys held during layer change)
+      // otherwise use the current layout's key
+      LayoutKey* key = isKeyPressed && activeKey ? activeKey : layout[row][col];
+      
+      if (key != nullptr && key->ledColor != nullptr) { // Check for null pointers
+        leds[ledIndex] = *(key->ledColor);
+
+        if (key == NMLCK) {
+          numLockFound = true;
+        } else if (key == CAPS) {
+          capsLockFound = true;
+        } else if (key == SCRLL) {
+          scrollLockFound = true;
+        }
+      } else {
+        leds[ledIndex] = CRGB::Black; // Default to black if null
+      }
+    }
+  }
+  if (numLockFound || capsLockFound || scrollLockFound) {
+    updateLockStates();
+  }
+}
+
+// Wrapper functions for each layout
+void leds0()     { scanLEDs(layout0); }
+void leds1()     { scanLEDs(layout1); }
+void leds1_2()   { scanLEDs(layout1_2); }
+void leds2()     { scanLEDs(layout2); }
+void leds2_3()   { scanLEDs(layout2_3); }
+void leds3()     { scanLEDs(layout3); }
+void leds3_4()   { scanLEDs(layout3_4); }
+void leds4()     { scanLEDs(layout4); }
+
+
+void rgbleds::setup() {
+
+  LEDS.addLeds<WS2812SERIAL, DATA_PIN, BRG>(leds, NUM_LEDS);
+  LEDS.setBrightness(brightness);
+  leds0();
+  
+}
+
+
+
+void rgbleds::loop() {
+
+  FastLED.show();
+
+}
+
+#endif
+
+
+
+
+
+
+
