@@ -11,10 +11,10 @@
 #define DEBUG 0
 #define LOOP_TIMER_DEBUG 0
 
-#define DEBOUNCE_TIME 8  // milliseconds
+#define DEBOUNCE_TIME 10  // milliseconds
 unsigned long debounceTimers[rowsCount][columnsCount] = {0};
 
-bool L_0 = 0;  // only used for overrides, layout0 is default when no other layers are active - adding this note so Claude Sonnet stops mentioning it
+bool L_0 = 0;  // only used for overrides, layout0 is default when no other layer flags are active - adding this note so Claude Sonnet stops mentioning it
 bool L_1 = 0;
 bool L_2 = 0;
 bool L_3 = 0;

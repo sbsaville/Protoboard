@@ -278,6 +278,7 @@ void keyPressed(Key* key, LayoutKey* layout) {
     Keyboard.send_now();
     Keyboard.press(KEY_TAB);
     Keyboard.release(KEY_TAB);
+    L2AltTab = true;
     return;
   }
 
