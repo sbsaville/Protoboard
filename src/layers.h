@@ -65,7 +65,7 @@ LayoutKey* layout3_4[rowsCount][columnsCount] = {
   {NUL,    NUL,   NUL,   EMCRN, NUL,   NUL,   NUL,   NUL,   PAD7,  PAD8,  PAD9,  CARAT, NUL,   NUL},
   {NUL,    AMRN,  NUL,   NUL,   NUL,   GMAIL, NUL,   NUL,   PAD4,  PAD5,  PAD6,  NUL,   ENTER, NUL},
   {NUL,    NUL,   NUL,   NUL,   NUL,   LNBRK, NUL,   NUL,   PAD1,  PAD2,  PAD3,  NUL,   NUL,   NMLCK},
-  {NUL,    NUL,   NUL,   NUL,   NUL,   SPC,   BKSPC, LYR3,  LYR4,  PAD0,  PDOT,  NUL,   NUL,   NUL}
+  {NUL,    RBOT,  NUL,   NUL,   NUL,   SPC,   BKSPC, LYR3,  LYR4,  PAD0,  PDOT,  NUL,   NUL,   NUL}
 };
 
 LayoutKey* layout4[rowsCount][columnsCount] = {

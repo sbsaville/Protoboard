@@ -86,15 +86,15 @@ void scanLEDs(LayoutKey* layout[rowsCount][columnsCount]) {
   for (int row = 0; row < rowsCount; row++) {
     for (int col = 0; col < columnsCount; col++) {
       int ledIndex = XYMatrix[row][col];
-      
+
       // Check if there's an active key being held from another layer
       bool isKeyPressed = physicalKeyStates[row][col].isPressed;
       LayoutKey* activeKey = physicalKeyStates[row][col].activeKey;
-      
+
       // Use the active key if available (for keys held during layer change)
       // otherwise use the current layout's key
       LayoutKey* key = isKeyPressed && activeKey ? activeKey : layout[row][col];
-      
+
       if (key != nullptr && key->ledColor != nullptr) { // Check for null pointers
         leds[ledIndex] = *(key->ledColor);
 
@@ -131,7 +131,28 @@ void rgbleds::setup() {
   LEDS.addLeds<WS2812SERIAL, DATA_PIN, BRG>(leds, NUM_LEDS);
   LEDS.setBrightness(brightness);
   leds0();
-  
+
+  // Flash all LEDs with Layer color twice at the end of setup
+  // Flash sequence: ON (100ms) -> OFF (100ms) -> ON (100ms) -> OFF (100ms)
+  for (int flash = 0; flash < 2; flash++) {
+    // Turn on all LEDs with Layer color
+    for (int i = 0; i < NUM_LEDS; i++) {
+      leds[i] = Layer;
+    }
+    FastLED.show();
+    delay(100);
+
+    // Turn off all LEDs
+    for (int i = 0; i < NUM_LEDS; i++) {
+      leds[i] = CRGB::Black;
+    }
+    FastLED.show();
+    delay(100);
+  }
+
+  // Restore original LED state
+  leds0();
+  FastLED.show();
 }
 
 
