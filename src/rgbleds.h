@@ -35,7 +35,7 @@ bool numLockFound = false;
 bool capsLockFound = false;
 bool scrollLockFound = false;
 
-int brightness = 20;
+int brightness;
 const int brt0 = 0;
 const int brt1 = 1;
 const int brt2 = 2;

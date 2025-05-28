@@ -20,7 +20,7 @@ public:
   static bool init();
   static bool saveBrightness(int brightness);
   static int loadBrightness(int defaultValue = 20);
-  
+
 private:
   static bool sdInitialized;
   static uint8_t calculateChecksum(const BrightnessConfig& config);
@@ -34,12 +34,12 @@ bool Config::init() {
   if (sdInitialized) {
     return true;
   }
-  
+
   if (SD.begin(SD_CS_PIN)) {
     sdInitialized = true;
     return true;
   }
-  
+
   return false;
 }
 
@@ -56,18 +56,18 @@ bool Config::validateConfig(const BrightnessConfig& config) {
   if (config.version != 1) {
     return false;
   }
-  
+
   // Check brightness range (0-255)
   if (config.brightness < 0 || config.brightness > 255) {
     return false;
   }
-  
+
   // Check checksum
   uint8_t expectedChecksum = calculateChecksum(config);
   if (config.checksum != expectedChecksum) {
     return false;
   }
-  
+
   return true;
 }
 
@@ -75,21 +75,26 @@ bool Config::saveBrightness(int brightness) {
   if (!init()) {
     return false;
   }
-  
+
   BrightnessConfig config;
   config.version = 1;
   config.brightness = brightness;
   config.checksum = calculateChecksum(config);
-  
+
+  // Remove existing file first to ensure clean write
+  if (SD.exists(CONFIG_FILE)) {
+    SD.remove(CONFIG_FILE);
+  }
+
   File file = SD.open(CONFIG_FILE, FILE_WRITE);
   if (!file) {
     return false;
   }
-  
+
   // Write the config structure
   size_t written = file.write((uint8_t*)&config, sizeof(config));
   file.close();
-  
+
   return written == sizeof(config);
 }
 
@@ -97,28 +102,28 @@ int Config::loadBrightness(int defaultValue) {
   if (!init()) {
     return defaultValue;
   }
-  
+
   if (!SD.exists(CONFIG_FILE)) {
     return defaultValue;
   }
-  
+
   File file = SD.open(CONFIG_FILE, FILE_READ);
   if (!file) {
     return defaultValue;
   }
-  
+
   BrightnessConfig config;
   size_t bytesRead = file.read((uint8_t*)&config, sizeof(config));
   file.close();
-  
+
   if (bytesRead != sizeof(config)) {
     return defaultValue;
   }
-  
+
   if (!validateConfig(config)) {
     return defaultValue;
   }
-  
+
   return config.brightness;
 }
 
