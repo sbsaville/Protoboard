@@ -10,6 +10,7 @@
 
 #include "main.h"
 #include "layers.h"
+#include "config.h"
 
 class rgbleds {
   public:
@@ -128,12 +129,19 @@ void leds4()     { scanLEDs(layout4); }
 
 void rgbleds::setup() {
 
+  // Load brightness from SD card (fallback to default if not found)
+  brightness = Config::loadBrightness(20);
+
   LEDS.addLeds<WS2812SERIAL, DATA_PIN, BRG>(leds, NUM_LEDS);
   LEDS.setBrightness(brightness);
   leds0();
 
   // Flash all LEDs with Layer color twice at the end of setup
   // Flash sequence: ON (100ms) -> OFF (100ms) -> ON (100ms) -> OFF (100ms)
+  // Temporarily reduce brightness for startup flash
+  int originalBrightness = brightness;
+  LEDS.setBrightness(brightness / 4);  // Quarter brightness for startup flash
+
   for (int flash = 0; flash < 2; flash++) {
     // Turn on all LEDs with Layer color
     for (int i = 0; i < NUM_LEDS; i++) {
@@ -149,6 +157,9 @@ void rgbleds::setup() {
     FastLED.show();
     delay(100);
   }
+
+  // Restore original brightness
+  LEDS.setBrightness(originalBrightness);
 
   // Restore original LED state
   leds0();

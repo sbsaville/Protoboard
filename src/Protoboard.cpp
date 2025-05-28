@@ -7,6 +7,7 @@
 #include "rgbleds.h"
 #include "layers.h"
 #include "trillbar.h"
+#include "config.h"
 
 #define DEBUG 0
 #define LOOP_TIMER_DEBUG 0
@@ -71,10 +72,10 @@ void sendKeys() {
 void L_check() {
   #if DEBUG
   Serial.print("L_0=");       Serial.print(L_0);        Serial.print(" ");
-  Serial.print("L_1=");       Serial.print(L_1);        Serial.print(" "); 
+  Serial.print("L_1=");       Serial.print(L_1);        Serial.print(" ");
   Serial.print("L_2=");       Serial.print(L_2);        Serial.print(" ");
-  Serial.print("L_3=");       Serial.print(L_3);        Serial.print(" "); 
-  Serial.print("L_4=");       Serial.print(L_4);        Serial.print(" "); 
+  Serial.print("L_3=");       Serial.print(L_3);        Serial.print(" ");
+  Serial.print("L_4=");       Serial.print(L_4);        Serial.print(" ");
   Serial.print("L_1_2L=");    Serial.print(L_1_2L);     Serial.println("");
   #endif
 }
@@ -96,13 +97,16 @@ void setup() {
   delay(1000);
 
   for (uint8_t j=0; j<columnsCount; j++) {
-    pinMode(columns[j], INPUT_PULLUP);                 
+    pinMode(columns[j], INPUT_PULLUP);
   }
 
   for (uint8_t i=0; i<rowsCount; i++) {
     pinMode(rows[i], OUTPUT);
     digitalWrite(rows[i], HIGH);
   }
+
+  // Initialize SD card for config storage
+  Config::init();
 
   trillbar::setup();
   rgbleds::setup();
@@ -114,28 +118,28 @@ LayoutKey* (*getActiveLayout())[columnsCount] {
   if (L_1 == 0 && L_2 == 0 && L_3 == 0 && L_4 == 0 && L_1_2L == 0) {
     trillbar::setMode(trillbar::MODE_ARROWS);
     return layout0;
-  } 
+  }
   else if (L_1 == 1 && L_2 == 0) {
     trillbar::setMode(trillbar::MODE_SCROLL);
     return layout1;
-  } 
+  }
   else if (L_1 == 0 && L_2 == 1 && L_3 == 0) {
     trillbar::setMode(trillbar::MODE_BRIGHTNESS);
     return layout2;
-  } 
+  }
   else if ((L_1 == 1 && L_2 == 1) || (L_1_2L == 1)) {
     trillbar::setMode(trillbar::MODE_ARROWS);
     return layout1_2;
   }
   else if (L_2 == 1 && L_3 == 1) {
     return layout2_3;
-  } 
+  }
   else if (L_3 == 1 && L_2 == 0 && L_4 == 0) {
     return layout3;
-  } 
+  }
   else if (L_3 == 1 && L_4 == 1) {
     return layout3_4;
-  } 
+  }
   else if (L_4 == 1) {
     trillbar::setMode(trillbar::MODE_BRIGHTNESS);
     return layout4;
@@ -147,7 +151,7 @@ LayoutKey* (*getActiveLayout())[columnsCount] {
 
 // Helper function to check if a key is a layer switching key
 bool isLayerKey(uint16_t code) {
-  return (code == LAYER_0 || code == LAYER_1 || code == LAYER_2 || 
+  return (code == LAYER_0 || code == LAYER_1 || code == LAYER_2 ||
           code == LAYER_3 || code == LAYER_4 || code == LAYER_1_2L);
 }
 
@@ -158,7 +162,7 @@ bool isLayerKey(uint16_t code) {
 void testKeyPreservation() {
   #if DEBUG
   Serial.println("Key preservation test:");
-  
+
   // Check for any currently pressed keys
   for (uint8_t i = 0; i < rowsCount; i++) {
     for (uint8_t j = 0; j < columnsCount; j++) {
@@ -168,7 +172,7 @@ void testKeyPreservation() {
         Serial.print("][");
         Serial.print(j);
         Serial.print("]: code=");
-        
+
         if (physicalKeyStates[i][j].activeKey) {
           Serial.print(physicalKeyStates[i][j].activeKey->code);
           Serial.print(", color=0x");
@@ -189,18 +193,18 @@ void testKeyPreservation() {
 void updateLayerMappings() {
   // Get the current active layout
   LayoutKey* (*newLayout)[columnsCount] = getActiveLayout();
-  
+
   // Only proceed if the layout has changed
   if (newLayout != currentLayout) {
     #if DEBUG
     Serial.println("Layout changed - updating key mappings");
     #endif
-    
+
     // Generic key preservation system:
     // When a key is held during layer change, its original function is preserved
     // This is handled automatically by storing the original LayoutKey pointers
     // in physicalKeyStates when keys are first pressed
-    
+
     // Update the current layout reference
     currentLayout = newLayout;
   }
@@ -210,12 +214,12 @@ void remapKeys() {
   // The generic key preservation system ensures that any keys pressed in one layer
   // retain their original function when changing to another layer, including LYR0
   // This works by tracking the original LayoutKey pointer when a key is first pressed
-  
+
   // Handle toggle state changes (these still need to be applied)
   layout0[5][4] = (ALT_L == 1) ? LALT : LYR2;
   layout0[5][6] = (ALT_R == 1) ? RALT : BKSPC;
   layout0[0][13] = (ALT_R == 1) ? BKSPC : DEL;
-  layout0[3][0]  = (CAPS_SLSH == 1) ? BSLSH : 
+  layout0[3][0]  = (CAPS_SLSH == 1) ? BSLSH :
                    (CAPS_ESC == 1) ? ESC : CAPS;
   if (ALT_L == 1) {
     ALTL->ledColor = &Toggle1;
@@ -254,12 +258,12 @@ void loop() {
   // Keyboard matrix scanning
   if (now - lastTime >= 1) {
     lastTime = now;
-  
+
     for (uint8_t i = 0; i < rowsCount; i++) {
       // Activate the current row
       digitalWrite(rows[i], LOW);
       delayMicroseconds(1); // this is needed on physical prototype V2 for some reason or keys one row down will be pressed at the same time
-      
+
       // Read all columns for the current row
       for (uint8_t j = 0; j < columnsCount; j++) {
         // Get correct port and bitmask for each individual column
@@ -267,27 +271,27 @@ void loop() {
         uint8_t port = digitalPinToPort(pin);
         volatile uint8_t* inputRegister = portInputRegister(port);
         uint8_t bitMask = digitalPinToBitMask(pin);
-        
+
         // Read the current key state
         Key* key = getKey(i, j);
         boolean current = !(*inputRegister & bitMask); // Active low logic
         boolean previous = key->pressed;
-        
+
         // Only process state changes or update debounce timer
         if (current != previous) {
           if (now - debounceTimers[i][j] >= DEBOUNCE_TIME) {
             key->pressed = current;
             debounceTimers[i][j] = now;
-            
+
             // Only fetch layout key if we need it (state changed and debounced)
             LayoutKey* layout = getLayoutKey(key->row, key->column);
               // Process the key event
             if (current) {
               keyPressed(key, layout);
-              
+
               // Get the actual code that was stored during keyPressed
               uint16_t activeCode = physicalKeyStates[key->row][key->column].activeCode;
-              
+
               // Set layer change flag if a layer key was pressed
               if (isLayerKey(activeCode)) {
                   updateNeeded = true;
@@ -295,11 +299,11 @@ void loop() {
             }
             else {
               keyReleased(key, layout);
-              
+
               // Check both the current layout code and the stored activeCode for layer keys
               LayoutKey* activeKey = physicalKeyStates[key->row][key->column].activeKey;
               uint16_t actualCode = activeKey ? activeKey->code : layout->code;
-              
+
               if (isLayerKey(actualCode)) {
                   updateNeeded = true;
               }
@@ -310,7 +314,7 @@ void loop() {
           debounceTimers[i][j] = now;
         }
       }
-      
+
       // Deactivate the row when done
       digitalWrite(rows[i], HIGH);
     }
@@ -322,21 +326,21 @@ void loop() {
   if (updateNeeded || (now - lastLayerTime >= 50)) {
     lastLayerTime = now;
     updateNeeded = false;
-    
+
     updateLayerMappings();
-    
+
     // Always update LEDs when any flag changes
     if (!trillbar::isLedOverride()) {
       scanLEDs(currentLayout);
-    }    
+    }
     remapKeys();
-    
+
     #if DEBUG
     // Test key preservation when layer changes
     testKeyPreservation();
     #endif
-  } 
-  
+  }
+
   // Regular LED updates every loop - THIS IS THE KEY CHANGE
   rgbleds::loop();
 

@@ -6,6 +6,7 @@
 #include "trillbar.h"
 #include "keydefs.h"
 #include "rgbleds.h"
+#include "config.h"
 
 #define EDGE_DEBUG 0
 
@@ -91,7 +92,7 @@ const LayerResetAction layerResets[] = {
 void pressAndReleaseMultiple(int count, ...) {
   va_list args;
   va_start(args, count);
-  
+
   for (int i = 0; i < count; i++) {
     int key = va_arg(args, int);
     Keyboard.press(key);
@@ -199,7 +200,7 @@ void keyPressed(Key* key, LayoutKey* layout) {
   Serial.println(key->column);
   #endif
   int code = layout->code;
-  
+
   // Store the key state information - this must happen before any early returns
   uint8_t row = key->row;
   uint8_t col = key->column;
@@ -386,13 +387,13 @@ void keyPressed(Key* key, LayoutKey* layout) {
   int code = layout->code;
   uint8_t row = key->row;
   uint8_t col = key->column;
-  
+
   // Get the original active key information from our tracking matrix
   LayoutKey* activeKey = physicalKeyStates[row][col].activeKey;
 
   #if EDGE_DEBUG
   Serial.print("Key released: row="); Serial.print(key->row);
-  Serial.print(", col="); Serial.print(key->column); 
+  Serial.print(", col="); Serial.print(key->column);
   Serial.print(", code="); Serial.print(code);
   Serial.print(", activeCode="); Serial.print(activeCode);
   if (activeKey) {
@@ -400,7 +401,7 @@ void keyPressed(Key* key, LayoutKey* layout) {
   }
   Serial.print(", L_0="); Serial.println(L_0);
   #endif
-  
+
   // Clear the key state tracking
   physicalKeyStates[row][col].isPressed = false;
   physicalKeyStates[row][col].activeCode = 0;
@@ -418,7 +419,7 @@ void keyPressed(Key* key, LayoutKey* layout) {
   }
   // Handle layer resets - prioritize the activeKey if available
   uint16_t relevantCode = activeKey ? activeKey->code : code;
-  
+
   for (uint8_t i = 0; i < sizeof(layerResets)/sizeof(LayerResetAction); i++) {
     if (relevantCode == layerResets[i].code) {
       if (relevantCode == LAYER_2 && L2AltTab) {
@@ -426,6 +427,10 @@ void keyPressed(Key* key, LayoutKey* layout) {
         L2AltTab = false;
       }
       *(layerResets[i].layerFlag) = 0; // Reset the layer flag
+
+      // Save brightness to SD card when any layer key is released
+      Config::saveBrightness(brightness);
+
       L_check();
       return;
     }
@@ -473,4 +478,3 @@ void keyPressed(Key* key, LayoutKey* layout) {
   #endif
 
 
-  
