@@ -8,6 +8,7 @@
 #include "layers.h"
 #include "trillbar.h"
 #include "config.h"
+#include "macro_definitions.h"
 
 #define DEBUG 0
 #define LOOP_TIMER_DEBUG 0
@@ -107,6 +108,9 @@ void setup() {
 
   // Initialize SD card for config storage
   Config::init();
+
+  // Initialize macro system
+  initializeMacros();
 
   trillbar::setup();
   rgbleds::setup();

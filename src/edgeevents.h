@@ -7,6 +7,8 @@
 #include "keydefs.h"
 #include "rgbleds.h"
 #include "config.h"
+#include "macros.h"
+#include "macro_definitions.h"
 
 #define EDGE_DEBUG 0
 
@@ -52,10 +54,7 @@ void shiftedFKey(int fKey) {
   shiftedKey(fKey);
 }
 
-struct TextMacro {
-  int code;
-  const char* text;
-};
+// TextMacro struct moved to macros.h
 
 struct BrightnessLevel {
   int code;
@@ -67,11 +66,7 @@ struct SimpleKeyAction {
   int keyToPress;
 };
 
-struct AltCodeSequence {
-  int code;
-  const int* sequence;  // Changed from uint8_t* to int*
-  uint8_t length;
-};
+// AltCodeSequence moved to macros.h
 
 // Helper structure for layer reset actions
 struct LayerResetAction {
@@ -101,25 +96,9 @@ void pressAndReleaseMultiple(int count, ...) {
   va_end(args);
 }
 
-// Helper function to send an ALT code sequence
-void sendAltCodeSequence(const int* sequence, uint8_t length) {  // Changed from uint8_t* to int*
-  Keyboard.press(KEY_RIGHT_ALT);
-  for (uint8_t i = 0; i < length; i++) {
-    Keyboard.press(sequence[i]);
-    Keyboard.release(sequence[i]);
-  }
-  Keyboard.release(KEY_RIGHT_ALT);
-}
+// Alt-code helper function moved to macros.h
 
-// Text macros
-const TextMacro textMacros[] = {
-  {MACRO_GMAIL,   "scott.b.saville@gmail.com"},
-  {MACRO_AIMARENA, "aim arena"},
-  {MACRO_LINEBREAK,  "</br>"},
-  {CMNTSTRT,  "/*"},
-  {CMNTEND,   "*/"},
-  {MACRO_SQUAREROOT,  "sqrt"},
-};
+// Text macros and alt-codes now handled by MacroManager
 
 // Brightness levels
 const BrightnessLevel brightnessLevels[] = {
@@ -172,24 +151,7 @@ const SimpleKeyAction shiftedKeys[] = {
   {KEYSF23,        KEY_F23},
 };
 
-// ALT code sequences - using int instead of uint8_t to prevent narrowing conversion warnings
-const int degreeSequence[]     = {KEYPAD_PLUS, KEYPAD_0, KEYPAD_0, KEY_B, KEYPAD_0};
-const int plusMinusSequence[]  = {KEYPAD_PLUS, KEYPAD_0, KEYPAD_0, KEY_B, KEYPAD_1};
-const int eMacronSequence[]    = {KEYPAD_PLUS, KEYPAD_0, KEYPAD_1, KEYPAD_1, KEYPAD_3};
-const int greatequalSequence[] = {KEYPAD_2, KEYPAD_4, KEYPAD_2};
-const int lessequalSequence[]  = {KEYPAD_2, KEYPAD_4, KEYPAD_3};
-const int notEqualSequence[]   = {KEYPAD_PLUS, KEYPAD_2, KEYPAD_2, KEYPAD_6, KEYPAD_0};
-const int ornateLParSequence[] = {KEYPAD_PLUS, KEY_F, KEY_D, KEYPAD_3, KEY_E};
-const int ornateRParSequence[] = {KEYPAD_PLUS, KEY_F, KEY_D, KEYPAD_3, KEY_F};
-
-const AltCodeSequence altCodes[] = {
-  {KEY_DEGREES, degreeSequence, sizeof(degreeSequence)/sizeof(int)},
-  {PLUS_MINUS, plusMinusSequence, sizeof(plusMinusSequence)/sizeof(int)},
-  {E_MACRON,   eMacronSequence, sizeof(eMacronSequence)/sizeof(int)},
-  {GREAT_EQUAL, greatequalSequence, sizeof(greatequalSequence)/sizeof(int)},
-  {LESS_EQUAL, lessequalSequence, sizeof(lessequalSequence)/sizeof(int)},
-  {NOT_EQUAL, notEqualSequence, sizeof(notEqualSequence)/sizeof(int)},
-};
+// Alt-code sequences moved to macro_definitions.h
 
 // All of the custom operations to be performed on key press
 void keyPressed(Key* key, LayoutKey* layout) {
@@ -213,12 +175,9 @@ void keyPressed(Key* key, LayoutKey* layout) {
     return;
   }
 
-  // Check text macros
-  for (uint8_t i = 0; i < sizeof(textMacros)/sizeof(TextMacro); i++) {
-    if (code == textMacros[i].code) {
-      Keyboard.print(textMacros[i].text);
-      return;
-    }
+  // Check macros using new macro system
+  if (macroManager.executeMacro(code)) {
+    return;
   }
 
   // Check brightness levels
@@ -283,12 +242,7 @@ void keyPressed(Key* key, LayoutKey* layout) {
     return;
   }
 
-  for (uint8_t i = 0; i < sizeof(altCodes)/sizeof(AltCodeSequence); i++) {
-    if (code == altCodes[i].code) {
-      sendAltCodeSequence(altCodes[i].sequence, altCodes[i].length);
-      return;
-    }
-  }
+  // Alt-codes now handled by macro system above
 
   for (uint8_t i = 0; i < sizeof(shiftedKeys)/sizeof(SimpleKeyAction); i++) {
     if (code == shiftedKeys[i].code) {
