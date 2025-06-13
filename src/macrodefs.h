@@ -1,5 +1,5 @@
-#ifndef MACRO_DEFINITIONS_H
-#define MACRO_DEFINITIONS_H
+#ifndef MACRODEFS_H
+#define MACRODEFS_H
 
 #include "macros.h"
 #include "main.h"

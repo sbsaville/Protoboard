@@ -8,7 +8,7 @@
 #include "layers.h"
 #include "trillbar.h"
 #include "config.h"
-#include "macro_definitions.h"
+#include "macrodefs.h"
 
 #define DEBUG 0
 #define LOOP_TIMER_DEBUG 0
