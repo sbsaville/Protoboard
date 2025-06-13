@@ -8,7 +8,6 @@
 #include "rgbleds.h"
 #include "config.h"
 #include "macros.h"
-#include "macrodefs.h"
 
 #define EDGE_DEBUG 0
 

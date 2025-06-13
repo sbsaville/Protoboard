@@ -2,6 +2,7 @@
 #define MACROS_H
 
 #include "main.h"
+#include <vector>
 
 struct SimpleMacro {
   uint16_t id;
@@ -16,29 +17,19 @@ struct AltCodeSequence {
 
 class SimpleMacroManager {
 private:
-  static const int MAX_MACROS = 50;
-  static const int MAX_ALTCODES = 20;
-  SimpleMacro macros[MAX_MACROS];
-  AltCodeSequence altCodes[MAX_ALTCODES];
-  int macroCount;
-  int altCodeCount;
+  std::vector<SimpleMacro> macros;
+  std::vector<AltCodeSequence> altCodes;
 
 public:
-  SimpleMacroManager() : macroCount(0), altCodeCount(0) {}
+  SimpleMacroManager() {}
+
   bool addMacro(uint16_t id, const char* text) {
-    if (macroCount >= MAX_MACROS) return false;
-    macros[macroCount].id = id;
-    macros[macroCount].text = text;
-    macroCount++;
+    macros.push_back({id, text});
     return true;
   }
 
   bool addAltCode(uint16_t id, const int* sequence, uint8_t length) {
-    if (altCodeCount >= MAX_ALTCODES) return false;
-    altCodes[altCodeCount].id = id;
-    altCodes[altCodeCount].sequence = sequence;
-    altCodes[altCodeCount].length = length;
-    altCodeCount++;
+    altCodes.push_back({id, sequence, length});
     return true;
   }
 
@@ -48,19 +39,19 @@ public:
   }
 
   bool executeMacro(uint16_t id) {
-    for (int i = 0; i < macroCount; i++) {
-      if (macros[i].id == id) {
-        Keyboard.print(macros[i].text);
+    for (const auto& macro : macros) {
+      if (macro.id == id) {
+        Keyboard.print(macro.text);
         return true;
       }
     }
 
-    for (int i = 0; i < altCodeCount; i++) {
-      if (altCodes[i].id == id) {
+    for (const auto& altCode : altCodes) {
+      if (altCode.id == id) {
         Keyboard.press(KEY_RIGHT_ALT);
-        for (uint8_t j = 0; j < altCodes[i].length; j++) {
-          Keyboard.press(altCodes[i].sequence[j]);
-          Keyboard.release(altCodes[i].sequence[j]);
+        for (uint8_t j = 0; j < altCode.length; j++) {
+          Keyboard.press(altCode.sequence[j]);
+          Keyboard.release(altCode.sequence[j]);
         }
         Keyboard.release(KEY_RIGHT_ALT);
         return true;
@@ -70,18 +61,35 @@ public:
     return false;
   }
 
-  SimpleMacro* getAllMacros() { return macros; }
-  int getMacroCount() { return macroCount; }
-  AltCodeSequence* getAllAltCodes() { return altCodes; }
-  int getAltCodeCount() { return altCodeCount; }
+  std::vector<SimpleMacro>& getAllMacros() { return macros; }
+  int getMacroCount() { return macros.size(); }
+  std::vector<AltCodeSequence>& getAllAltCodes() { return altCodes; }
+  int getAltCodeCount() { return altCodes.size(); }
 };
 
-extern SimpleMacroManager macroManager;
+SimpleMacroManager macroManager;
 
 #define ADD_ALTCODE(id, ...) \
   do { \
     static const int seq[] = {__VA_ARGS__}; \
     macroManager.addAltCode(id, seq); \
   } while(0)
+
+void initializeMacros() {
+  macroManager.addMacro(MACRO_GMAIL,      "scott.b.saville@gmail.com");
+  macroManager.addMacro(MACRO_AIMARENA,   "aim arena");
+  macroManager.addMacro(MACRO_LINEBREAK,  "</br>");
+  macroManager.addMacro(CMNTSTRT,         "/*");
+  macroManager.addMacro(CMNTEND,          "*/");
+  macroManager.addMacro(MACRO_SQUAREROOT, "sqrt");
+
+  ADD_ALTCODE(KEY_DEGREES,    KEYPAD_PLUS, KEYPAD_0, KEYPAD_0, KEY_B, KEYPAD_0);
+  ADD_ALTCODE(PLUS_MINUS,     KEYPAD_PLUS, KEYPAD_0, KEYPAD_0, KEY_B, KEYPAD_1);
+  ADD_ALTCODE(E_MACRON,       KEYPAD_PLUS, KEYPAD_0, KEYPAD_1, KEYPAD_1, KEYPAD_3);
+  ADD_ALTCODE(GREAT_EQUAL,    KEYPAD_2, KEYPAD_4, KEYPAD_2);
+  ADD_ALTCODE(LESS_EQUAL,     KEYPAD_2, KEYPAD_4, KEYPAD_3);
+  ADD_ALTCODE(NOT_EQUAL,      KEYPAD_PLUS, KEYPAD_2, KEYPAD_2, KEYPAD_6, KEYPAD_0);
+
+}
 
 #endif
