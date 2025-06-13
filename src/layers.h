@@ -25,11 +25,11 @@ LayoutKey* layout1[rowsCount][columnsCount] = {
 
 LayoutKey* layout1_2[rowsCount][columnsCount] = {
   {ESC,    F13,   F14,   F15,   F16,   F17,   F18,   F19,   F20,   F21,   F22,   F23,   F24,   DEL},
-  {LPAR,   PMUL,  PDIV,  PADD,  PSUB,  RPAR,  NUL,   NUL,   PMUL,  PDIV,  PADD,  PSUB,  DNEQL, NUL},
-  {TAB,    PAD7,  PAD8,  PAD9,  CARAT, SQRT,  NUL,   NUL,   PAD7,  PAD8,  PAD9,  CARAT, NUL,   NUL},
-  {NUL,    PAD4,  PAD5,  PAD6,  EQUAL, DBLQ,  NUL,   NUL,   PAD4,  PAD5,  PAD6,  NUL,   ENTER, NUL},
-  {LSHFT,  PAD1,  PAD2,  PAD3,  PENT,  NUL,   NUL,   NUL,   PAD1,  PAD2,  PAD3,  NUL,   UP,    NMLCK},
-  {L12L,   PAD0,  PDOT,  PAD0,  LYR0,  SPC,   BKSPC, LYR0,  PAD0,  PDOT,  PAD0,  LEFT,  DOWN,  L12L}
+  {LPAR,   PMUL,  PDIV,  PADD,  PSUB,  RPAR,  NUL,   NUL,   NUL,   NUL,   NUL,   DNEQL, EQUAL, NUL},
+  {TAB,    PAD7,  PAD8,  PAD9,  CARAT, SQRT,  NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL},
+  {NUL,    PAD4,  PAD5,  PAD6,  EQUAL, DBLQ,  NUL,   NUL,   LSEQL, GREQL, NUL,   NUL,   ENTER, NUL},
+  {LSHFT,  PAD1,  PAD2,  PAD3,  PENT,  NUL,   NUL,   NUL,   LCHEV, RCHEV, NUL,   NUL,   UP,    NMLCK},
+  {L12L,   PAD0,  PDOT,  PAD0,  LYR0,  SPC,   BKSPC, LYR0,  NUL,   PDOT,  PAD0,  LEFT,  DOWN,  L12L}
 };
 
 LayoutKey* layout2[rowsCount][columnsCount] = {
@@ -38,7 +38,7 @@ LayoutKey* layout2[rowsCount][columnsCount] = {
   {ALTT,   HOME,  UP,    END,   PGUP,  QUOTE, NUL,   UNDS,  NUL,   NUL,   PRCNT, NUL,   NUL,   NUL},
   {NUL,    LEFT,  DOWN,  RIGHT, PGDN,  DBLQ,  MINUS, NUL,   NUL,   PADD,  NUL,   NUL,   ENTER, LCLK},
   {LSHFT,  NUL,   NUL,   NUL,   PENT,  BSLSH, HASH,  AMPS,  LCHEV, RCHEV, NUL,   NUL,   PGUP,  NMLCK},
-  {L12L,   PAD0,  PDOT,  LYR1,  LYR2,  SPC,   DEL,   LYR3,  NUL,   RALT,  RCRTL, BKSPC, PGDN,  DEL}
+  {L12L,   PAD0,  PDOT,  LYR1,  LYR2,  DEL,   BKSPC, LYR3,  NUL,   RALT,  RCRTL, BKSPC, PGDN,  DEL}
 };
 
 LayoutKey* layout2_3[rowsCount][columnsCount] = {
@@ -56,7 +56,7 @@ LayoutKey* layout3[rowsCount][columnsCount] = {
   {NUL,    QUOTE, DBLQ,  EXCLM, ASTR,  LCHEV, RCHEV, UNDS,  NUL,   NUL,   PIPE,  NUL,   NUL,   NUL},
   {NUL,    NUL,   NUL,   LBRACE,LBRACK,LPAR,  RPAR,  RBRACK,RBRACE,NUL,   NUL,   NUL,   ENTER, NUL},
   {NUL,    NUL,   NUL,   NUL,   CMTST, BSLSH, HASH,  CMTED, LSEQL, GREQL, NUL,   NUL,   PGUP,  NUL},
-  {NUL,    NUL,   NUL,   NUL,   LYR2,  ENTER, BKSPC, LYR3,  LYR4,  NUL,   NUL,   BKSPC, PGDN,  DEL}
+  {NUL,    NUL,   NUL,   NUL,   LYR2,  DEL,   BKSPC, LYR3,  LYR4,  NUL,   NUL,   BKSPC, PGDN,  DEL}
 };
 
 LayoutKey* layout3_4[rowsCount][columnsCount] = {
