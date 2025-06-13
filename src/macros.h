@@ -3,20 +3,17 @@
 
 #include "main.h"
 
-// Simple text macro structure
 struct SimpleMacro {
   uint16_t id;
   const char* text;
 };
 
-// Alt-code sequence structure
 struct AltCodeSequence {
   uint16_t id;
   const int* sequence;
   uint8_t length;
 };
 
-// Combined macro manager - handles both text macros and alt-codes
 class SimpleMacroManager {
 private:
   static const int MAX_MACROS = 50;
@@ -28,8 +25,6 @@ private:
 
 public:
   SimpleMacroManager() : macroCount(0), altCodeCount(0) {}
-
-  // Add a text macro
   bool addMacro(uint16_t id, const char* text) {
     if (macroCount >= MAX_MACROS) return false;
     macros[macroCount].id = id;
@@ -38,7 +33,6 @@ public:
     return true;
   }
 
-  // Add an alt-code sequence
   bool addAltCode(uint16_t id, const int* sequence, uint8_t length) {
     if (altCodeCount >= MAX_ALTCODES) return false;
     altCodes[altCodeCount].id = id;
@@ -48,9 +42,12 @@ public:
     return true;
   }
 
-  // Execute a macro or alt-code by ID
+  template<size_t N>
+  bool addAltCode(uint16_t id, const int (&sequence)[N]) {
+    return addAltCode(id, sequence, N);
+  }
+
   bool executeMacro(uint16_t id) {
-    // Check text macros first
     for (int i = 0; i < macroCount; i++) {
       if (macros[i].id == id) {
         Keyboard.print(macros[i].text);
@@ -58,10 +55,8 @@ public:
       }
     }
 
-    // Check alt-codes
     for (int i = 0; i < altCodeCount; i++) {
       if (altCodes[i].id == id) {
-        // Send alt-code sequence
         Keyboard.press(KEY_RIGHT_ALT);
         for (uint8_t j = 0; j < altCodes[i].length; j++) {
           Keyboard.press(altCodes[i].sequence[j]);
@@ -75,14 +70,18 @@ public:
     return false;
   }
 
-  // Get all macros (for future GUI/config)
   SimpleMacro* getAllMacros() { return macros; }
   int getMacroCount() { return macroCount; }
   AltCodeSequence* getAllAltCodes() { return altCodes; }
   int getAltCodeCount() { return altCodeCount; }
 };
 
-// Global macro manager instance
 extern SimpleMacroManager macroManager;
+
+#define ADD_ALTCODE(id, ...) \
+  do { \
+    static const int seq[] = {__VA_ARGS__}; \
+    macroManager.addAltCode(id, seq); \
+  } while(0)
 
 #endif
