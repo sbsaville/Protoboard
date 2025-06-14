@@ -1,9 +1,8 @@
 #ifndef KEYDEFS_H
 #define KEYDEFS_H
 
-#include "main.h" // Keep for now, CRGB might be forward declared in main.h, or main.h might be needed by other files including keydefs.h
+// This file is now effectively deprecated.
+// LedColor typedef has been moved to key_definitions.h
+// Original content (LayoutKey, color vars, key instances) removed in previous steps.
 
-typedef CRGB LedColor;
-using LedColor = CRGB;
-
-#endif
+#endif // KEYDEFS_H

@@ -2,7 +2,6 @@
 #define LAYERS_H
 
 #include "main.h"     // For keycode constants and rowsCount/columnsCount
-#include "rgbleds.h"  // Kept for now, though direct usage by layers.h is removed
 
 uint16_t layout0[rowsCount][columnsCount] = {
   {KEY_ESC,    KEY_F1,    KEY_F2,    KEY_F3,    KEY_F4,    KEY_F5,    KEY_F6,    KEY_F7,    KEY_F8,    KEY_F9,     KEY_F10,   KEY_F11,    KEY_F12,    KEY_DELETE  },

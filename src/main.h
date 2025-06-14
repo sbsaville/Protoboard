@@ -41,99 +41,19 @@ extern PhysicalKeyState physicalKeyStates[rowsCount][columnsCount];
 // Function to initialize the key tracking matrix
 void initKeyTrackingMatrix();
 
-const uint16_t LAYER_0                       = 1   | 0xA000;
-const uint16_t LAYER_1                       = 2   | 0xA000;
-const uint16_t LAYER_2                       = 3   | 0xA000;
-const uint16_t LAYER_3                       = 4   | 0xA000;
-const uint16_t LAYER_4                       = 5   | 0xA000;
+// Define X-Macros for generating keycode constants
+#define KEY_SPEC(ConstName, NumericId, ColorCategoryPtr) \
+    const uint16_t ConstName = ((NumericId) | 0xA000);
+#define KEY_SPEC_STD(UsbKeyCodeName, ColorCategoryPtr) \
+    // Standard USB keycodes like KEY_A, KEY_ESC are already globally defined
+    // by <usb_keyboard.h>, so this macro does nothing for constant declaration.
+    // It's defined to allow key_specifications.h to be included without error.
 
-// maximum of 16 layers since even that is pushing it for teensy 3.6 EEPROM
+// Include the specifications file to generate the constants
+#include "key_specifications.h"
 
-const uint16_t KEY_CAPS_SLASH                = 17  | 0xA000;
-const uint16_t KEY_CAPS_ESC                  = 18  | 0xA000;
-const uint16_t LAYER_1_2L                    = 19  | 0xA000;
-const uint16_t KEY_ALTL                      = 20  | 0xA000;
-const uint16_t KEY_ALTR                      = 21  | 0xA000;
-
-// I arbitrarily decided that alt+[KEY] should descend from 99 while shift+[KEY] should ascend from 100
-const uint16_t KEY_ALT_TAB                   = 99  | 0xA000;
-const uint16_t EXCLMAMATION                  = 100 | 0xA000; // !
-const uint16_t KEY_AT                        = 101 | 0xA000; // @
-const uint16_t KEY_HASH                      = 102 | 0xA000; // #
-const uint16_t KEY_DOLLAR                    = 103 | 0xA000; // $
-const uint16_t KEY_PERCENT                   = 104 | 0xA000; // %
-const uint16_t KEY_CARAT                     = 105 | 0xA000; // ^
-const uint16_t AMPERSAND                     = 106 | 0xA000; // &
-const uint16_t KEY_ASTERISK                  = 107 | 0xA000; // *
-const uint16_t L_PARENTHESIS                 = 108 | 0xA000; // (
-const uint16_t R_PARENTHESIS                 = 109 | 0xA000; // )
-const uint16_t UNDERSCORE                    = 110 | 0xA000; // _
-const uint16_t KEY_PIPE                      = 111 | 0xA000; // |
-const uint16_t LEFT_CHEVRON                  = 112 | 0xA000; // <
-const uint16_t RIGHT_CHEVRON                 = 113 | 0xA000; // >
-const uint16_t QUESTION_MARK                 = 114 | 0xA000; // ?
-const uint16_t KEY_COLON                     = 115 | 0xA000; // :
-const uint16_t KEY_DBLQUOTE                  = 116 | 0xA000; // "
-const uint16_t CURL_L_BRACE                  = 117 | 0xA000; // {
-const uint16_t CURL_R_BRACE                  = 118 | 0xA000; // }
-const uint16_t SHIFT_TILDE                   = 119 | 0xA000; // ~
-const uint16_t KEY_PLUS                      = 120 | 0xA000; // +
-const uint16_t KEYSF13                       = 121 | 0xA000;
-const uint16_t KEYSF14                       = 122 | 0xA000;
-const uint16_t KEYSF15                       = 123 | 0xA000;
-const uint16_t KEYSF16                       = 124 | 0xA000;
-const uint16_t KEYSF17                       = 125 | 0xA000;
-const uint16_t KEYSF18                       = 126 | 0xA000;
-const uint16_t KEYSF19                       = 127 | 0xA000;
-const uint16_t KEYSF20                       = 128 | 0xA000;
-const uint16_t KEYSF21                       = 129 | 0xA000;
-const uint16_t KEYSF22                       = 130 | 0xA000;
-const uint16_t KEYSF23                       = 131 | 0xA000;
-const uint16_t KEYSF24                       = 132 | 0xA000;
-
-//                            alt-codes
-const uint16_t E_MACRON                      = 200 | 0xA000; // ē
-const uint16_t GREAT_EQUAL                   = 201 | 0xA000; // ≥
-const uint16_t LESS_EQUAL                    = 202 | 0xA000; // ≤
-const uint16_t NOT_EQUAL                     = 203 | 0xA000; // ≠
-const uint16_t PLUS_MINUS                    = 204 | 0xA000; // ±
-const uint16_t KEY_DEGREES                   = 205 | 0xA000; // °
-
-//                            macros
-const uint16_t MACRO_GMAIL                   = 400 | 0xA000;
-const uint16_t MACRO_HOTMAIL                 = 401 | 0xA000;
-const uint16_t MACRO_AIMARENA                = 402 | 0xA000;
-const uint16_t MACRO_LINEBREAK               = 403 | 0xA000;
-const uint16_t CMNTSTRT                      = 404 | 0xA000;
-const uint16_t CMNTEND                       = 405 | 0xA000;
-const uint16_t LOOP_COUNT                    = 406 | 0xA000;
-const uint16_t MACRO_SQUAREROOT              = 407 | 0xA000;
-
-//                          administrative
-const uint16_t KEY_NULL                      = 600 | 0xA000;
-const uint16_t KEY_RELEASE                   = 601 | 0xA000;
-const uint16_t KEY_SET0                      = 602 | 0xA000;
-const uint16_t KEY_REBOOT                    = 603 | 0xA000;
-
-//                          non-keyboard things
-const uint16_t MOUSE_LCLICK                  = 900 | 0xA000;
-const uint16_t MOUSE_RCLICK                  = 901 | 0xA000;
-const uint16_t TRILL_MODE1                   = 902 | 0xA000;
-const uint16_t TRILL_MODE2                   = 903 | 0xA000;
-const uint16_t TRILL_MODE3                   = 904 | 0xA000;
-const uint16_t LEDS_BR0                      = 905 | 0xA000;
-const uint16_t LEDS_BR1                      = 906 | 0xA000;
-const uint16_t LEDS_BR2                      = 907 | 0xA000;
-const uint16_t LEDS_BR3                      = 908 | 0xA000;
-const uint16_t LEDS_BR4                      = 909 | 0xA000;
-const uint16_t LEDS_BR5                      = 910 | 0xA000;
-const uint16_t LEDS_BR6                      = 911 | 0xA000;
-const uint16_t LEDS_BR7                      = 912 | 0xA000;
-const uint16_t LEDS_BR8                      = 913 | 0xA000;
-const uint16_t LEDS_BR9                      = 914 | 0xA000;
-const uint16_t LEDS_BR10                     = 915 | 0xA000;
-const uint16_t LEDS_INC                      = 916 | 0xA000;
-const uint16_t LEDS_DEC                      = 917 | 0xA000;
-
+// Undefine the macros to prevent conflicts
+#undef KEY_SPEC
+#undef KEY_SPEC_STD
 
 #endif
