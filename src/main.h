@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <usb_keyboard.h>
 #include <usb_mouse.h>
+#include "key_definitions.h" // Added include
 
 // Forward declaration of CRGB
 class CRGB;
@@ -23,9 +24,6 @@ struct Key {
   boolean pressed;
 };
 
-// Forward declaration of LayoutKey
-struct LayoutKey;
-
 /**
  * Structure to track physical key states across layer changes.
  * This is the core of the generic key preservation system that allows
@@ -34,7 +32,7 @@ struct LayoutKey;
 struct PhysicalKeyState {
   bool isPressed;                  // Whether the key is currently physically pressed
   uint16_t activeCode;             // The key code that's currently active for this position
-  LayoutKey* activeKey;            // Pointer to the original LayoutKey when first pressed
+  const KeyFinalDefinition* activeKey; // Changed type
 };
 
 // Global matrix to track physical key states across layer changes

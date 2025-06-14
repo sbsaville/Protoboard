@@ -5,6 +5,7 @@
 
 #include "main.h"
 #include "rgbleds.h"
+#include "key_definitions.h" // Added include
 #include "layers.h"
 #include "trillbar.h"
 #include "config.h"
@@ -34,7 +35,7 @@ bool loopTimer = false;
 // Matrix to track physical key states across layer changes
 PhysicalKeyState physicalKeyStates[rowsCount][columnsCount];
 
-LayoutKey* (*currentLayout)[columnsCount] = layout0;
+uint16_t (*currentLayout)[columnsCount] = layout0; // Changed type
 
 Key keys[rowsCount][columnsCount] = {
  {{0, 0, false},{0, 1, false},{0, 2, false},{0, 3, false},{0, 4, false},{0, 5, false},{0, 6, false},{0, 7, false},{0, 8, false},{0, 9, false},{0, 10, false},{0, 11, false},{0, 12, false},{0, 13, false}},
@@ -49,7 +50,7 @@ Key* getKey(uint8_t row, uint8_t column) {
   return &keys[row][column];
 }
 
-LayoutKey* getLayoutKey(uint8_t row, uint8_t column) {
+uint16_t getKeyCodeFromLayout(uint8_t row, uint8_t column) { // Renamed and changed signature
   return currentLayout[row][column];
 }
 
@@ -94,6 +95,7 @@ void setup() {
 
   // Initialize the key tracking matrix
   initKeyTrackingMatrix();
+  initKeyProperties(); // Added call
 
   delay(1000);
 
@@ -118,7 +120,7 @@ void setup() {
 
 
 
-LayoutKey* (*getActiveLayout())[columnsCount] {
+uint16_t (*getActiveLayout())[columnsCount] { // Changed return type
   if (L_1 == 0 && L_2 == 0 && L_3 == 0 && L_4 == 0 && L_1_2L == 0) {
     trillbar::setMode(trillbar::MODE_ARROWS);
     return layout0;
@@ -178,12 +180,17 @@ void testKeyPreservation() {
         Serial.print("]: code=");
 
         if (physicalKeyStates[i][j].activeKey) {
-          Serial.print(physicalKeyStates[i][j].activeKey->code);
+          Serial.print(physicalKeyStates[i][j].activeKey->keycode); // struct member name change
           Serial.print(", color=0x");
-          uint32_t color = ((uint32_t)physicalKeyStates[i][j].activeKey->ledColor->r << 16) |
-                           ((uint32_t)physicalKeyStates[i][j].activeKey->ledColor->g << 8) |
-                           physicalKeyStates[i][j].activeKey->ledColor->b;
-          Serial.println(color, HEX);
+          const KeyFinalDefinition* keyDef = physicalKeyStates[i][j].activeKey;
+          if (keyDef && keyDef->pActiveColor) { // Ensure pointers are valid
+              uint32_t color_val = ((uint32_t)keyDef->pActiveColor->r << 16) |
+                                   ((uint32_t)keyDef->pActiveColor->g << 8) |
+                                   keyDef->pActiveColor->b;
+              Serial.println(color_val, HEX);
+          } else {
+              Serial.println("NULL color pointer or keyDef");
+          }
         } else {
           Serial.println("NULL activeKey");
         }
@@ -196,7 +203,7 @@ void testKeyPreservation() {
 // Updates key mappings when changing layers while preserving physical key states
 void updateLayerMappings() {
   // Get the current active layout
-  LayoutKey* (*newLayout)[columnsCount] = getActiveLayout();
+  uint16_t (*newLayout)[columnsCount] = getActiveLayout(); // Changed type
 
   // Only proceed if the layout has changed
   if (newLayout != currentLayout) {
@@ -220,34 +227,84 @@ void remapKeys() {
   // This works by tracking the original LayoutKey pointer when a key is first pressed
 
   // Handle toggle state changes (these still need to be applied)
-  layout0[5][4] = (ALT_L == 1) ? LALT : LYR2;
-  layout0[5][6] = (ALT_R == 1) ? RALT : BKSPC;
-  layout0[0][13] = (ALT_R == 1) ? BKSPC : DEL;
-  layout0[3][0]  = (CAPS_SLSH == 1) ? BSLSH :
-                   (CAPS_ESC == 1) ? ESC : CAPS;
+  layout0[5][4] = (ALT_L == 1) ? KEY_LEFT_ALT : LAYER_2;
+  layout0[5][6] = (ALT_R == 1) ? KEY_RIGHT_ALT : KEY_BACKSPACE;
+  layout0[0][13] = (ALT_R == 1) ? KEY_BACKSPACE : KEY_DELETE;
+  layout0[3][0]  = (CAPS_SLSH == 1) ? KEY_BACKSLASH :
+                   (CAPS_ESC == 1) ? KEY_ESC : KEY_CAPS_LOCK;
+
   if (ALT_L == 1) {
-    ALTL->ledColor = &Toggle1;
+    if (G_KeyProperties.count(KEY_ALTL)) {
+        KeyFinalDefinition& props = G_KeyProperties.at(KEY_ALTL);
+        props.uniqueInstanceColor = Toggle1; // Toggle1 is global LedColor
+        props.pActiveColor = &props.uniqueInstanceColor;
+    }
   } else {
-    ALTL->ledColor = &ALTL->defaultColor;
+    if (G_KeyProperties.count(KEY_ALTL)) {
+        KeyFinalDefinition& props = G_KeyProperties.at(KEY_ALTL);
+        props.pActiveColor = props.pInitialCategoryColor;
+    }
   }
   if (ALT_R == 1) {
-    ALTR->ledColor = &Toggle1;
+    if (G_KeyProperties.count(KEY_ALTR)) {
+        KeyFinalDefinition& props = G_KeyProperties.at(KEY_ALTR);
+        props.uniqueInstanceColor = Toggle1; // Toggle1 is global LedColor
+        props.pActiveColor = &props.uniqueInstanceColor;
+    }
   } else {
-    ALTR->ledColor = &ALTL->defaultColor;
+    if (G_KeyProperties.count(KEY_ALTR)) {
+        KeyFinalDefinition& props = G_KeyProperties.at(KEY_ALTR);
+        props.pActiveColor = props.pInitialCategoryColor;
+    }
   }
   if (CAPS_SLSH == 1) {
-    CAPS_ESC = 0;
-    CAPSLSH->ledColor = &Toggle2;
-  } else {
-    CAPSLSH->ledColor = &ALTL->defaultColor;
+    CAPS_ESC = 0; // Ensure mutual exclusivity
+    if (G_KeyProperties.count(KEY_CAPS_SLASH)) {
+        KeyFinalDefinition& props = G_KeyProperties.at(KEY_CAPS_SLASH);
+        props.uniqueInstanceColor = Toggle2; // Toggle2 is global LedColor
+        props.pActiveColor = &props.uniqueInstanceColor;
+    }
+    // Reset CAPS_ESC color if it was active
+    if (G_KeyProperties.count(KEY_CAPS_ESC)) {
+        KeyFinalDefinition& props = G_KeyProperties.at(KEY_CAPS_ESC);
+        props.pActiveColor = props.pInitialCategoryColor;
+    }
+    if (G_KeyProperties.count(KEY_ESC)) { // Reset ESC if it was toggled by CAPS_ESC
+        KeyFinalDefinition& props = G_KeyProperties.at(KEY_ESC);
+        props.pActiveColor = props.pInitialCategoryColor;
+    }
+  } else { // CAPS_SLSH is OFF
+    if (G_KeyProperties.count(KEY_CAPS_SLASH)) {
+        KeyFinalDefinition& props = G_KeyProperties.at(KEY_CAPS_SLASH);
+        props.pActiveColor = props.pInitialCategoryColor;
+    }
   }
   if (CAPS_ESC == 1) {
-    CAPS_SLSH = 0;
-    CAPSESC->ledColor = &Toggle2;
-    ESC->ledColor = &Toggle2;
-  } else {
-    CAPSESC->ledColor = &CAPSESC->defaultColor;
-    ESC->ledColor = &ESC->defaultColor;
+    CAPS_SLSH = 0; // Ensure mutual exclusivity
+    if (G_KeyProperties.count(KEY_CAPS_ESC)) {
+        KeyFinalDefinition& props = G_KeyProperties.at(KEY_CAPS_ESC);
+        props.uniqueInstanceColor = Toggle2; // Toggle2 is global LedColor
+        props.pActiveColor = &props.uniqueInstanceColor;
+    }
+    if (G_KeyProperties.count(KEY_ESC)) { // Also toggle ESC color
+        KeyFinalDefinition& props = G_KeyProperties.at(KEY_ESC);
+        props.uniqueInstanceColor = Toggle2;
+        props.pActiveColor = &props.uniqueInstanceColor;
+    }
+    // Reset CAPS_SLSH color if it was active
+    if (G_KeyProperties.count(KEY_CAPS_SLASH)) {
+        KeyFinalDefinition& props = G_KeyProperties.at(KEY_CAPS_SLASH);
+        props.pActiveColor = props.pInitialCategoryColor;
+    }
+  } else { // CAPS_ESC is OFF
+    if (G_KeyProperties.count(KEY_CAPS_ESC)) {
+        KeyFinalDefinition& props = G_KeyProperties.at(KEY_CAPS_ESC);
+        props.pActiveColor = props.pInitialCategoryColor;
+    }
+    if (G_KeyProperties.count(KEY_ESC)) { // Also revert ESC color
+        KeyFinalDefinition& props = G_KeyProperties.at(KEY_ESC);
+        props.pActiveColor = props.pInitialCategoryColor;
+    }
   }
 }
 
@@ -288,10 +345,10 @@ void loop() {
             debounceTimers[i][j] = now;
 
             // Only fetch layout key if we need it (state changed and debounced)
-            LayoutKey* layout = getLayoutKey(key->row, key->column);
+            uint16_t keyCode = getKeyCodeFromLayout(key->row, key->column); // Changed to get keyCode
               // Process the key event
             if (current) {
-              keyPressed(key, layout);
+              keyPressed(key, keyCode); // Pass keyCode
 
               // Get the actual code that was stored during keyPressed
               uint16_t activeCode = physicalKeyStates[key->row][key->column].activeCode;
@@ -302,11 +359,11 @@ void loop() {
               }
             }
             else {
-              keyReleased(key, layout);
+              keyReleased(key, keyCode); // Pass keyCode
 
               // Check both the current layout code and the stored activeCode for layer keys
-              LayoutKey* activeKey = physicalKeyStates[key->row][key->column].activeKey;
-              uint16_t actualCode = activeKey ? activeKey->code : layout->code;
+              const KeyFinalDefinition* preservedKeyDef = physicalKeyStates[key->row][key->column].activeKey; // Changed type
+              uint16_t actualCode = preservedKeyDef ? preservedKeyDef->keycode : keyCode; // Use preservedKeyDef or current layout keyCode
 
               if (isLayerKey(actualCode)) {
                   updateNeeded = true;

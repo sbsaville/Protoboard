@@ -4,7 +4,8 @@
 #include "main.h"
 #include "layers.h"
 #include "trillbar.h"
-#include "keydefs.h"
+// #include "keydefs.h" // Removed
+#include "key_definitions.h" // Added
 #include "rgbleds.h"
 #include "config.h"
 #include "macros.h"
@@ -153,21 +154,26 @@ const SimpleKeyAction shiftedKeys[] = {
 // Alt-code sequences moved to macro_definitions.h
 
 // All of the custom operations to be performed on key press
-void keyPressed(Key* key, LayoutKey* layout) {
+void keyPressed(Key* key, uint16_t direct_keyCode) { // Signature changed
   #if EDGE_DEBUG
   Serial.print("Key pressed: row=");
   Serial.print(key->row);
   Serial.print(", col=");
   Serial.println(key->column);
   #endif
-  int code = layout->code;
+  int code = direct_keyCode; // Use direct_keyCode
 
   // Store the key state information - this must happen before any early returns
   uint8_t row = key->row;
   uint8_t col = key->column;
   physicalKeyStates[row][col].isPressed = true;
   physicalKeyStates[row][col].activeCode = code;
-  physicalKeyStates[row][col].activeKey = layout;  // Store the original LayoutKey pointer
+  // physicalKeyStates[row][col].activeKey = layout;  // Store the original LayoutKey pointer
+  if (G_KeyProperties.count(code)) {
+      physicalKeyStates[row][col].activeKey = &G_KeyProperties.at(code);
+  } else {
+      physicalKeyStates[row][col].activeKey = nullptr; // Or handle as an error / default
+  }
 
   // Check for null key first (early return)
   if (code == KEY_NULL) {
@@ -332,46 +338,47 @@ void keyPressed(Key* key, LayoutKey* layout) {
       return;
   }
 
-  Keyboard.press(layout->code);
+  Keyboard.press(code); // Use code (which is direct_keyCode)
 
   }
                                                            // All of the operations to be performed on key release
-  void keyReleased(Key* key, LayoutKey* layout) {
-  int code = layout->code;
+  void keyReleased(Key* key, uint16_t keyCodeFromLayer) { // Signature changed
+  // int code = layout->code; // Old way
   uint8_t row = key->row;
   uint8_t col = key->column;
 
   // Get the original active key information from our tracking matrix
-  LayoutKey* activeKey = physicalKeyStates[row][col].activeKey;
+  const KeyFinalDefinition* preservedKeyDef = physicalKeyStates[row][col].activeKey; // Changed type
 
   #if EDGE_DEBUG
   Serial.print("Key released: row="); Serial.print(key->row);
   Serial.print(", col="); Serial.print(key->column);
-  Serial.print(", code="); Serial.print(code);
-  Serial.print(", activeCode="); Serial.print(activeCode);
-  if (activeKey) {
-    Serial.print(", activeKeyCode="); Serial.print(activeKey->code);
+  Serial.print(", keyCodeFromLayer="); Serial.print(keyCodeFromLayer); // Changed variable name
+  Serial.print(", physicalKeyActiveCode="); Serial.print(physicalKeyStates[row][col].activeCode); // Clarified which activeCode
+  if (preservedKeyDef) {
+    Serial.print(", preservedKeyCode="); Serial.print(preservedKeyDef->keycode); // Changed variable and member
   }
   Serial.print(", L_0="); Serial.println(L_0);
   #endif
 
   // Clear the key state tracking
   physicalKeyStates[row][col].isPressed = false;
-  physicalKeyStates[row][col].activeCode = 0;
-  physicalKeyStates[row][col].activeKey = nullptr;
+  physicalKeyStates[row][col].activeCode = 0; // Clear the code that was active
+  physicalKeyStates[row][col].activeKey = nullptr; // Clear the pointer to KeyFinalDefinition
 
   // Check for null key first (early return)
-  if ((code == KEY_NULL) && (!activeKey || activeKey->code == KEY_NULL)) {
+  // Use keyCodeFromLayer for the current layout's key, and preservedKeyDef for the actually pressed key
+  if ((keyCodeFromLayer == KEY_NULL) && (!preservedKeyDef || preservedKeyDef->keycode == KEY_NULL)) {
     return;
   }
   // Special handling for KEY_SET0
-  if (code == KEY_SET0 || (activeKey && activeKey->code == KEY_SET0)) {
+  if (keyCodeFromLayer == KEY_SET0 || (preservedKeyDef && preservedKeyDef->keycode == KEY_SET0)) {
     L_check();
     Keyboard.releaseAll();
     return;
   }
-  // Handle layer resets - prioritize the activeKey if available
-  uint16_t relevantCode = activeKey ? activeKey->code : code;
+  // Handle layer resets - prioritize the preservedKeyDef if available
+  uint16_t relevantCode = preservedKeyDef ? preservedKeyDef->keycode : keyCodeFromLayer; // Changed logic
 
   for (uint8_t i = 0; i < sizeof(layerResets)/sizeof(LayerResetAction); i++) {
     if (relevantCode == layerResets[i].code) {
@@ -412,18 +419,18 @@ void keyPressed(Key* key, LayoutKey* layout) {
   }
 
   // Handle mouse button releases
-  switch (code) {
+  switch (keyCodeFromLayer) { // Use keyCodeFromLayer for current layout's intent for mouse buttons
     case MOUSE_LCLICK:
     case MOUSE_RCLICK:
       Mouse.set_buttons(0, 0, 0);
       return;
   }
     // Default: regular key release
-  // Always use the activeKey if available (preserves original function during layer change)
-  if (activeKey) {
-    Keyboard.release(activeKey->code);
+  // Always use the preservedKeyDef if available (preserves original function during layer change)
+  if (preservedKeyDef) {
+    Keyboard.release(preservedKeyDef->keycode);
   } else {
-    Keyboard.release(code);
+    Keyboard.release(keyCodeFromLayer); // Fallback to the code from current layer
   }
 
 }
