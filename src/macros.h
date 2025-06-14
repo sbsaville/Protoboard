@@ -33,11 +33,6 @@ public:
     return true;
   }
 
-  template<size_t N>
-  bool addAltCode(uint16_t id, const int (&sequence)[N]) {
-    return addAltCode(id, sequence, N);
-  }
-
   bool executeMacro(uint16_t id) {
     for (const auto& macro : macros) {
       if (macro.id == id) {
@@ -61,10 +56,10 @@ public:
     return false;
   }
 
-  std::vector<SimpleMacro>& getAllMacros() { return macros; }
-  int getMacroCount() { return macros.size(); }
-  std::vector<AltCodeSequence>& getAllAltCodes() { return altCodes; }
-  int getAltCodeCount() { return altCodes.size(); }
+  const std::vector<SimpleMacro>& getAllMacros() const { return macros; }
+  int getMacroCount() const { return macros.size(); }
+  const std::vector<AltCodeSequence>& getAllAltCodes() const { return altCodes; }
+  int getAltCodeCount() const { return altCodes.size(); }
 };
 
 SimpleMacroManager macroManager;
@@ -72,9 +67,13 @@ SimpleMacroManager macroManager;
 #define ADD_ALTCODE(id, ...) \
   do { \
     static const int seq[] = {__VA_ARGS__}; \
-    macroManager.addAltCode(id, seq); \
+    macroManager.addAltCode(id, seq, sizeof(seq)/sizeof(seq[0])); \
   } while(0)
 
+// Function declaration
+void initializeMacros();
+
+// Function definition
 void initializeMacros() {
   macroManager.addMacro(MACRO_GMAIL,      "scott.b.saville@gmail.com");
   macroManager.addMacro(MACRO_AIMARENA,   "aim arena");

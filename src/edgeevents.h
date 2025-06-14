@@ -267,8 +267,6 @@ void keyPressed(Key* key, LayoutKey* layout) {
     LYR0_col = -1;
     ALT_R = 0;
     ALT_L = 0;
-    CAPSLSH = 0;
-    CAPSESC = 0;
     return;
   }
 
