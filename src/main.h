@@ -6,6 +6,11 @@
 #include <usb_mouse.h>
 #include "key_definitions.h" // Added include
 
+// Configuration for Keycode ID generation
+#define USE_EXPLICIT_KEYCODE_IDS 1   // Set to 0 to use auto-generated sequential IDs for custom keys,
+                                     // Set to 1 to use the explicit 'NumericId' from key_specifications.h
+#define CUSTOM_KEYCODE_BASE_ID 0     // Base for __COUNTER__ if auto-generating IDs (e.g., 0 or 1)
+
 // Forward declaration of CRGB
 class CRGB;
 
@@ -42,8 +47,14 @@ extern PhysicalKeyState physicalKeyStates[rowsCount][columnsCount];
 void initKeyTrackingMatrix();
 
 // Define X-Macros for generating keycode constants
-#define KEY_SPEC(ConstName, NumericId, ColorCategoryPtr) \
-    const uint16_t ConstName = ((NumericId) | 0xA000);
+#if USE_EXPLICIT_KEYCODE_IDS
+    #define KEY_SPEC(ConstName, NumericId, ColorCategoryPtr) \
+        const uint16_t ConstName = ((NumericId) | 0xA000);
+#else // Use auto-generated IDs; NumericId from key_specifications.h is effectively ignored by this KEY_SPEC definition
+    #define KEY_SPEC(ConstName, NumericId, ColorCategoryPtr) \
+        const uint16_t ConstName = ((CUSTOM_KEYCODE_BASE_ID + __COUNTER__) | 0xA000);
+#endif
+
 #define KEY_SPEC_STD(UsbKeyCodeName, ColorCategoryPtr) \
     // Standard USB keycodes like KEY_A, KEY_ESC are already globally defined
     // by <usb_keyboard.h>, so this macro does nothing for constant declaration.

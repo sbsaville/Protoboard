@@ -83,31 +83,43 @@ void updateLockStates() {
 }
 
 
-void scanLEDs(LayoutKey* layout[rowsCount][columnsCount]) {
+void scanLEDs(uint16_t layout[rowsCount][columnsCount]) { // Signature changed
+  numLockFound = false; // Reset flags at the beginning of each scan
+  capsLockFound = false;
+  scrollLockFound = false;
+
   for (int row = 0; row < rowsCount; row++) {
     for (int col = 0; col < columnsCount; col++) {
       int ledIndex = XYMatrix[row][col];
+      uint16_t current_keycode_from_layout = layout[row][col];
+      LedColor color_to_set = LEDoff; // Default to off
 
-      // Check if there's an active key being held from another layer
-      bool isKeyPressed = physicalKeyStates[row][col].isPressed;
-      LayoutKey* activeKey = physicalKeyStates[row][col].activeKey;
+      const PhysicalKeyState& pks = physicalKeyStates[row][col];
 
-      // Use the active key if available (for keys held during layer change)
-      // otherwise use the current layout's key
-      LayoutKey* key = isKeyPressed && activeKey ? activeKey : layout[row][col];
-
-      if (key != nullptr && key->ledColor != nullptr) { // Check for null pointers
-        leds[ledIndex] = *(key->ledColor);
-
-        if (key == NMLCK) {
-          numLockFound = true;
-        } else if (key == CAPS) {
-          capsLockFound = true;
-        } else if (key == SCRLL) {
-          scrollLockFound = true;
-        }
+      if (pks.isPressed && pks.activeKey != nullptr) {
+          // Key is held, use its preserved definition's active color
+          color_to_set = *pks.activeKey->pActiveColor;
       } else {
-        leds[ledIndex] = CRGB::Black; // Default to black if null
+          // Key is not held (or no preserved state), use current layout's key definition
+          if (G_KeyProperties.count(current_keycode_from_layout)) {
+              color_to_set = *G_KeyProperties.at(current_keycode_from_layout).pActiveColor;
+          } else {
+              // Keycode from layout not in G_KeyProperties, default to LEDoff (already set by initialization of color_to_set)
+          }
+      }
+      leds[ledIndex] = color_to_set;
+
+      // Lock key detection logic (updated)
+      // We need the keycode that determined the color for lock state detection.
+      // If pressed, it's from pks.activeKey->keycode. Otherwise, it's current_keycode_from_layout.
+      uint16_t effective_keycode = pks.isPressed && pks.activeKey ? pks.activeKey->keycode : current_keycode_from_layout;
+
+      if (effective_keycode == KEY_NUM_LOCK) {
+          numLockFound = true;
+      } else if (effective_keycode == KEY_CAPS_LOCK) {
+          capsLockFound = true;
+      } else if (effective_keycode == KEY_SCROLL_LOCK) {
+          scrollLockFound = true;
       }
     }
   }
