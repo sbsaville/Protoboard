@@ -11,6 +11,49 @@
 #include "config.h"
 #include "macros.h"
 
+// Moved from key_definitions.cpp:
+// Global LedColor variable definitions
+LedColor Layer    = CRGB(0x00FFFF);
+LedColor Letter   = CRGB(0x8000FF);
+LedColor Number   = CRGB(0x0000FF);
+LedColor Numnav   = CRGB(0x0000FF);
+LedColor Chara1   = CRGB(0xFF3300);
+LedColor Chara2   = CRGB(0xFF3300);
+LedColor Modifier = CRGB(0xFF0000);
+LedColor Capslock = CRGB(0xFF0000);
+LedColor Numlock  = CRGB(0xFFFF00);
+LedColor Scrllock = CRGB(0xFFFF00);
+LedColor FKeys1   = CRGB(0xFF2200);
+LedColor FKeys1b  = CRGB(0xFF0000);
+LedColor FKeys2   = CRGB(0x3300FF);
+LedColor FKeys2b  = CRGB(0xFF00FF);
+LedColor Special  = CRGB(0xFFFF00);
+LedColor Nav      = CRGB(0x0000FF);
+LedColor LedAdj   = CRGB(0xFFFFFF);
+LedColor LEDoff   = CRGB(0x000000);
+LedColor Macro    = CRGB(0xFF69B4);
+LedColor Toggle1  = CRGB(0xFF0000);
+LedColor Toggle2  = CRGB(0x8000FF);
+LedColor VimNav   = CRGB(0x33FF33);
+
+// G_KeyProperties map definition
+std::map<uint16_t, KeyFinalDefinition> G_KeyProperties;
+
+// initKeyProperties function definition
+void initKeyProperties() {
+    #define KEY_SPEC(KeycodeValue, ColorCategoryPtr) \
+        G_KeyProperties[KeycodeValue] = KeyFinalDefinition(KeycodeValue, ColorCategoryPtr)
+
+    #define KEY_SPEC_STD(UsbKeyCodeValue, ColorCategoryPtr) \
+        G_KeyProperties[UsbKeyCodeValue] = KeyFinalDefinition(UsbKeyCodeValue, ColorCategoryPtr)
+
+    #include "key_specifications.h"
+
+    #undef KEY_SPEC
+    #undef KEY_SPEC_STD
+}
+// End of moved content from key_definitions.cpp
+
 #define DEBUG 0
 #define LOOP_TIMER_DEBUG 0
 

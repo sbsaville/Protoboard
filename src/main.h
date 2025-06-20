@@ -11,9 +11,6 @@
                                      // Set to 1 to use the explicit 'NumericId' from key_specifications.h
 #define CUSTOM_KEYCODE_BASE_ID 0     // Base for __COUNTER__ if auto-generating IDs (e.g., 0 or 1)
 
-// Forward declaration of CRGB
-class CRGB;
-
 void L_check();
 
 const uint8_t rowsCount = 6;

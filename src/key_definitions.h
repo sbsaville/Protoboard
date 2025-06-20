@@ -2,11 +2,7 @@
 #define KEY_DEFINITIONS_H
 
 #include <map>
-#include "rgbleds.h" // For CRGB definition (from FastLED.h via rgbleds.h)
-
-// Define LedColor as an alias for CRGB
-typedef CRGB LedColor;
-using LedColor = CRGB; // C++11 style alias
+#include "types.h" // ADDED - for LedColor definition
 
 // Declare global LED color category variables
 extern LedColor Layer;
