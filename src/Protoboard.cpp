@@ -169,11 +169,11 @@ uint16_t (*getActiveLayout())[columnsCount] { // Changed return type
     return layout0;
   }
   else if (L_1 == 1 && L_2 == 0) {
-    trillbar::setMode(trillbar::MODE_SCROLL);
+    trillbar::setMode(trillbar::MODE_BRIGHTNESS); // Changed to MODE_BRIGHTNESS
     return layout1;
   }
   else if (L_1 == 0 && L_2 == 1 && L_3 == 0) {
-    trillbar::setMode(trillbar::MODE_BRIGHTNESS);
+    trillbar::setMode(trillbar::MODE_SCROLL); // Changed to MODE_SCROLL
     return layout2;
   }
   else if ((L_1 == 1 && L_2 == 1) || (L_1_2L == 1)) {

@@ -4,7 +4,9 @@
 #include <Arduino.h>
 #include <usb_keyboard.h>
 #include <usb_mouse.h>
-#include "key_definitions.h" // Added include
+// It's assumed rgbleds.h properly includes <FastLED.h> for CRGB
+#include "rgbleds.h"         // ADD THIS LINE or ensure it's moved here if present later
+#include "key_definitions.h" // This line should come AFTER rgbleds.h
 
 // Configuration for Keycode ID generation
 #define USE_EXPLICIT_KEYCODE_IDS 1   // Set to 0 to use auto-generated sequential IDs for custom keys,

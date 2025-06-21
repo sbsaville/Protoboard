@@ -1,12 +1,12 @@
 #ifndef KEY_DEFINITIONS_H
 #define KEY_DEFINITIONS_H
 
-#include <map>
-#include <FastLED.h> // ADDED - For CRGB
+#include "main.h"     // ADDED - This should make CRGB available via its own includes
+#include <map>        // Moved after "main.h" just in case, though order might not matter here
 
-// Define LedColor as an alias for CRGB
+// Define LedColor as an alias for CRGB (CRGB comes from main.h's include chain)
 typedef CRGB LedColor;
-using LedColor = CRGB; // C++11 style alias
+using LedColor = CRGB;
 
 // Declare global LED color category variables
 extern LedColor Layer;
