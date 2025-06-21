@@ -2,7 +2,10 @@
 // Provide dummy definitions for IntelliSense to prevent errors
 // These should not impact the actual build process
 #define KEY_SPEC(ConstName, NumericId, ColorCategoryPtr) static const int ConstName = NumericId;
-#define KEY_SPEC_STD(UsbKeyCodeName, ColorCategoryPtr) static const int UsbKeyCodeName = 0;
+// For KEY_SPEC_STD, UsbKeyCodeName is often a macro that expands to a number (e.g. KEY_A from usb_keyboard.h).
+// Using it as a variable name in "static const int KEY_A = 0;" would be "static const int <value_of_KEY_A> = 0;", which is invalid.
+// So, make it a no-op for IntelliSense, assuming UsbKeyCodeName is already defined elsewhere for the parser.
+#define KEY_SPEC_STD(UsbKeyCodeName, ColorCategoryPtr) /* Do nothing */
 #endif
 
 // This file is intended to be included multiple times with different macro definitions.

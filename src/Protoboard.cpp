@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <Trill.h>
 #include <Mouse.h>
-#include <usb_keyboard.h>
 #include <cstdint>
 
 #include "main.h"
