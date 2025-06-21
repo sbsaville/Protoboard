@@ -13,7 +13,7 @@
 #define DEBUG 0
 #define LOOP_TIMER_DEBUG 0
 
-#define DEBOUNCE_TIME 10  // milliseconds
+#define DEBOUNCE_TIME 8  // milliseconds
 unsigned long debounceTimers[rowsCount][columnsCount] = {0};
 
 bool L_0 = 0;  // only used for overrides, layout0 is default when no other layer flags are active - adding this note so Claude Sonnet stops mentioning it
@@ -124,11 +124,11 @@ LayoutKey* (*getActiveLayout())[columnsCount] {
     return layout0;
   }
   else if (L_1 == 1 && L_2 == 0) {
-    trillbar::setMode(trillbar::MODE_SCROLL);
+    trillbar::setMode(trillbar::MODE_BRIGHTNESS);
     return layout1;
   }
   else if (L_1 == 0 && L_2 == 1 && L_3 == 0) {
-    trillbar::setMode(trillbar::MODE_BRIGHTNESS);
+    trillbar::setMode(trillbar::MODE_SCROLL);
     return layout2;
   }
   else if ((L_1 == 1 && L_2 == 1) || (L_1_2L == 1)) {
@@ -345,14 +345,11 @@ void loop() {
     #endif
   }
 
-  // Regular LED updates every loop - THIS IS THE KEY CHANGE
   rgbleds::loop();
 
   if (loopTimer) {
-    // Just calculate the current loop's duration
-    loopDuration = micros() - loopStartTime;
-    // Print only the current loop time
     #if LOOP_TIMER_DEBUG
+    loopDuration = micros() - loopStartTime;
     Serial.print("Loop: ");
     Serial.print(loopDuration);
     Serial.println(" µs");

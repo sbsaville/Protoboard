@@ -35,8 +35,8 @@ LayoutKey* layout1_2[rowsCount][columnsCount] = {
 LayoutKey* layout2[rowsCount][columnsCount] = {
   {ESC,    F13,   F14,   F15,   F16,   F17,   F18,   F19,   F20,   F21,   F22,   F23,   F24,   NUL},
   {NUL,    NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL},
-  {ALTT,   HOME,  UP,    END,   PGUP,  QUOTE, NUL,   UNDS,  NUL,   NUL,   PRCNT, NUL,   NUL,   NUL},
-  {NUL,    LEFT,  DOWN,  RIGHT, PGDN,  DBLQ,  MINUS, NUL,   NUL,   PADD,  NUL,   NUL,   ENTER, LCLK},
+  {ALTT,   HOME,  UP,    END,   PGUP,  NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL,   NUL},
+  {NUL,    LEFT,  DOWN,  RIGHT, PGDN,  NUL,   LEFT,  DOWN,  UP,    RIGHT, NUL,   NUL,   ENTER, LCLK},
   {LSHFT,  NUL,   NUL,   NUL,   PENT,  BSLSH, HASH,  AMPS,  LCHEV, RCHEV, NUL,   NUL,   PGUP,  NMLCK},
   {L12L,   PAD0,  PDOT,  LYR1,  LYR2,  DEL,   BKSPC, LYR3,  NUL,   RALT,  RCRTL, BKSPC, PGDN,  DEL}
 };
