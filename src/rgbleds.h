@@ -1,6 +1,5 @@
 #ifndef RGBLEDS_H
 #define RGBLEDS_H
-#define FASTLED_INTERNAL
 
 #define USE_WS2812SERIAL // Define this before including FastLED.h
 #include <FastLED.h>
