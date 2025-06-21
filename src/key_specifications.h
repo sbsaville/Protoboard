@@ -1,3 +1,10 @@
+#ifdef __INTELLISENSE__
+// Provide dummy definitions for IntelliSense to prevent errors
+// These should not impact the actual build process
+#define KEY_SPEC(ConstName, NumericId, ColorCategoryPtr) static const int ConstName = NumericId;
+#define KEY_SPEC_STD(UsbKeyCodeName, ColorCategoryPtr) static const int UsbKeyCodeName = 0;
+#endif
+
 // This file is intended to be included multiple times with different macro definitions.
 // It should not have its own include guards.
 
