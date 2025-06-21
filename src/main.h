@@ -5,8 +5,8 @@
 #include <usb_keyboard.h>
 #include <usb_mouse.h>
 // It's assumed rgbleds.h properly includes <FastLED.h> for CRGB
-#include "rgbleds.h"         // ADD THIS LINE or ensure it's moved here if present later
-#include "key_definitions.h" // This line should come AFTER rgbleds.h
+#include "rgbleds.h" // Provides CRGB
+#include "keydefs.h"   // Provides KeyFinalDefinition, LedColor, and extern color category variables
 
 // Configuration for Keycode ID generation
 #define USE_EXPLICIT_KEYCODE_IDS 1   // Set to 0 to use auto-generated sequential IDs for custom keys,
@@ -60,7 +60,7 @@ void initKeyTrackingMatrix();
     // It's defined to allow key_specifications.h to be included without error.
 
 // Include the specifications file to generate the constants
-#include "key_specifications.h"
+#include "keyspecs.h"
 
 // Undefine the macros to prevent conflicts
 #undef KEY_SPEC

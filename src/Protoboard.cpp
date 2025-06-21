@@ -5,7 +5,7 @@
 
 #include "main.h"
 #include "rgbleds.h"
-#include "key_definitions.h" // Added include
+#include "keydefs.h" // Updated include
 #include "layers.h"
 #include "trillbar.h"
 #include "config.h"
@@ -47,7 +47,7 @@ void initKeyProperties() {
     #define KEY_SPEC_STD(UsbKeyCodeValue, ColorCategoryPtr) \
         G_KeyProperties[UsbKeyCodeValue] = KeyFinalDefinition(UsbKeyCodeValue, ColorCategoryPtr)
 
-    #include "key_specifications.h"
+    #include "keyspecs.h"
 
     #undef KEY_SPEC
     #undef KEY_SPEC_STD

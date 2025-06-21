@@ -6,6 +6,7 @@
 #endif
 
 // This file is intended to be included multiple times with different macro definitions.
+// It defines the list of all key specifications for the X-Macro system.
 // It should not have its own include guards.
 
 // Format: KEY_SPEC(ConstName, NumericId, ColorCategoryPtr) for custom keys (NumericId will be ORed with 0xA000 by main.h)
