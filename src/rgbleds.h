@@ -2,9 +2,9 @@
 #define RGBLEDS_H
 #define FASTLED_INTERNAL
 
-#include <WS2812Serial.h>
-#define USE_WS2812SERIAL
+#define USE_WS2812SERIAL // Define this before including FastLED.h
 #include <FastLED.h>
+#include <WS2812Serial.h> // Include specific chipset library after FastLED.h
 #include <cmath>
 #include <algorithm>
 

@@ -21,6 +21,7 @@ extern bool L_1_2L;
 extern bool ALT_L;
 extern bool ALT_R;
 extern bool CAPS_SLSH;
+extern bool CAPS_ESC; // Added extern declaration
 
 bool L2AltTab = false;
 
@@ -273,8 +274,8 @@ void keyPressed(Key* key, uint16_t direct_keyCode) { // Signature changed
     LYR0_col = -1;
     ALT_R = 0;
     ALT_L = 0;
-    CAPSLSH = 0;
-    CAPSESC = 0;
+    CAPS_SLSH = 0; // Corrected typo
+    CAPS_ESC = 0;  // Corrected typo
     return;
   }
 

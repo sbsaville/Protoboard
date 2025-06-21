@@ -41,8 +41,8 @@ std::map<uint16_t, KeyFinalDefinition> G_KeyProperties;
 
 // initKeyProperties function definition
 void initKeyProperties() {
-    #define KEY_SPEC(KeycodeValue, ColorCategoryPtr) \
-        G_KeyProperties[KeycodeValue] = KeyFinalDefinition(KeycodeValue, ColorCategoryPtr)
+    #define KEY_SPEC(ConstName, NumericId, ColorCategoryPtr) \
+        G_KeyProperties[ConstName] = KeyFinalDefinition(ConstName, ColorCategoryPtr)
 
     #define KEY_SPEC_STD(UsbKeyCodeValue, ColorCategoryPtr) \
         G_KeyProperties[UsbKeyCodeValue] = KeyFinalDefinition(UsbKeyCodeValue, ColorCategoryPtr)

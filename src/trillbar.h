@@ -7,11 +7,6 @@
 #define TRILL_MOMENTUM_DEBUG 0
 #define ACCEL_DEBUG 0
 
-// Forward declarations of functions used by trillbar methods
-void scanLEDs(LayoutKey* (*layoutMatrix)[columnsCount]);
-void ledsDEC();
-void ledsINC();
-
 // Class-based implementation for trillbar
 class trillbar {
 public:
