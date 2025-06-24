@@ -5,7 +5,7 @@
 
 #include "main.h"
 #include "rgbleds.h"
-#include "keydefs.h" // Updated include
+#include "keydefs.h"
 #include "layers.h"
 #include "trillbar.h"
 #include "config.h"
