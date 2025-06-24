@@ -1,13 +1,10 @@
 #ifndef KEYDEFS_H
 #define KEYDEFS_H
 
-// Forward declaration for CRGB if not fully including FastLED.h or rgbleds.h here yet,
-// or ensure rgbleds.h is included if it's light enough.
-// For now, assume rgbleds.h will be included as it provides CRGB.
-#include "rgbleds.h" // Provides CRGB
+#include <FastLED.h> // For CRGB type, used in LedColor typedef
 #include <map>       // For std::map
 
-// Define LedColor as an alias for CRGB (CRGB is provided by rgbleds.h)
+// Define LedColor as an alias for CRGB (CRGB is provided by FastLED.h)
 typedef CRGB LedColor;
 using LedColor = CRGB;
 

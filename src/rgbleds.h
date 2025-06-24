@@ -7,9 +7,13 @@
 #include <cmath>
 #include <algorithm>
 
-#include "main.h"
+#include "keyboard_config.h" // For rowsCount, columnsCount, PhysicalKeyState struct
+#include "keydefs.h" // For KeyFinalDefinition struct, G_KeyProperties, LedColor type, color globals
 #include "layers.h"
 #include "config.h"
+
+// Access global physicalKeyStates array declared in main.h / defined via keyboard_config.h
+extern PhysicalKeyState physicalKeyStates[rowsCount][columnsCount];
 
 class rgbleds {
   public:
