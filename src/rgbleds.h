@@ -132,7 +132,7 @@ void rgbleds::setup() {
   // Load brightness from SD card (fallback to default if not found)
   brightness = Config::loadBrightness(20);
 
-  LEDS.addLeds<WS2812SERIAL, DATA_PIN, BRG>(leds, NUM_LEDS);
+  LEDS.addLeds<NSFastLED::WS2812SERIAL, DATA_PIN, BRG>(leds, NUM_LEDS);
   LEDS.setBrightness(brightness);
   leds0();
 
