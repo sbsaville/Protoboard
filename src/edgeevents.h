@@ -160,111 +160,70 @@ void keyPressed(Key* key, LayoutKey* layout) {
   Serial.print(", col=");
   Serial.println(key->column);
   #endif
+  int code = layout->code;
 
+  // Store the key state information - this must happen before any early returns
   uint8_t row = key->row;
   uint8_t col = key->column;
-  unsigned long currentTime = millis();
-  uint16_t codeToPress = layout->code; // Default to normal key code
-
-  // Store the physical key state *before* any double-tap logic might change `layout` or `codeToPress`
   physicalKeyStates[row][col].isPressed = true;
-  physicalKeyStates[row][col].activeKey = layout; // Store the original LayoutKey pointer
-  // activeCode will be set after determining if it's a double tap or not
+  physicalKeyStates[row][col].activeCode = code;
+  physicalKeyStates[row][col].activeKey = layout;  // Store the original LayoutKey pointer
 
-  // Double-tap logic
-  if (doubleTapRow == row && doubleTapCol == col && layout->doubleTapCode != 0 && (currentTime - doubleTapTimestamp < DOUBLE_TAP_WINDOW_MS)) {
-    // This is a successful double-tap
-    codeToPress = layout->doubleTapCode;
-    #if EDGE_DEBUG
-    Serial.print("Double tap detected! Sending code: "); Serial.println(codeToPress);
-    #endif
-    // Reset double-tap tracking
-    doubleTapRow = 255;
-    doubleTapCol = 255;
-    doubleTapTimestamp = 0;
-  } else {
-    // Not a double tap (either different key, no doubleTapCode, or window expired)
-    // Send the normal key code (already assigned to codeToPress)
-    // If this key *has* a doubleTapCode, it's the first tap of a potential double-tap
-    if (layout->doubleTapCode != 0) {
-      #if EDGE_DEBUG
-      Serial.print("First tap of potential double tap. Key: "); Serial.print(row); Serial.print(","); Serial.print(col); Serial.print(" Code: "); Serial.println(layout->code);
-      #endif
-      doubleTapRow = row;
-      doubleTapCol = col;
-      doubleTapTimestamp = currentTime;
-    } else {
-      // Normal key press without double-tap capability, or a key pressed while another was in DT window
-      // Ensure any pending double-tap is cleared if a different key is pressed.
-      if (doubleTapTimestamp != 0 && (doubleTapRow != row || doubleTapCol != col)) {
-        #if EDGE_DEBUG
-        Serial.println("Different key pressed, clearing pending double tap.");
-        #endif
-        doubleTapRow = 255;
-        doubleTapCol = 255;
-        doubleTapTimestamp = 0;
-      }
-    }
-  }
-
-  // Update activeCode in physicalKeyStates with the code that will actually be processed
-  physicalKeyStates[row][col].activeCode = codeToPress;
-
-  // Check for null key first (early return) - use codeToPress
-  if (codeToPress == KEY_NULL) {
+  // Check for null key first (early return)
+  if (code == KEY_NULL) {
     return;
   }
 
-  // Check macros using new macro system - use codeToPress
-  if (macroManager.executeMacro(codeToPress)) {
+  // Check macros using new macro system
+  if (macroManager.executeMacro(code)) {
     return;
   }
 
-  // Check brightness levels - use codeToPress
+  // Check brightness levels
   for (uint8_t i = 0; i < sizeof(brightnessLevels)/sizeof(BrightnessLevel); i++) {
-    if (codeToPress == brightnessLevels[i].code) {
+    if (code == brightnessLevels[i].code) {
       brightness = brightnessLevels[i].brightnessValue;
       LEDS.setBrightness(brightness);
       return;
     }
   }
 
-  // Check LED increment/decrement - use codeToPress
-  if (codeToPress == LEDS_INC) {
+  // Check LED increment/decrement
+  if (code == LEDS_INC) {
     ledsINC();
     return;
   }
-  else if (codeToPress == LEDS_DEC) {
+  else if (code == LEDS_DEC) {
     ledsDEC();
     return;
   }
 
-  // Check trill modes - use codeToPress
-  if (codeToPress == TRILL_MODE1) {
+  // Check trill modes
+  if (code == TRILL_MODE1) {
     trillbar::setMode(trillbar::MODE_ARROWS);
     return;
   }
-  else if (codeToPress == TRILL_MODE2) {
+  else if (code == TRILL_MODE2) {
     trillbar::setMode(trillbar::MODE_SCROLL);
     return;
   }
-  else if (codeToPress == TRILL_MODE3) {
+  else if (code == TRILL_MODE3) {
     trillbar::setMode(trillbar::MODE_BRIGHTNESS);
     return;
   }
 
-  // Check mouse clicks - use codeToPress
-  if (codeToPress == MOUSE_LCLICK) {
+  // Check mouse clicks
+  if (code == MOUSE_LCLICK) {
     Mouse.set_buttons(1, 0, 0);
     return;
   }
-  else if (codeToPress == MOUSE_RCLICK) {
+  else if (code == MOUSE_RCLICK) {
     Mouse.set_buttons(0, 0, 1);
     return;
   }
 
-  // Check key release - use codeToPress
-  if (codeToPress == KEY_RELEASE) {
+  // Check key release
+  if (code == KEY_RELEASE) {
     Keyboard.set_modifier(0);
     Keyboard.set_key1(0);
     Keyboard.send_now();
@@ -273,7 +232,7 @@ void keyPressed(Key* key, LayoutKey* layout) {
     return;
   }
 
-  if (codeToPress == KEY_ALT_TAB) {
+  if (code == KEY_ALT_TAB) {
     Keyboard.press(KEY_LEFT_ALT);
     Keyboard.send_now();
     Keyboard.press(KEY_TAB);
@@ -285,19 +244,19 @@ void keyPressed(Key* key, LayoutKey* layout) {
   // Alt-codes now handled by macro system above
 
   for (uint8_t i = 0; i < sizeof(shiftedKeys)/sizeof(SimpleKeyAction); i++) {
-    if (codeToPress == shiftedKeys[i].code) {
+    if (code == shiftedKeys[i].code) {
       shiftedKey(shiftedKeys[i].keyToPress);
       return;
     }
   }
 
-  if (codeToPress == KEY_REBOOT) {
+  if (code == KEY_REBOOT) {
     _reboot_Teensyduino_();
     return;
   }
 
-  // Emergency layer reset - use codeToPress
-  if (codeToPress == KEY_SET0) {
+  // Emergency layer reset
+  if (code == KEY_SET0) {
     L_1 = 0;
     L_2 = 0;
     L_3 = 0;
@@ -311,7 +270,7 @@ void keyPressed(Key* key, LayoutKey* layout) {
     return;
   }
 
-  switch (codeToPress) { // use codeToPress
+  switch (code) {
     case LAYER_1:
       L_1 = 1;
       L_check();
@@ -359,8 +318,8 @@ void keyPressed(Key* key, LayoutKey* layout) {
       prev_L_3 = L_3;
       prev_L_4 = L_4;
       prev_L_1_2L = L_1_2L;
-      LYR0_row = key->row; // Use key->row directly
-      LYR0_col = key->column; // Use key->column directly
+      LYR0_row = key->row;
+      LYR0_col = key->column;
       L_0 = 1;
       L_1 = 0;
       L_2 = 0;
@@ -374,63 +333,72 @@ void keyPressed(Key* key, LayoutKey* layout) {
   Keyboard.press(codeToPress); // Use codeToPress
 
   }
-                                                           // All of the operations to be performed on key release
-  void keyReleased(Key* key, LayoutKey* layout) {
-  // int code = layout->code; // Original code, keep for reference if needed for specific release logic not tied to activeKey
+// All of the operations to be performed on key release
+void keyReleased(Key* key, LayoutKey* layout) {
   uint8_t row = key->row;
   uint8_t col = key->column;
+  uint16_t initialCodeFromLayout = layout->code;
 
   // Get the original active key information from our tracking matrix
   LayoutKey* activeKey = physicalKeyStates[row][col].activeKey;
 
+  // Determine the relevant code for release logic.
+  // This should usually be the code of the key as it was *first* pressed,
+  // which is stored in activeKey->code if activeKey is valid.
+  // If activeKey is somehow null, fall back to the layout passed to the function.
+  uint16_t relevantCode = activeKey ? activeKey->code : initialCodeFromLayout;
+
   #if EDGE_DEBUG
   Serial.print("Key released: row="); Serial.print(key->row);
   Serial.print(", col="); Serial.print(key->column);
-  Serial.print(", code="); Serial.print(code);
-  Serial.print(", activeCode="); Serial.print(activeCode);
+  Serial.print(", initialLayoutCode="); Serial.print(initialCodeFromLayout);
   if (activeKey) {
-    Serial.print(", activeKeyCode="); Serial.print(activeKey->code);
+    Serial.print(", activeKey->code="); Serial.print(activeKey->code);
+  } else {
+    Serial.print(", activeKey=NULL");
   }
+  Serial.print(", relevantCode="); Serial.print(relevantCode);
+  // physicalKeyStates is cleared *after* this block, so this shows the code *before* clearing.
+  Serial.print(", physicalState.activeCode (before clear)="); Serial.print(physicalKeyStates[row][col].activeCode);
   Serial.print(", L_0="); Serial.println(L_0);
   #endif
 
-  // Clear the key state tracking
+  // Clear the key state tracking *after* retrieving all necessary info from it (like activeKey)
   physicalKeyStates[row][col].isPressed = false;
   physicalKeyStates[row][col].activeCode = 0;
   physicalKeyStates[row][col].activeKey = nullptr;
 
-  // Check for null key first (early return)
-  if ((code == KEY_NULL) && (!activeKey || activeKey->code == KEY_NULL)) {
+  // Use relevantCode for all checks from here onwards
+  if (relevantCode == KEY_NULL) {
     return;
   }
-  // Special handling for KEY_SET0
-  if (code == KEY_SET0 || (activeKey && activeKey->code == KEY_SET0)) {
-    L_check();
-    Keyboard.releaseAll();
-    return;
-  }
-  // Handle layer resets - prioritize the activeKey if available
-  uint16_t relevantCode = activeKey ? activeKey->code : code;
 
+  if (relevantCode == KEY_SET0) { // This is an emergency reset
+    L_check();
+    // Keyboard.releaseAll(); // Usually KEY_SET0 is a momentary action.
+    updateNeeded = true; // To reflect layer changes
+    return;
+  }
+
+  // Handle layer resets - use relevantCode
   for (uint8_t i = 0; i < sizeof(layerResets)/sizeof(LayerResetAction); i++) {
     if (relevantCode == layerResets[i].code) {
-      if (relevantCode == LAYER_2 && L2AltTab) {
+      if (relevantCode == LAYER_2 && L2AltTab) { // Special handling for Alt-Tab
         Keyboard.release(KEY_LEFT_ALT);
         L2AltTab = false;
       }
       *(layerResets[i].layerFlag) = 0; // Reset the layer flag
-
-      // Save brightness to SD card when any layer key is released
-      Config::saveBrightness(brightness);
-
+      Config::saveBrightness(brightness); // Save brightness on layer key release
       L_check();
+      updateNeeded = true;
       return;
     }
   }
 
-  // Handle LAYER_1_2L which only needs L_check()
+  // Handle LAYER_1_2L
   if (relevantCode == LAYER_1_2L) {
     L_check();
+    updateNeeded = true;
     return;
   }
 
@@ -440,31 +408,41 @@ void keyPressed(Key* key, LayoutKey* layout) {
     Serial.println("Layer 0 released");
     #endif
     // Restore previous layer states
-    L_1 = prev_L_1;
-    L_2 = prev_L_2;
-    L_3 = prev_L_3;
-    L_4 = prev_L_4;
-    L_1_2L = prev_L_1_2L;
+    L_1 = prev_L_1; L_2 = prev_L_2; L_3 = prev_L_3; L_4 = prev_L_4; L_1_2L = prev_L_1_2L;
     L_0 = false;
+    LYR0_row = -1;
+    LYR0_col = -1;
     L_check();
+    updateNeeded = true;
     return;
   }
 
-  // Handle mouse button releases
-  switch (code) {
+  // Handle mouse button releases - use relevantCode
+  switch (relevantCode) {
     case MOUSE_LCLICK:
     case MOUSE_RCLICK:
       Mouse.set_buttons(0, 0, 0);
+      Mouse.send_now();
       return;
   }
-    // Default: regular key release
-  // Always use the activeKey if available (preserves original function during layer change)
-  if (activeKey) {
-    Keyboard.release(activeKey->code);
-  } else {
-    Keyboard.release(code);
-  }
 
+  // Default: regular key release.
+  // This includes standard keys, modifiers, and any other keys not handled above.
+  // For toggle keys like KEY_ALTL, KEY_ALTR, KEY_CAPS_SLASH, KEY_CAPS_ESC,
+  // their state change happens on press. Release does not alter their toggled state further.
+  // We only Keyboard.release for actual HID codes that are not special state toggles.
+  // Helper function isLayerKey is defined in Protoboard.cpp (included via main.h)
+  // but might need to be declared extern or moved if not visible here.
+  // For now, assuming it's available or we list layer keys explicitly.
+  if (relevantCode != KEY_ALTL && relevantCode != KEY_ALTR &&
+      relevantCode != KEY_CAPS_SLASH && relevantCode != KEY_CAPS_ESC &&
+      !(relevantCode == LAYER_0 || relevantCode == LAYER_1 || relevantCode == LAYER_2 || relevantCode == LAYER_3 || relevantCode == LAYER_4 || relevantCode == LAYER_1_2L) &&
+      relevantCode != KEY_NULL && /*already checked*/
+      relevantCode != LOOP_COUNT /* loopTimer is a state, not a key to release */ ) {
+        Keyboard.release(relevantCode);
+  }
+  // For other cases (like toggles or LOOP_COUNT), their effect is managed by state flags.
+  // updateNeeded=true (if set by their press action) will handle LED and layout remapping.
 }
 
   #endif
