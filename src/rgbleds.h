@@ -1,9 +1,9 @@
 #ifndef RGBLEDS_H
 #define RGBLEDS_H
 
-#define USE_WS2812SERIAL // Define this before including FastLED.h
-#include <FastLED.h>
-#include <WS2812Serial.h> // Include specific chipset library after FastLED.h
+#define USE_WS2812SERIAL
+#include <WS2812Serial.h> // Try including chipset driver first
+#include <FastLED.h>       // Then FastLED core
 #include <cmath>
 #include <algorithm>
 

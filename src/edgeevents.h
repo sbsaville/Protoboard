@@ -4,7 +4,8 @@
 #include "main.h"
 #include "layers.h"
 #include "trillbar.h"
-#include "keydefs.h"
+// #include "keydefs.h" // Removed
+#include "key_definitions.h" // Added
 #include "rgbleds.h"
 #include "config.h"
 #include "macros.h"
