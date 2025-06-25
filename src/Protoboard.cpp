@@ -27,6 +27,12 @@ bool ALT_L = 0;
 bool CAPS_SLSH = 0;
 bool CAPS_ESC = 0;
 
+// Double-tap tracking variables
+uint8_t doubleTapRow = 255; // Using 255 as uninitialized/invalid row/col
+uint8_t doubleTapCol = 255;
+unsigned long doubleTapTimestamp = 0;
+const unsigned int DOUBLE_TAP_WINDOW_MS = 200;
+
 unsigned long loopStartTime = 0;
 unsigned long loopDuration = 0;
 bool loopTimer = false;
@@ -326,6 +332,17 @@ void loop() {
 
   // Process trill bar
   trillbar::loop();
+
+  // Check for expired double-tap window
+  if (doubleTapTimestamp != 0 && (now - doubleTapTimestamp >= DOUBLE_TAP_WINDOW_MS)) {
+    #if DEBUG // Or use EDGE_DEBUG if that's more appropriate for this kind of message
+    Serial.print("Double tap window expired for key: "); Serial.print(doubleTapRow); Serial.print(","); Serial.println(doubleTapCol);
+    #endif
+    doubleTapRow = 255;
+    doubleTapCol = 255;
+    doubleTapTimestamp = 0;
+  }
+
     // Check if we need to update layouts due to layer changes
   if (updateNeeded || (now - lastLayerTime >= 50)) {
     lastLayerTime = now;

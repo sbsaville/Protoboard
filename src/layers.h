@@ -10,7 +10,7 @@ LayoutKey* layout0[rowsCount][columnsCount] = {
   {TILDE,  NUM1,  NUM2,  NUM3,  NUM4,  NUM5,  NUM6,  NUM7,  NUM8,  NUM9,   NUM0,  MINUS,  EQUAL,  PGDN },
   {TAB,    Q,     W,     E,     R,     T,     Y,     U,     I,     O,      P,     LBRACK, RBRACK, BSLSH},
   {CAPS,   A,     S,     D,     F,     G,     H,     J,     K,     L,      SMCLN, QUOTE,  ENTER,  HOME },
-  {LSHFT,  Z,     X,     C,     V,     B,     N,     M,     COMMA, PERIOD, SLASH, RSHFT,  UP,     END  },
+  {LSHFT,  Z,     X,     C,     V,     B,     N,     M,     COMMA, PERIOD, SLASH, RSHFT_CAPS, UP, END  },
   {LCRTL,  LGUI,  LALT,  LYR1,  LYR2,  SPC,   BKSPC, LYR3,  LYR4,  RALT,   RCRTL, LEFT,   DOWN,   RIGHT}
 };
 

@@ -31,10 +31,15 @@ LedColor VimNav   = CRGB(0x33FF33);
 
 struct LayoutKey {
     uint16_t code;
+    uint16_t doubleTapCode; // Added for double-tap functionality
     LedColor* ledColor;
     LedColor defaultColor;
-    LayoutKey(uint16_t code, LedColor* ledColor)
-        : code(code), ledColor(ledColor), defaultColor(*ledColor) {}
+
+    LayoutKey(uint16_t c, LedColor* lc)
+        : code(c), doubleTapCode(0), ledColor(lc), defaultColor(*lc) {}
+
+    LayoutKey(uint16_t c, uint16_t dtc, LedColor* lc)
+        : code(c), doubleTapCode(dtc), ledColor(lc), defaultColor(*lc) {}
 };
 
 LayoutKey _LYR1_       = {LAYER_1,         &Layer};       LayoutKey* LYR1    = &_LYR1_;
@@ -180,6 +185,7 @@ LayoutKey _COMMA_      = {KEY_COMMA,        &Chara1};     LayoutKey* COMMA   = &
 LayoutKey _PERIOD_     = {KEY_PERIOD,       &Chara1};     LayoutKey* PERIOD  = &_PERIOD_;
 LayoutKey _SLASH_      = {KEY_SLASH,        &Chara1};     LayoutKey* SLASH   = &_SLASH_;
 LayoutKey _RSHFT_      = {KEY_RIGHT_SHIFT,  &Modifier};   LayoutKey* RSHFT   = &_RSHFT_;
+LayoutKey _RSHFT_CAPS_ = {KEY_RIGHT_SHIFT, KEY_CAPS_LOCK, &Modifier}; LayoutKey* RSHFT_CAPS = &_RSHFT_CAPS_;
 LayoutKey _RCRTL_      = {KEY_RIGHT_CTRL,   &Modifier};   LayoutKey* RCRTL   = &_RCRTL_;
 LayoutKey _RGUI_       = {KEY_RIGHT_GUI,    &Modifier};   LayoutKey* RGUI    = &_RGUI_;
 LayoutKey _RALT_       = {KEY_RIGHT_ALT,    &Modifier};   LayoutKey* RALT    = &_RALT_;
