@@ -451,7 +451,8 @@ void keyPressed(Key* key, LayoutKey* layout) {
     // Default action: press the keycode
     Keyboard.press(pressedKeyCode);
   }
-} // End of keyPressed function
+} // End of if(!keyActionTaken)
+} // End of keyPressed function - THIS IS THE INTENDED FIX
 
 void keyReleased(Key* key, LayoutKey* layout) {
   // int code = layout->code; // This is the code from the CURRENT layout, which might have changed.
