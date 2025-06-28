@@ -151,10 +151,12 @@ void setup() {
   // Original layer3_4 keymap is now layout3DT, triggered by double-tapping LAYER_3 key.
   addLayer(layer3_4, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_3}); // Formerly "layout3DT"
 
-  // Removing old combo/toggle layers that are being replaced or are not specified to be kept:
-  // addLayer(layer1_2, LayerActivationType::COMBO_PRESS, {LAYER_1, LAYER_2}); // Old L1+L2 combo
-  // addLayer("Layer1_2_Toggle", layer1_2, LayerActivationType::TOGGLE, {LAYER_1_2L}); // Old L_1_2L toggle
-  // addLayer("Layer2_3_Combo", layer2_3, LayerActivationType::COMBO_PRESS, {LAYER_2, LAYER_3}); // Old L2+L3 combo
+  // Restore Layer2_3 Combo
+  addLayer(layer2_3, LayerActivationType::COMBO_PRESS, {LAYER_2, LAYER_3});
+
+  // Removing other old combo/toggle layers that are being replaced or are not specified to be kept:
+  // addLayer(layer1_2, LayerActivationType::COMBO_PRESS, {LAYER_1, LAYER_2}); // Old L1+L2 combo (replaced by layout2DT)
+  // addLayer(layer1_2, LayerActivationType::TOGGLE, {LAYER_1_2L}); // Old L1_2L toggle for layer1_2 (keymap now used by layout2DT)
 
   // LYR0 for layer0 override is handled directly in keyPressed/keyReleased.
 
