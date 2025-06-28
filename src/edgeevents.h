@@ -11,9 +11,7 @@
 
 #define EDGE_DEBUG 0
 
-// Forward declare KeyMapEntry if its definition isn't already included by main.h->keydefs.h path
-// struct KeyMapEntry; // Not strictly needed if keydefs.h is included before this extern.
-extern KeyMapEntry (*currentLayout)[columnsCount]; // From Protoboard.cpp
+extern KeyMapEntry (*currentLayout)[columnsCount];
 
 extern bool L_0;
 extern bool L_1;
@@ -24,29 +22,26 @@ extern bool L_1_2L;
 extern bool ALT_L;
 extern bool ALT_R;
 extern bool CAPS_SLSH;
-extern bool CAPS_ESC; // Added this as it's used in Protoboard.cpp and likely should be here
+extern bool CAPS_ESC;
 
 bool L2AltTab = false;
 
-// Double-tap feature settings and state
 const unsigned long DOUBLE_TAP_WINDOW_MS = 200;
 static int last_double_tap_candidate_row = -1;
 static int last_double_tap_candidate_col = -1;
 static unsigned long last_double_tap_press_time = 0;
 
-// Add near the top with other external variables
 bool prev_L_1 = 0;
 bool prev_L_2 = 0;
 bool prev_L_3 = 0;
 bool prev_L_4 = 0;
 bool prev_L_1_2L = 0;
 
-int LYR0_row = -1;    // Store the physical row position of pressed LYR0 key
-int LYR0_col = -1;    // Store the physical column position of pressed LYR0 key
+int LYR0_row = -1;
+int LYR0_col = -1;
 
 extern bool loopTimer;
 
-// Helper function to press and release a key
 void pressAndRelease(int key) {
   Keyboard.press(key);
   Keyboard.release(key);
@@ -64,8 +59,6 @@ void shiftedFKey(int fKey) {
   shiftedKey(fKey);
 }
 
-// TextMacro struct moved to macros.h
-
 struct BrightnessLevel {
   int code;
   int brightnessValue;
@@ -76,15 +69,11 @@ struct SimpleKeyAction {
   int keyToPress;
 };
 
-// AltCodeSequence moved to macros.h
-
-// Helper structure for layer reset actions
 struct LayerResetAction {
   int code;
-  bool* layerFlag; // Pointer to layer flag to reset
+  bool* layerFlag;
 };
 
-// Layer reset table
 const LayerResetAction layerResets[] = {
   {LAYER_1, &L_1},
   {LAYER_2, &L_2},
@@ -93,7 +82,6 @@ const LayerResetAction layerResets[] = {
   {LOOP_COUNT, &loopTimer},
 };
 
-// Helper function to press and release multiple keys in sequence
 void pressAndReleaseMultiple(int count, ...) {
   va_list args;
   va_start(args, count);
@@ -106,11 +94,6 @@ void pressAndReleaseMultiple(int count, ...) {
   va_end(args);
 }
 
-// Alt-code helper function moved to macros.h
-
-// Text macros and alt-codes now handled by MacroManager
-
-// Brightness levels
 const BrightnessLevel brightnessLevels[] = {
   {LEDS_BR0,  brt0},
   {LEDS_BR1,  brt1},
@@ -125,7 +108,6 @@ const BrightnessLevel brightnessLevels[] = {
   {LEDS_BR10, brt10},
 };
 
-// Shifted keys
 const SimpleKeyAction shiftedKeys[] = {
   {EXCLMAMATION,    KEY_1},
   {KEY_AT,         KEY_2},
@@ -161,9 +143,6 @@ const SimpleKeyAction shiftedKeys[] = {
   {KEYSF23,        KEY_F23},
 };
 
-// Alt-code sequences moved to macro_definitions.h
-
-// All of the custom operations to be performed on key press
 void keyPressed(Key* key, LayoutKey* layout) {
   #if EDGE_DEBUG
   Serial.print("Key pressed: row=");
@@ -175,72 +154,50 @@ void keyPressed(Key* key, LayoutKey* layout) {
   uint8_t row = key->row;
   uint8_t col = key->column;
   KeyMapEntry currentKeyMapEntry = currentLayout[row][col];
-  LayoutKey* primaryKey = currentKeyMapEntry.primaryKey; // This should be == layout passed in
+  LayoutKey* primaryKey = currentKeyMapEntry.primaryKey;
   LayoutKey* doubleTapKeyPtr = currentKeyMapEntry.doubleTapKey;
 
-  // Ensure primaryKey is not null, fallback to NUL if it is (shouldn't happen with proper layout defs)
   if (primaryKey == nullptr) primaryKey = NUL;
 
-  int code = primaryKey->code; // Use primaryKey's code for most operations
+  int code = primaryKey->code;
 
-  // Store the primary key state information - this must happen before any early returns
   physicalKeyStates[row][col].isPressed = true;
   physicalKeyStates[row][col].activeCode = code;
-  physicalKeyStates[row][col].activeKey = primaryKey;  // Store the original primary LayoutKey pointer
+  physicalKeyStates[row][col].activeKey = primaryKey;
 
-  // Double-tap logic
   if (doubleTapKeyPtr != nullptr && doubleTapKeyPtr != NUL) {
     unsigned long now = millis();
     if (last_double_tap_candidate_row == row &&
         last_double_tap_candidate_col == col &&
         (now - last_double_tap_press_time) < DOUBLE_TAP_WINDOW_MS) {
-      // This is a double tap
       #if EDGE_DEBUG
       Serial.println("Double tap detected!");
       #endif
-
-      // Perform the double-tap action.
-      // For CAPS, it's a toggle. We press and release it.
-      // Other types of keys might need different handling (e.g. just press if it's a modifier)
-      // For now, assume press and release for simplicity, suitable for CAPS.
-      if (doubleTapKeyPtr->code != KEY_NULL) { // Ensure the double tap key is not NUL
+      if (doubleTapKeyPtr->code != KEY_NULL) {
           Keyboard.press(doubleTapKeyPtr->code);
           Keyboard.release(doubleTapKeyPtr->code);
       }
 
-      // Reset double tap tracking for this key
       last_double_tap_candidate_row = -1;
       last_double_tap_candidate_col = -1;
       last_double_tap_press_time = 0;
-      // The primary key is already pressed by the normal flow later.
-      // No need to return; let primary key press also go through.
     } else {
-      // This is the first press of a potential double-tap key, or the window expired
       last_double_tap_candidate_row = row;
       last_double_tap_candidate_col = col;
       last_double_tap_press_time = now;
-      // The primary key will be pressed by the normal flow later.
     }
   } else {
-    // Not a double-tap capable key, clear any pending double-tap state from other keys.
-    // (Or only do this if a *different* key is pressed? Consider implications.)
-    // For now, any non-double-tap-candidate key press resets the tracker.
-    // Or, more simply, if a key *is* a candidate but is too slow, it resets itself above.
-    // If this key is *not* a candidate, it doesn't affect the previous candidate's window.
+
   }
 
-  // Proceed with primary key actions (macros, regular press, etc.)
-  // Check for null key (primaryKey might be NUL)
   if (code == KEY_NULL) {
-    return; // Don't process KEY_NULL further, but double-tap logic above might have run if it had a non-NUL doubleTapKey
+    return;
   }
 
-  // Check macros using new macro system (operates on primaryKey->code)
   if (macroManager.executeMacro(code)) {
     return;
   }
 
-  // Check brightness levels
   for (uint8_t i = 0; i < sizeof(brightnessLevels)/sizeof(BrightnessLevel); i++) {
     if (code == brightnessLevels[i].code) {
       brightness = brightnessLevels[i].brightnessValue;
@@ -249,7 +206,6 @@ void keyPressed(Key* key, LayoutKey* layout) {
     }
   }
 
-  // Check LED increment/decrement
   if (code == LEDS_INC) {
     ledsINC();
     return;
@@ -259,7 +215,6 @@ void keyPressed(Key* key, LayoutKey* layout) {
     return;
   }
 
-  // Check trill modes
   if (code == TRILL_MODE1) {
     trillbar::setMode(trillbar::MODE_ARROWS);
     return;
@@ -273,7 +228,6 @@ void keyPressed(Key* key, LayoutKey* layout) {
     return;
   }
 
-  // Check mouse clicks
   if (code == MOUSE_LCLICK) {
     Mouse.set_buttons(1, 0, 0);
     return;
@@ -283,13 +237,11 @@ void keyPressed(Key* key, LayoutKey* layout) {
     return;
   }
 
-  // Check key release
   if (code == KEY_RELEASE) {
     Keyboard.set_modifier(0);
     Keyboard.set_key1(0);
     Keyboard.send_now();
     Keyboard.releaseAll();
-//    trillbar::active(false);
     return;
   }
 
@@ -301,8 +253,6 @@ void keyPressed(Key* key, LayoutKey* layout) {
     L2AltTab = true;
     return;
   }
-
-  // Alt-codes now handled by macro system above
 
   for (uint8_t i = 0; i < sizeof(shiftedKeys)/sizeof(SimpleKeyAction); i++) {
     if (code == shiftedKeys[i].code) {
@@ -394,13 +344,12 @@ void keyPressed(Key* key, LayoutKey* layout) {
   Keyboard.press(layout->code);
 
   }
-                                                           // All of the operations to be performed on key release
+
   void keyReleased(Key* key, LayoutKey* layout) {
   int code = layout->code;
   uint8_t row = key->row;
   uint8_t col = key->column;
 
-  // Get the original active key information from our tracking matrix
   LayoutKey* activeKey = physicalKeyStates[row][col].activeKey;
 
   #if EDGE_DEBUG
@@ -448,18 +397,15 @@ void keyPressed(Key* key, LayoutKey* layout) {
     }
   }
 
-  // Handle LAYER_1_2L which only needs L_check()
   if (relevantCode == LAYER_1_2L) {
     L_check();
     return;
   }
 
-  // Handle LAYER_0
   if (relevantCode == LAYER_0) {
     #if EDGE_DEBUG
     Serial.println("Layer 0 released");
     #endif
-    // Restore previous layer states
     L_1 = prev_L_1;
     L_2 = prev_L_2;
     L_3 = prev_L_3;
@@ -470,15 +416,13 @@ void keyPressed(Key* key, LayoutKey* layout) {
     return;
   }
 
-  // Handle mouse button releases
   switch (code) {
     case MOUSE_LCLICK:
     case MOUSE_RCLICK:
       Mouse.set_buttons(0, 0, 0);
       return;
   }
-    // Default: regular key release
-  // Always use the activeKey if available (preserves original function during layer change)
+
   if (activeKey) {
     Keyboard.release(activeKey->code);
   } else {

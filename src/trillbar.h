@@ -7,67 +7,59 @@
 #define TRILL_MOMENTUM_DEBUG 0
 #define ACCEL_DEBUG 0
 
-// Forward declarations of functions used by trillbar methods
 void scanLEDs(LayoutKey* (*layoutMatrix)[columnsCount]);
 void ledsDEC();
 void ledsINC();
 
-// Class-based implementation for trillbar
 class trillbar {
 public:
-  // Public methods
   static void setup();
   static void loop();
   static bool isLedOverride();
   static int getMode();
   static void setMode(int newMode);
 
-  // Constants - publicly accessible mode values
   static const int MODE_ARROWS = 1;
   static const int MODE_BRIGHTNESS = 2;
   static const int MODE_SCROLL = 3;
 
 private:
-  // Configuration
   static Trill sensor;
 
-  // Constants
   static const float FILTER_WEIGHT;
   static const float TAP_THRESHOLD;
   static const int SIZE_STABILITY_THRESHOLD;
 
-  // Touch state
-  static bool active;                         // Is touch currently active
-  static unsigned long startTime;             // When touch began
-  static int count;                           // Number of touches
-  static bool wasQuickTap;                    // For tap gesture detection
+  static bool active;                         
+  static unsigned long startTime;             
+  static int count;                           
+  static bool wasQuickTap;                    
 
-  // Movement data
-  static int rawPos;                          // Current raw position (0-3200)
-  static int lastRawPos;                      // Previous raw position
-  static int size;                            // Current touch size
-  static int lastSize;                        // Previous touch size
-  static int sizeRate;                        // Rate of change in size
-  static bool isStable;                       // Touch size stability flag
-  static int adjustedSize;                    // Scaled touch size
-  static int rawDelta;                        // Raw position change
-  static float filteredDelta;                 // Filtered position change
-  static float accumulatedMovement;           // For fractional movements
 
-  // Multi-touch data
-  static int spread;                          // Distance between touch points
-  static int lastSpread;                      // Previous spread distance
+  static int rawPos;                          
+  static int lastRawPos;                      
+  static int size;                            
+  static int lastSize;                        
+  static int sizeRate;                        
+  static bool isStable;                       
+  static int adjustedSize;                    
+  static int rawDelta;                        
+  static float filteredDelta;                 
+  static float accumulatedMovement;           
 
-  // Mode control
-  static int mode;                            // Current mode
-  static int holdCounter;                     // Ensures touch has stabilized
-  static bool ledsOverride;                   // LED control flag
+  static int spread;
+  static int lastSpread;
+
+
+  static int mode;
+  static int holdCounter;
+  static bool ledsOverride;
 
   // Momentum system
-  static float velocity;                      // Current velocity
-  static float friction;                      // Friction coefficient
-  static float threshold;                     // Minimum velocity threshold
-  static bool momentumActive;                 // Is momentum currently active
+  static float velocity;
+  static float friction;
+  static float threshold;
+  static bool momentumActive;
   static unsigned long lastUpdate;            // Timing for updates
   static const unsigned long updateInterval;  // ~60Hz updates
 
@@ -79,11 +71,9 @@ private:
   // Flag for triple touch
   static bool tripleActionTriggered;          // Prevent repeated play/pause
 
-  // Add these variables
-  static unsigned long lastTouchCountChange;  // Time when touch count changed
-  static const unsigned int touchDebounceTime = 10; // ms to ignore movements after touch count changes
+  static unsigned long lastTouchCountChange;
+  static const unsigned int touchDebounceTime = 10;
 
-  // Private methods
   static float calculateSensitivity(int rawDelta);
   static float applyFilter(float input);
   static int processMovement();
@@ -99,7 +89,6 @@ private:
   static void handleTouchRelease();
 };
 
-// Initialize static members
 Trill trillbar::sensor;
 
 const float trillbar::FILTER_WEIGHT = 0.5f;

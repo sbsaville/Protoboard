@@ -105,8 +105,7 @@ void setup() {
   // Initialize the key tracking matrix
   initKeyTrackingMatrix();
 
-  // Initialize the working layer0 by copying from the base definition
-  memcpy(layer0, layer0_base, sizeof(layer0_base));
+  memcpy(layer0, layer0_default, sizeof(layer0_default));
 
   delay(1000);
 
@@ -217,11 +216,11 @@ void updateLayerMappings() {
 }
 
 void remapKeys() {
-  layer0[5][4] = (ALT_L == 1) ? KeyMapEntry{LALT} : layer0_base[5][4];
-  layer0[5][6] = (ALT_R == 1) ? KeyMapEntry{RALT} : layer0_base[5][6];
-  layer0[0][13] = (ALT_R == 1) ? KeyMapEntry{BKSPC} : layer0_base[0][13];
+  layer0[5][4] = (ALT_L == 1) ? KeyMapEntry{LALT} : layer0_default[5][4];
+  layer0[5][6] = (ALT_R == 1) ? KeyMapEntry{RALT} : layer0_default[5][6];
+  layer0[0][13] = (ALT_R == 1) ? KeyMapEntry{BKSPC} : layer0_default[0][13];
   layer0[3][0]  = (CAPS_SLSH == 1) ? KeyMapEntry{BSLSH} :
-                   (CAPS_ESC == 1) ? KeyMapEntry{ESC} : layer0_base[3][0];
+                   (CAPS_ESC == 1) ? KeyMapEntry{ESC} : layer0_default[3][0];
 
   if (ALT_L == 1) {
     ALTL->ledColor = &Modifier; 
@@ -261,37 +260,29 @@ void loop() {
 
   unsigned long now = millis();
 
-  // Keyboard matrix scanning
   if (now - lastTime >= 1) {
     lastTime = now;
 
     for (uint8_t i = 0; i < rowsCount; i++) {
-      // Activate the current row
       digitalWrite(rows[i], LOW);
       delayMicroseconds(1); // this is needed on physical prototype V2 for some reason or keys one row down will be pressed at the same time
 
-      // Read all columns for the current row
       for (uint8_t j = 0; j < columnsCount; j++) {
-        // Get correct port and bitmask for each individual column
         uint8_t pin = columns[j];
         uint8_t port = digitalPinToPort(pin);
         volatile uint8_t* inputRegister = portInputRegister(port);
         uint8_t bitMask = digitalPinToBitMask(pin);
 
-        // Read the current key state
         Key* key = getKey(i, j);
-        boolean current = !(*inputRegister & bitMask); // Active low logic
+        boolean current = !(*inputRegister & bitMask);
         boolean previous = key->pressed;
 
-        // Only process state changes or update debounce timer
         if (current != previous) {
           if (now - debounceTimers[i][j] >= DEBOUNCE_TIME) {
             key->pressed = current;
             debounceTimers[i][j] = now;
 
-            // Only fetch layout key if we need it (state changed and debounced)
             LayoutKey* layout = getLayoutKey(key->row, key->column);
-              // Process the key event
             if (current) {
               keyPressed(key, layout);
 
@@ -326,23 +317,19 @@ void loop() {
     }
   }
 
-  // Process trill bar
   trillbar::loop();
-    // Check if we need to update layouts due to layer changes
   if (updateNeeded || (now - lastLayerTime >= 50)) {
     lastLayerTime = now;
     updateNeeded = false;
 
     updateLayerMappings();
 
-    // Always update LEDs when any flag changes
     if (!trillbar::isLedOverride()) {
       scanLEDs(currentLayout);
     }
     remapKeys();
 
     #if DEBUG
-    // Test key preservation when layer changes
     testKeyPreservation();
     #endif
   }

@@ -47,11 +47,6 @@ struct KeyMapEntry {
     // Constructor for double-tap key
     KeyMapEntry(LayoutKey* pKey, LayoutKey* dtKey) : primaryKey(pKey), doubleTapKey(dtKey) {}
 
-    // Default constructor removed to resolve ambiguity with KeyMapEntry(LayoutKey* pKey = nullptr)
-    // KeyMapEntry() : primaryKey(nullptr), doubleTapKey(nullptr) {}
-
-
-    // Allow initialization with a single LayoutKey* like {ESC}
     KeyMapEntry(std::initializer_list<LayoutKey*> keys) : primaryKey(nullptr), doubleTapKey(nullptr) {
         if (keys.size() > 0) {
             primaryKey = *keys.begin();

@@ -88,27 +88,23 @@ void scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]) {
     for (int col = 0; col < columnsCount; col++) {
       int ledIndex = XYMatrix[row][col];
 
-      // Check if there's an active key being held from another layer
       bool isKeyPressed = physicalKeyStates[row][col].isPressed;
-      LayoutKey* activeKeyFromState = physicalKeyStates[row][col].activeKey; // Renamed to avoid conflict
+      LayoutKey* activeKeyFromState = physicalKeyStates[row][col].activeKey;
 
       LayoutKey* keyToUse = nullptr;
 
       if (isKeyPressed && activeKeyFromState != nullptr) {
-        // If a key is physically pressed and we have its original LayoutKey, use that
         keyToUse = activeKeyFromState;
       } else {
-        // Otherwise, use the primary key from the current layout's KeyMapEntry
         KeyMapEntry currentEntry = layout[row][col];
         if (currentEntry.primaryKey != nullptr) {
           keyToUse = currentEntry.primaryKey;
         } else {
-          // Fallback to NUL if primaryKey is somehow null (should be rare)
           keyToUse = NUL;
         }
       }
 
-      if (keyToUse != nullptr && keyToUse->ledColor != nullptr) { // Check for null pointers
+      if (keyToUse != nullptr && keyToUse->ledColor != nullptr) {
         leds[ledIndex] = *(keyToUse->ledColor);
 
         if (keyToUse == NMLCK) {
@@ -119,8 +115,6 @@ void scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]) {
           scrollLockFound = true;
         }
       } else {
-        // This case should ideally not be reached if NUL is used as a fallback.
-        // If keyToUse is NUL, its ledColor should be LEDoff (black).
         leds[ledIndex] = CRGB::Black;
       }
     }
@@ -130,7 +124,6 @@ void scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]) {
   }
 }
 
-// Wrapper functions for each layout
 void leds0()     { scanLEDs(layer0); }
 void leds1()     { scanLEDs(layer1); }
 void leds1_2()   { scanLEDs(layer1_2); }
@@ -151,20 +144,16 @@ void rgbleds::setup() {
   leds0();
 
   // Flash all LEDs with Layer color twice at the end of setup
-  // Flash sequence: ON (100ms) -> OFF (100ms) -> ON (100ms) -> OFF (100ms)
-  // Temporarily reduce brightness for startup flash
   int originalBrightness = brightness;
   LEDS.setBrightness(brightness / 4);  // Quarter brightness for startup flash
 
   for (int flash = 0; flash < 2; flash++) {
-    // Turn on all LEDs with Layer color
     for (int i = 0; i < NUM_LEDS; i++) {
       leds[i] = Layer;
     }
     FastLED.show();
     delay(100);
 
-    // Turn off all LEDs
     for (int i = 0; i < NUM_LEDS; i++) {
       leds[i] = CRGB::Black;
     }
@@ -172,10 +161,8 @@ void rgbleds::setup() {
     delay(100);
   }
 
-  // Restore original brightness
   LEDS.setBrightness(originalBrightness);
 
-  // Restore original LED state
   leds0();
   FastLED.show();
 }

@@ -5,7 +5,6 @@
 #include <usb_keyboard.h>
 #include <usb_mouse.h>
 
-// Forward declaration of CRGB
 class CRGB;
 
 void L_check();
@@ -32,15 +31,14 @@ struct LayoutKey;
  * keys to maintain their original function when held during layer changes.
  */
 struct PhysicalKeyState {
-  bool isPressed;                  // Whether the key is currently physically pressed
-  uint16_t activeCode;             // The key code that's currently active for this position
-  LayoutKey* activeKey;            // Pointer to the original LayoutKey when first pressed
+  bool isPressed;
+  uint16_t activeCode;
+  LayoutKey* activeKey;
 };
 
 // Global matrix to track physical key states across layer changes
 extern PhysicalKeyState physicalKeyStates[rowsCount][columnsCount];
 
-// Function to initialize the key tracking matrix
 void initKeyTrackingMatrix();
 
 const uint16_t LAYER_0                       = 1   | 0xA000;

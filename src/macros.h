@@ -70,10 +70,8 @@ SimpleMacroManager macroManager;
     macroManager.addAltCode(id, seq, sizeof(seq)/sizeof(seq[0])); \
   } while(0)
 
-// Function declaration
 void initializeMacros();
 
-// Function definition
 void initializeMacros() {
   macroManager.addMacro(MACRO_GMAIL,      "scott.b.saville@gmail.com");
   macroManager.addMacro(MACRO_AIMARENA,   "aim arena");

@@ -5,8 +5,7 @@
 #include "keydefs.h"
 #include "rgbleds.h"
 
-// This is the master, read-only definition for layer0
-const KeyMapEntry layer0_base[rowsCount][columnsCount] = {
+const KeyMapEntry layer0_default[rowsCount][columnsCount] = {
   {{ESC},    {F1},    {F2},    {F3},    {F4},    {F5},    {F6},    {F7},    {F8},    {F9},     {F10},   {F11},         {F12},    {DEL}  },
   {{TILDE},  {NUM1},  {NUM2},  {NUM3},  {NUM4},  {NUM5},  {NUM6},  {NUM7},  {NUM8},  {NUM9},   {NUM0},  {MINUS},       {EQUAL},  {PGDN} },
   {{TAB},    {Q},     {W},     {E},     {R},     {T},     {Y},     {U},     {I},     {O},      {P},     {LBRACK},      {RBRACK}, {BSLSH}},
@@ -15,7 +14,6 @@ const KeyMapEntry layer0_base[rowsCount][columnsCount] = {
   {{LCRTL},  {LGUI},  {LALT},  {LYR1},  {LYR2},  {SPC},   {BKSPC}, {LYR3},  {LYR4},  {RALT},   {RCRTL}, {LEFT},        {DOWN},   {RIGHT}}
 };
 
-// This is the working (mutable) copy of layer0, used by Protoboard.cpp
 extern KeyMapEntry layer0[rowsCount][columnsCount];
 
 KeyMapEntry layer1[rowsCount][columnsCount] = {
