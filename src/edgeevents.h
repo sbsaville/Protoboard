@@ -218,62 +218,131 @@ void keyPressed(Key* key, LayoutKey* layout) {
 void keyReleased(Key* key, LayoutKey* layout) {
   uint8_t row = key->row;
   uint8_t col = key->column;
-  uint16_t initialCodeFromLayout = layout->code;
-  LayoutKey* activeKey = physicalKeyStates[row][col].activeKey;
-  uint16_t relevantCode = activeKey ? activeKey->code : initialCodeFromLayout;
+
+  // Capture the state *before* clearing physicalKeyStates
+  uint16_t codeToRelease = physicalKeyStates[row][col].activeCode;
+  LayoutKey* originalActiveKey = physicalKeyStates[row][col].activeKey;
+  // uint16_t initialCodeFromLayout = layout->code; // layout might not be original if a double tap changed things
 
   #if EDGE_DEBUG
   Serial.print("Key released: row="); Serial.print(key->row); Serial.print(", col="); Serial.print(key->column);
-  Serial.print(", initialLayoutCode="); Serial.print(initialCodeFromLayout);
-  if (activeKey) { Serial.print(", activeKey->code="); Serial.print(activeKey->code); } else { Serial.print(", activeKey=NULL"); }
-  Serial.print(", relevantCode="); Serial.print(relevantCode);
-  Serial.print(", physicalState.activeCode (before clear)="); Serial.print(physicalKeyStates[row][col].activeCode);
+  // Serial.print(", initialLayoutCode="); Serial.print(initialCodeFromLayout); // Potentially confusing
+  if (originalActiveKey) { Serial.print(", originalActiveKey->code="); Serial.print(originalActiveKey->code); } else { Serial.print(", originalActiveKey=NULL"); }
+  Serial.print(", codeToRelease="); Serial.print(codeToRelease);
   Serial.print(", L_0="); Serial.println(L_0);
   #endif
 
+  // Now clear the physical key state
   physicalKeyStates[row][col].isPressed = false;
   physicalKeyStates[row][col].activeCode = 0;
   physicalKeyStates[row][col].activeKey = nullptr;
 
-  if (relevantCode == KEY_NULL) return;
-  if (relevantCode == KEY_SET0) { L_check(); updateNeeded = true; return; }
+  // Use codeToRelease for the actual HID release event.
+  // Use originalActiveKey->code (or layout->code if originalActiveKey is null) for firmware logic (layer changes, toggles, etc.)
+  uint16_t firmwareLogicCode = originalActiveKey ? originalActiveKey->code : layout->code; // Fallback to current layout if no original key somehow
 
+  if (firmwareLogicCode == KEY_NULL) return; // If the key itself is defined as NULL, do nothing on release. codeToRelease might also be KEY_NULL.
+
+  // Special handling for KEY_SET0 - uses firmwareLogicCode as it's a special command key
+  if (firmwareLogicCode == KEY_SET0) {
+    L_check();
+    updateNeeded = true;
+    // No Keyboard.release(KEY_SET0) as it's not a standard HID key.
+    return;
+  }
+
+  // Handle layer resets - firmwareLogicCode determines if it's a layer key
   for (uint8_t i = 0; i < sizeof(layerResets)/sizeof(LayerResetAction); i++) {
-    if (relevantCode == layerResets[i].code) {
-      if (relevantCode == LAYER_2 && L2AltTab) { Keyboard.release(KEY_LEFT_ALT); L2AltTab = false; }
+    if (firmwareLogicCode == layerResets[i].code) {
+      if (firmwareLogicCode == LAYER_2 && L2AltTab) { Keyboard.release(KEY_LEFT_ALT); L2AltTab = false; }
       *(layerResets[i].layerFlag) = 0;
       Config::saveBrightness(brightness);
-      L_check(); updateNeeded = true; return;
+      L_check(); updateNeeded = true;
+      // No Keyboard.release for layer keys as their effect is internal.
+      return;
     }
   }
 
-  if (relevantCode == LAYER_1_2L) { L_check(); updateNeeded = true; return; }
+  // Handle LAYER_1_2L toggle - firmwareLogicCode
+  if (firmwareLogicCode == LAYER_1_2L) {
+    L_check();
+    updateNeeded = true;
+    // No Keyboard.release for this toggle.
+    return;
+  }
 
-  if (relevantCode == LAYER_0) {
+  // Handle LAYER_0 - firmwareLogicCode
+  if (firmwareLogicCode == LAYER_0) {
     #if EDGE_DEBUG
     Serial.println("Layer 0 released");
     #endif
     L_1 = prev_L_1; L_2 = prev_L_2; L_3 = prev_L_3; L_4 = prev_L_4; L_1_2L = prev_L_1_2L;
     L_0 = false; LYR0_row = -1; LYR0_col = -1;
-    L_check(); updateNeeded = true; return;
+    L_check(); updateNeeded = true;
+    // No Keyboard.release for this internal layer key.
+    return;
   }
 
-  switch (relevantCode) {
-    case MOUSE_LCLICK:
-    case MOUSE_RCLICK:
-      Mouse.set_buttons(0, 0, 0);
-      // Mouse.send_now(); // REMOVED - THIS IS LINE 425 (approx)
-      return;
+  // Handle mouse button releases - codeToRelease determines if a mouse button was "pressed"
+  if (codeToRelease == MOUSE_LCLICK || codeToRelease == MOUSE_RCLICK) {
+    Mouse.set_buttons(0, 0, 0);
+    return;
   }
 
-  bool isNonStandardRelease = (relevantCode == KEY_ALTL || relevantCode == KEY_ALTR ||
-                             relevantCode == KEY_CAPS_SLASH || relevantCode == KEY_CAPS_ESC ||
-                             (relevantCode >= LAYER_0 && relevantCode <= LAYER_4) || /* Basic layer check */
-                             relevantCode == LAYER_1_2L ||
-                             relevantCode == LOOP_COUNT);
+  // For all other keys, including those activated by double-tap (like KEY_CAPS_LOCK),
+  // send the release for `codeToRelease`.
+  // This ensures that if `keyPressed` sent `Keyboard.press(KEY_CAPS_LOCK)`,
+  // then `keyReleased` will send `Keyboard.release(KEY_CAPS_LOCK)`.
+  // We must ensure that `codeToRelease` is not a special non-HID internal toggle code.
+  bool isInternalToggleOrSpecial = (firmwareLogicCode == KEY_ALTL || firmwareLogicCode == KEY_ALTR ||
+                                   firmwareLogicCode == KEY_CAPS_SLASH || firmwareLogicCode == KEY_CAPS_ESC ||
+                                   (firmwareLogicCode >= LAYER_0 && firmwareLogicCode <= LAYER_4) ||
+                                   firmwareLogicCode == LAYER_1_2L ||
+                                   firmwareLogicCode == LOOP_COUNT ||
+                                   firmwareLogicCode == KEY_SET0 || /* already handled but good for clarity */
+                                   firmwareLogicCode == KEY_NULL /* already handled */);
 
-  if (!isNonStandardRelease && relevantCode != KEY_NULL) {
-      Keyboard.release(relevantCode);
+  // If the code that was pressed (codeToRelease) is not KEY_NULL and
+  // the key's defined function (firmwareLogicCode) isn't an internal toggle/special key
+  // that shouldn't get a standard HID release, then release codeToRelease.
+  // OR, if codeToRelease is something like KEY_CAPS_LOCK (which is a standard HID key
+  // and not an internal toggle like KEY_ALTL), it should be released.
+  // The primary check is: if codeToRelease is a valid HID key that was pressed, release it.
+  // Internal toggles (KEY_ALTL etc.) handled by firmwareLogicCode check.
+
+  if (codeToRelease != KEY_NULL) { // If something was actually "pressed"
+      // Only release if the *original key definition* isn't one of the firmware-only toggles.
+      // This prevents sending release for KEY_ALTL if ALT_L was the codeToRelease by mistake.
+      // However, codeToRelease *should* be the actual HID code.
+      if (!isInternalToggleOrSpecial) { // If the key itself isn't an internal toggle
+          Keyboard.release(codeToRelease);
+      } else {
+          // If the key is an internal toggle (e.g. KEY_ALTL), but codeToRelease was
+          // its primary action (e.g. also KEY_ALTL), we still might not want to release it
+          // if its effect is purely state based.
+          // However, if codeToRelease was, say, KEY_CAPS_LOCK (from a double tap on a key
+          // whose firmwareLogicCode is KEY_RSHIFT), we DO want to release KEY_CAPS_LOCK.
+
+          // Simpler: If codeToRelease is a standard HID key, release it.
+          // The isInternalToggleOrSpecial check should mostly apply to firmwareLogicCode.
+          // Let's refine: Release codeToRelease UNLESS codeToRelease itself is one of these special firmware codes.
+          bool shouldReleaseCodeToRelease = true;
+          if (codeToRelease == KEY_ALTL || codeToRelease == KEY_ALTR ||
+              codeToRelease == KEY_CAPS_SLASH || codeToRelease == KEY_CAPS_ESC ||
+              (codeToRelease >= LAYER_0 && codeToRelease <= LAYER_4) ||
+              codeToRelease == LAYER_1_2L ||
+              codeToRelease == LOOP_COUNT ||
+              codeToRelease == KEY_SET0 ||
+              codeToRelease == MOUSE_LCLICK || /* Already handled */
+              codeToRelease == MOUSE_RCLICK /* Already handled */
+              ) {
+                shouldReleaseCodeToRelease = false;
+          }
+
+          if (shouldReleaseCodeToRelease) {
+              Keyboard.release(codeToRelease);
+          }
+      }
   }
 }
 #endif
