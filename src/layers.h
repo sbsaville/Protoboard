@@ -7,13 +7,6 @@
 #include <cstdint> // Required for uint16_t
 #include <vector>  // Required for std::vector
 
-// Forward declaration
-struct Layer;
-
-// Global vector of active layers, defined in Protoboard.cpp
-extern std::vector<Layer> activeLayers;
-
-
 // Enum for Layer Activation Types
 enum class LayerActivationType {
     LAYER_IS_DEFAULT, // Renamed from DEFAULT to avoid macro collision
@@ -75,6 +68,10 @@ struct Layer {
      // Default constructor for placeholder/inactive layers if needed
     Layer() : /*name("Uninitialized"),*/ keymap(nullptr), activationType(LayerActivationType::LAYER_IS_DEFAULT), numActivationKeys(0), isActive(false), tapCount(0), lastTapTime(0), waitingForSecondTap(false), toggleOffKey(0) {}
 };
+
+// Global vector of active layers, defined in Protoboard.cpp
+// Declared here AFTER Layer is fully defined.
+extern std::vector<Layer> activeLayers;
 
 const KeyMapEntry layer0_default[rowsCount][columnsCount] = {
   {{ESC},    {F1},    {F2},    {F3},    {F4},    {F5},    {F6},    {F7},    {F8},    {F9},     {F10},   {F11},         {F12},    {DEL}  },
