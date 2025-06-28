@@ -206,116 +206,50 @@ void testKeyPreservation() {
   #endif
 }
 
-// Updates key mappings when changing layers while preserving physical key states
 void updateLayerMappings() {
-  // Get the current active layout
   KeyMapEntry (*newLayout)[columnsCount] = getActiveLayout();
-
-  // Only proceed if the layout has changed
   if (newLayout != currentLayout) {
     #if DEBUG
     Serial.println("Layout changed - updating key mappings");
     #endif
-
-    // Generic key preservation system:
-    // When a key is held during layer change, its original function is preserved
-    // This is handled automatically by storing the original LayoutKey pointers
-    // in physicalKeyStates when keys are first pressed
-
-    // Update the current layout reference
     currentLayout = newLayout;
   }
 }
 
 void remapKeys() {
-  // The generic key preservation system ensures that any keys pressed in one layer
-  // retain their original function when changing to another layer, including LYR0
-  // This works by tracking the original LayoutKey pointer when a key is first pressed
-
-  // Handle toggle state changes (these still need to be applied)
-  // When a toggle is off, revert to the key definition from layer0_base
   layer0[5][4] = (ALT_L == 1) ? KeyMapEntry{LALT} : layer0_base[5][4];
   layer0[5][6] = (ALT_R == 1) ? KeyMapEntry{RALT} : layer0_base[5][6];
   layer0[0][13] = (ALT_R == 1) ? KeyMapEntry{BKSPC} : layer0_base[0][13];
   layer0[3][0]  = (CAPS_SLSH == 1) ? KeyMapEntry{BSLSH} :
                    (CAPS_ESC == 1) ? KeyMapEntry{ESC} : layer0_base[3][0];
 
-  // Update LED colors based on toggle state
-  // For LEDs, the defaultColor is part of the LayoutKey struct itself
   if (ALT_L == 1) {
-    ALTL->ledColor = &Modifier; // Or some other appropriate color for active toggle
+    ALTL->ledColor = &Modifier; 
   } else {
-    // LYR2 is the default key at layer0_base[5][4]. Its LED color should be restored.
-    // The actual LayoutKey LYR2 is defined in keydefs.h.
-    // We need to ensure the ledColor of the specific LayoutKey instance (ALTL) is reset
-    // to its own defaultColor.
-    // The original key at layer0_base[5][4] is LYR2.
-    // When ALT_L is 0, layer0[5][4] is set to layer0_base[5][4] (which is {LYR2}).
-    // The ALTL LayoutKey itself is not directly on this layer anymore.
-    // The key that IS at layer0[5][4] (which is LYR2) should have its default color.
-    // This is handled by scanLEDs.
-    // However, the ALTL key (which is a layer modifier key on layer4) might need its LED updated
-    // if it's also visually representing the ALT_L toggle state.
-    // The current logic updates the LED color of ALTL, CAPSLSH, CAPSESC, ESC directly.
-    // This is fine if these LayoutKey objects are distinct and their ledColor property
-    // is meant to reflect the toggle state globally, not just their appearance on a specific layer.
-
-    // If ALTL (the key that toggles ALT_L mode) is present on the current layer,
-    // its color should reflect the toggle state.
-    // The original code updates ALTL->ledColor, assuming ALTL is a specific key whose LED shows the mode.
-    // Let's stick to that for now.
     ALTL->ledColor = &ALTL->defaultColor;
   }
 
   if (ALT_R == 1) {
     ALTR->ledColor = &Modifier;
   } else {
-    // Similar to ALT_L, ALTR is a specific key.
     ALTR->ledColor = &ALTR->defaultColor;
   }
 
   if (CAPS_SLSH == 1) {
-    CAPS_ESC = 0; // Ensure mutual exclusivity
+    CAPS_ESC = 0;
     CAPSLSH->ledColor = &Toggle;
-    // If CAPS (the key at layer0_base[3][0]) is currently BSLSH due to this toggle,
-    // its LED should be 'Toggle'. This is handled by scanLEDs for the key at the position.
-    // CAPSLSH is the key that *activates* this mode.
   } else {
-    CAPSLSH->ledColor = &CAPSLSH->defaultColor; // Reset the activator key's LED
+    CAPSLSH->ledColor = &CAPSLSH->defaultColor;
   }
 
   if (CAPS_ESC == 1) {
-    CAPS_SLSH = 0; // Ensure mutual exclusivity
-    CAPSESC->ledColor = &Toggle;
-    // ESC (the key that becomes active) is at layer0_base[0][0], but this remap changes layer0[3][0].
-    // The key that *activates* this mode is CAPSESC.
-    // The key at layer0[3][0] (normally CAPS) becomes ESC.
-    // The problem is with `ESC->ledColor = &Toggle;` if ESC is also on the current layer elsewhere.
-    // The original `layer0_base[3][0]` is `CAPS`.
-    // If `CAPS_ESC` is true, `layer0[3][0]` becomes `KeyMapEntry{ESC}`.
-    // `scanLEDs` will color `layer0[3][0]` based on `ESC`'s color.
-    // So, we should set `ESC->ledColor` if `ESC` is the active key due to toggle.
-    // However, `ESC` has its own default color.
-    // This implies that the `ESC` key definition itself is being globally changed.
-    // This is probably not what we want. We want the key *position* [3][0] to show toggle color.
-    // This is handled by `scanLEDs` and the fact that `Toggle` is a distinct `LedColor` object.
-    // The `LayoutKey* ESC` should retain its default color setup.
-    // The `remapKeys` function should only change the `KeyMapEntry` at the position.
-    // `scanLEDs` will then use `currentLayout[row][column].primaryKey->ledColor`.
-    // The current LED update logic for CAPSESC and ESC seems a bit tangled.
-    // Let's simplify: the activator key (CAPSESC) shows the toggle state.
-    // The key that *becomes* ESC will get its color from the ESC LayoutKey.
-    // If ESC itself should appear as 'Toggle' color when this mode is on, then ESC->ledColor needs to be changed.
-    // This was the original logic:
-    // CAPSESC->ledColor = &Toggle;
-    // ESC->ledColor = &Toggle;
-    // This means the global ESC key definition's current color is changed.
-    // Let's maintain this original logic for now, assuming it's intentional.
-    ESC->ledColor = &Toggle;
+    CAPS_SLSH = 0;
+    CAPSESC->ledColor = &Chara1;
+    ESC->ledColor = &Chara1;
 
   } else {
-    CAPSESC->ledColor = &CAPSESC->defaultColor; // Reset activator
-    ESC->ledColor = &ESC->defaultColor; // Reset global ESC color to its default
+    CAPSESC->ledColor = &CAPSESC->defaultColor;
+    ESC->ledColor = &ESC->defaultColor;
   }
 }
 
