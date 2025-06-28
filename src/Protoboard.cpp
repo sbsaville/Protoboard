@@ -110,14 +110,13 @@ void L_check() {
     }
     Serial.println("");
   }
-  Serial.print("CAPS_SLSH_toggled="); Serial.print(CAPS_SLSH_toggled); Serial.print(" ");
-  Serial.print("CAPS_ESC_toggled=");  Serial.print(CAPS_ESC_toggled);  Serial.println("");
+  Serial.print("CAPS_SLSH_toggled="); Serial.print(CAPS_SLSH); Serial.print(" ");
+  Serial.print("CAPS_ESC_toggled=");  Serial.print(CAPS_ESC);  Serial.println("");
   #endif
 }
 
-
-static unsigned long lastTime = 0;        // For keyboard scanning
-static unsigned long lastLayerTime = 0;   // For layer updates
+// static unsigned long lastTime = 0;        // For keyboard scanning - Replaced by now in loop
+// static unsigned long lastLayerTime = 0;   // For layer updates - Replaced by now in loop
 static bool updateNeeded = false;
 
 // Function to add layers to the activeLayers vector
