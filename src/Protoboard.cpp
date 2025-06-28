@@ -450,6 +450,19 @@ void loop() {
     }
   }
 
+  // Timeout for key-specific double-tap candidates
+  if (key_specific_dt_candidate_row != -1 && (now - key_specific_dt_press_time > DOUBLE_TAP_WINDOW)) {
+      #if DEBUG || EDGE_DEBUG
+      Serial.print("Key-specific double-tap candidate timed out for key at [");
+      Serial.print(key_specific_dt_candidate_row); Serial.print("]["); Serial.print(key_specific_dt_candidate_col);
+      Serial.println("]");
+      #endif
+      key_specific_dt_candidate_row = -1;
+      key_specific_dt_candidate_col = -1;
+      key_specific_dt_press_time = 0;
+      // No updateNeeded = true; here, as this is a silent timeout of a potential action
+  }
+
   if (updateNeeded || (now - lastLayerTime >= 50)) {
     lastLayerTime = now;
     updateNeeded = false;

@@ -27,6 +27,13 @@ extern bool CAPS_ESC;
 bool L2AltTab = false; // Specific state for Alt-Tab behavior, might need review
 
 // DOUBLE_TAP_WINDOW is now defined in Protoboard.cpp
+
+// For Key-Specific Double Taps (like RShift -> CapsLock)
+// These are now global within the compilation unit (Protoboard.cpp via include)
+int key_specific_dt_candidate_row = -1;
+int key_specific_dt_candidate_col = -1;
+unsigned long key_specific_dt_press_time = 0;
+
 // static int last_double_tap_candidate_row = -1; // Will be part of Layer struct or managed differently
 // static int last_double_tap_candidate_col = -1; // "
 // static unsigned long last_double_tap_press_time = 0; // "
@@ -157,21 +164,69 @@ void keyPressed(Key* key, LayoutKey* layout) {
   uint8_t col = key->column;
   KeyMapEntry currentKeyMapEntry = currentLayout[row][col];
   LayoutKey* primaryKey = currentKeyMapEntry.primaryKey;
-  // LayoutKey* doubleTapKeyPtr = currentKeyMapEntry.doubleTapKey; // Old double tap, to be removed or integrated
+  LayoutKey* keySpecificDoubleTapKey = currentKeyMapEntry.doubleTapKey;
 
   if (primaryKey == nullptr) primaryKey = NUL; // Ensure primaryKey is never null
 
-  int pressedKeyCode = primaryKey->code;
+  int pressedKeyCode = primaryKey->code; // This is the code for the primary key function
 
   physicalKeyStates[row][col].isPressed = true;
-  physicalKeyStates[row][col].activeCode = pressedKeyCode; // Store the code of the key definition that was active upon press
-  physicalKeyStates[row][col].activeKey = primaryKey;   // Store a pointer to the key definition itself
+  physicalKeyStates[row][col].activeCode = pressedKeyCode;
+  physicalKeyStates[row][col].activeKey = primaryKey;
 
-  bool keyActionTaken = false; // Flag to check if any layer/toggle logic handled this press. If so, don't send raw key.
+  bool keyActionTaken = false;
   unsigned long now = millis();
 
-  // --- Handle Layer Activations and Toggles ---
-  for (size_t i = 0; i < activeLayers.size(); ++i) { // Use size_t and activeLayers.size()
+  // --- Handle Key-Specific Double-Tap ---
+  // Check if the current key press completes a pending key-specific double-tap
+  if (key_specific_dt_candidate_row == row &&
+      key_specific_dt_candidate_col == col &&
+      (now - key_specific_dt_press_time) < DOUBLE_TAP_WINDOW) {
+
+    // currentKeyMapEntry is for the *second* press. We need the KME of the *first* press (candidate)
+    // to get its doubleTapKey. However, they are the same physical key, so currentKeyMapEntry is fine.
+    if (keySpecificDoubleTapKey != nullptr && keySpecificDoubleTapKey->code != KEY_NULL) {
+        #if EDGE_DEBUG
+        Serial.print("Key-specific double-tap COMPLETED! Key at [");
+        Serial.print(row); Serial.print("]["); Serial.print(col);
+        Serial.print("] ("); Serial.print(primaryKey->code, HEX); Serial.print(")");
+        Serial.print(" -> DT Key: "); Serial.println(keySpecificDoubleTapKey->code, HEX);
+        #endif
+
+        Keyboard.press(keySpecificDoubleTapKey->code);
+        Keyboard.release(keySpecificDoubleTapKey->code);
+        keyActionTaken = true; // Double-tap action performed, consume the event.
+    }
+    // Always reset candidate after a second press, regardless of whether it had a DT action or not
+    key_specific_dt_candidate_row = -1;
+    key_specific_dt_candidate_col = -1;
+    key_specific_dt_press_time = 0;
+  } else {
+    // Not a second tap completion. Check if this current key press is a *first* tap for a new sequence.
+    if (keySpecificDoubleTapKey != nullptr && keySpecificDoubleTapKey->code != KEY_NULL) {
+      // This key *can* start a double-tap sequence.
+      key_specific_dt_candidate_row = row;
+      key_specific_dt_candidate_col = col;
+      key_specific_dt_press_time = now;
+      #if EDGE_DEBUG
+      Serial.print("Key-specific double-tap INITIATED. Candidate: [");
+      Serial.print(row); Serial.print("]["); Serial.print(col);
+      Serial.print("] ("); Serial.print(primaryKey->code, HEX); Serial.print(")");
+      Serial.println();
+      #endif
+      // For the first tap, keyActionTaken remains false. Its primary action will proceed.
+    } else {
+      // This key cannot start a double-tap sequence (no doubleTapKey defined for it).
+      // Clear any pending candidate from a *different* key.
+      key_specific_dt_candidate_row = -1;
+      key_specific_dt_candidate_col = -1;
+      key_specific_dt_press_time = 0;
+    }
+  }
+
+  // --- Handle Layer Activations and Toggles (only if not handled by a completed key-specific DT)---
+  if (!keyActionTaken) {
+    for (size_t i = 0; i < activeLayers.size(); ++i) { // Use size_t and activeLayers.size()
     Layer* currentLayer = &activeLayers[i];
     bool isActivationPress = false;
     for (uint8_t k = 0; k < currentLayer->numActivationKeys; ++k) {
