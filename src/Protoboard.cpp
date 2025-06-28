@@ -436,16 +436,12 @@ void loop() {
       // The keyReleased logic handles deactivation if held then released.
       // This timeout ensures that if it's held *indefinitely* (or another event interrupts before release), it deactivates.
       #if DEBUG || EDGE_DEBUG
-      Serial.print("Double tap (2nd tap hold) timed out, deactivating layer index: "); Serial.println(i);
+      Serial.print("Double tap (2nd tap HELD past window) for layer index: "); Serial.println(i);
+      Serial.println("  Layer remains active. Release event will determine toggle/momentary.");
       #endif
-      if(activeLayers[i].activationType == LayerActivationType::DOUBLE_TAP_TOGGLE || activeLayers[i].activationType == LayerActivationType::DOUBLE_TAP_HOLD) {
-        // For DOUBLE_TAP_TOGGLE, this means the "hold for momentary" part timed out.
-        // For DOUBLE_TAP_HOLD, it also means it timed out.
-        activeLayers[i].isActive = false;
-      }
-      activeLayers[i].awaitingSecondTapRelease = false;
-      activeLayers[i].tapCount = 0; // Reset tap count
-      updateNeeded = true;
+      // No state changes here. The layer is active and held.
+      // keyReleased will use awaitingSecondTapRelease and lastTapTime to make its decision.
+      // This timeout is now purely informational if debugging.
     }
   }
 
