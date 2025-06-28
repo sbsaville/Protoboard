@@ -34,7 +34,7 @@ extern unsigned long doubleTapTimestamp;
 extern const unsigned int DOUBLE_TAP_WINDOW_MS;
 
 // Macro Manager (assuming it's a global object)
-extern MacroManager macroManager;
+extern SimpleMacroManager macroManager;
 
 
 bool L2AltTab = false;
