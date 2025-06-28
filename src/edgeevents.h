@@ -19,10 +19,10 @@ extern KeyMapEntry (*currentLayout)[columnsCount];
 // extern bool L_3; // "
 // extern bool L_4; // "
 // extern bool L_1_2L; // "
-extern bool ALT_L_active; // Now directly using the renamed global from Protoboard.cpp
-extern bool ALT_R_active; // "
-extern bool CAPS_SLSH_toggled; // "
-extern bool CAPS_ESC_toggled; // "
+extern bool ALT_L;
+extern bool ALT_R;
+extern bool CAPS_SLSH;
+extern bool CAPS_ESC;
 
 bool L2AltTab = false; // Specific state for Alt-Tab behavior, might need review
 
@@ -71,18 +71,18 @@ struct SimpleKeyAction {
   int keyToPress;
 };
 
-struct LayerResetAction {
-  int code;
-  bool* layerFlag;
-};
+// struct LayerResetAction { // Obsolete with new layer system
+//   int code;
+//   bool* layerFlag;
+// };
 
-const LayerResetAction layerResets[] = {
-  {LAYER_1, &L_1},
-  {LAYER_2, &L_2},
-  {LAYER_3, &L_3},
-  {LAYER_4, &L_4},
-  {LOOP_COUNT, &loopTimer},
-};
+// const LayerResetAction layerResets[] = { // Obsolete
+//   {LAYER_1, &L_1},
+//   {LAYER_2, &L_2},
+//   {LAYER_3, &L_3},
+//   {LAYER_4, &L_4},
+//   {LOOP_COUNT, &loopTimer}, // loopTimer is handled directly now in keyPressed
+// };
 
 void pressAndReleaseMultiple(int count, ...) {
   va_list args;
@@ -171,7 +171,7 @@ void keyPressed(Key* key, LayoutKey* layout) {
   unsigned long now = millis();
 
   // --- Handle Layer Activations and Toggles ---
-  for (uint8_t i = 0; i < definedLayerCount; ++i) {
+  for (size_t i = 0; i < activeLayers.size(); ++i) { // Use size_t and activeLayers.size()
     Layer* currentLayer = &activeLayers[i];
     bool isActivationPress = false;
     for (uint8_t k = 0; k < currentLayer->numActivationKeys; ++k) {
@@ -189,7 +189,8 @@ void keyPressed(Key* key, LayoutKey* layout) {
         case LayerActivationType::SINGLE_PRESS:
           currentLayer->isActive = true;
           #if EDGE_DEBUG
-          Serial.print("Layer activated (SINGLE_PRESS): "); Serial.println(currentLayer->name);
+          // Serial.print("Layer activated (SINGLE_PRESS): "); Serial.println(currentLayer->name);
+          Serial.print("Layer activated (SINGLE_PRESS): Index "); Serial.println(i);
           #endif
           break;
         case LayerActivationType::COMBO_PRESS:
@@ -221,7 +222,8 @@ void keyPressed(Key* key, LayoutKey* layout) {
             if (allComboKeysPressed) {
               currentLayer->isActive = true;
               #if EDGE_DEBUG
-              Serial.print("Layer activated (COMBO_PRESS): "); Serial.println(currentLayer->name);
+              // Serial.print("Layer activated (COMBO_PRESS): "); Serial.println(currentLayer->name);
+              Serial.print("Layer activated (COMBO_PRESS): Index "); Serial.println(i);
               #endif
             }
           }
@@ -230,7 +232,8 @@ void keyPressed(Key* key, LayoutKey* layout) {
           if (pressedKeyCode == currentLayer->activationKeys[0]) { // Assuming first key is the toggle key
             currentLayer->isActive = !currentLayer->isActive;
             #if EDGE_DEBUG
-            Serial.print("Layer toggled: "); Serial.print(currentLayer->name); Serial.println(currentLayer->isActive ? " ON" : " OFF");
+            // Serial.print("Layer toggled: "); Serial.print(currentLayer->name); Serial.println(currentLayer->isActive ? " ON" : " OFF");
+            Serial.print("Layer toggled: Index "); Serial.print(i); Serial.println(currentLayer->isActive ? " ON" : " OFF");
             #endif
           }
           // if toggleOffKey is different and pressed, it's handled in keyReleased or a separate check.
@@ -245,14 +248,16 @@ void keyPressed(Key* key, LayoutKey* layout) {
             currentLayer->waitingForSecondTap = false;
             currentLayer->tapCount = 0;
             #if EDGE_DEBUG
-            Serial.print("Layer activated (DOUBLE_TAP_HOLD): "); Serial.println(currentLayer->name);
+            // Serial.print("Layer activated (DOUBLE_TAP_HOLD): "); Serial.println(currentLayer->name);
+            Serial.print("Layer activated (DOUBLE_TAP_HOLD): Index "); Serial.println(i);
             #endif
           } else if (!currentLayer->isActive) { // Only start new sequence if not already active from a previous valid DT_HOLD that hasn't been released
             currentLayer->waitingForSecondTap = true;
             currentLayer->lastTapTime = now;
             currentLayer->tapCount = 1;
             #if EDGE_DEBUG
-            Serial.print("Layer waiting for 2nd tap (DOUBLE_TAP_HOLD): "); Serial.println(currentLayer->name);
+            // Serial.print("Layer waiting for 2nd tap (DOUBLE_TAP_HOLD): "); Serial.println(currentLayer->name);
+            Serial.print("Layer waiting for 2nd tap (DOUBLE_TAP_HOLD): Index "); Serial.println(i);
             #endif
           }
           break;
@@ -264,7 +269,8 @@ void keyPressed(Key* key, LayoutKey* layout) {
             currentLayer->waitingForSecondTap = false;
             currentLayer->tapCount = 0;
             #if EDGE_DEBUG
-            Serial.print("Layer DEactivated by single press (DOUBLE_TAP_TOGGLE): "); Serial.println(currentLayer->name);
+            // Serial.print("Layer DEactivated by single press (DOUBLE_TAP_TOGGLE): "); Serial.println(currentLayer->name);
+            Serial.print("Layer DEactivated by single press (DOUBLE_TAP_TOGGLE): Index "); Serial.println(i);
             #endif
           } else if (currentLayer->waitingForSecondTap &&
               (now - currentLayer->lastTapTime) < DOUBLE_TAP_WINDOW &&
@@ -274,7 +280,8 @@ void keyPressed(Key* key, LayoutKey* layout) {
             currentLayer->waitingForSecondTap = false;
             currentLayer->tapCount = 0;
             #if EDGE_DEBUG
-            Serial.print("Layer activated (DOUBLE_TAP_TOGGLE): "); Serial.println(currentLayer->name);
+            // Serial.print("Layer activated (DOUBLE_TAP_TOGGLE): "); Serial.println(currentLayer->name);
+            Serial.print("Layer activated (DOUBLE_TAP_TOGGLE): Index "); Serial.println(i);
             #endif
           } else if (!currentLayer->isActive) {
             // Layer is not active, so this is the first tap of a potential double-tap to turn ON
@@ -282,7 +289,8 @@ void keyPressed(Key* key, LayoutKey* layout) {
             currentLayer->lastTapTime = now;
             currentLayer->tapCount = 1;
             #if EDGE_DEBUG
-            Serial.print("Layer waiting for 2nd tap (DOUBLE_TAP_TOGGLE): "); Serial.println(currentLayer->name);
+            // Serial.print("Layer waiting for 2nd tap (DOUBLE_TAP_TOGGLE): "); Serial.println(currentLayer->name);
+            Serial.print("Layer waiting for 2nd tap (DOUBLE_TAP_TOGGLE): Index "); Serial.println(i);
             #endif
           }
           // If layer is active and a different key is pressed, or if it's the first tap of an activation sequence while already active (which shouldn't happen with current logic), no change.
@@ -295,18 +303,18 @@ void keyPressed(Key* key, LayoutKey* layout) {
 
   // --- Handle Specific Key Toggles (not layers) ---
   if (pressedKeyCode == KEY_ALTL) {
-    ALT_L_active = !ALT_L_active;
+    ALT_L = !ALT_L;
     updateNeeded = true; keyActionTaken = true;
   } else if (pressedKeyCode == KEY_ALTR) {
-    ALT_R_active = !ALT_R_active;
+    ALT_R = !ALT_R;
     updateNeeded = true; keyActionTaken = true;
   } else if (pressedKeyCode == KEY_CAPS_SLASH) {
-    CAPS_SLSH_toggled = !CAPS_SLSH_toggled;
-    if (CAPS_SLSH_toggled) CAPS_ESC_toggled = false; // Mutually exclusive
+    CAPS_SLSH = !CAPS_SLSH;
+    if (CAPS_SLSH) CAPS_ESC = false; // Mutually exclusive
     updateNeeded = true; keyActionTaken = true;
   } else if (pressedKeyCode == KEY_CAPS_ESC) {
-    CAPS_ESC_toggled = !CAPS_ESC_toggled;
-    if (CAPS_ESC_toggled) CAPS_SLSH_toggled = false; // Mutually exclusive
+    CAPS_ESC = !CAPS_ESC;
+    if (CAPS_ESC) CAPS_SLSH = false; // Mutually exclusive
     updateNeeded = true; keyActionTaken = true;
   } else if (pressedKeyCode == LAYER_0) { // Layer 0 Override Key
     layer0_override_active = true;
@@ -380,10 +388,10 @@ void keyPressed(Key* key, LayoutKey* layout) {
 
     // Emergency Layer Reset (KEY_SET0)
     if (pressedKeyCode == KEY_SET0) {
-        for(int i=0; i < definedLayerCount; ++i) activeLayers[i].isActive = false;
+        for(size_t i=0; i < activeLayers.size(); ++i) activeLayers[i].isActive = false; // Use size_t
         layer0_override_active = false;
-        ALT_L_active = false; ALT_R_active = false;
-        CAPS_SLSH_toggled = false; CAPS_ESC_toggled = false;
+        ALT_L = false; ALT_R = false;
+        CAPS_SLSH = false; CAPS_ESC = false;
         updateNeeded = true;
         L_check(); // For debug
         return;
@@ -422,7 +430,7 @@ void keyReleased(Key* key, LayoutKey* layout) {
   bool keyActionTaken = false; // To decide if Keyboard.release(releasedKeyCode) should be called
 
   // --- Handle Layer Deactivations ---
-  for (uint8_t i = 0; i < definedLayerCount; ++i) {
+  for (size_t i = 0; i < activeLayers.size(); ++i) { // Use size_t and activeLayers.size()
     Layer* currentLayer = &activeLayers[i];
     bool isActivationKeyRelease = false;
     for(uint8_t k=0; k < currentLayer->numActivationKeys; ++k) {
@@ -440,7 +448,8 @@ void keyReleased(Key* key, LayoutKey* layout) {
         case LayerActivationType::SINGLE_PRESS:
           currentLayer->isActive = false;
           #if EDGE_DEBUG
-          Serial.print("Layer deactivated (SINGLE_PRESS release): "); Serial.println(currentLayer->name);
+          // Serial.print("Layer deactivated (SINGLE_PRESS release): "); Serial.println(currentLayer->name);
+          Serial.print("Layer deactivated (SINGLE_PRESS release): Index "); Serial.println(i);
           #endif
           keyActionTaken = true;
           break;
@@ -448,7 +457,8 @@ void keyReleased(Key* key, LayoutKey* layout) {
           // If any key in a combo is released, the combo layer deactivates.
           currentLayer->isActive = false;
           #if EDGE_DEBUG
-          Serial.print("Layer deactivated (COMBO_PRESS release): "); Serial.println(currentLayer->name);
+          // Serial.print("Layer deactivated (COMBO_PRESS release): "); Serial.println(currentLayer->name);
+          Serial.print("Layer deactivated (COMBO_PRESS release): Index "); Serial.println(i);
           #endif
           keyActionTaken = true;
           break;
@@ -456,7 +466,8 @@ void keyReleased(Key* key, LayoutKey* layout) {
           if (currentLayer->isActive) { // Only deactivate if it was successfully activated
             currentLayer->isActive = false;
             #if EDGE_DEBUG
-            Serial.print("Layer deactivated (DOUBLE_TAP_HOLD release): "); Serial.println(currentLayer->name);
+            // Serial.print("Layer deactivated (DOUBLE_TAP_HOLD release): "); Serial.println(currentLayer->name);
+            Serial.print("Layer deactivated (DOUBLE_TAP_HOLD release): Index "); Serial.println(i);
             #endif
           }
           // Reset tap states regardless, in case it was a partial tap
@@ -495,7 +506,7 @@ void keyReleased(Key* key, LayoutKey* layout) {
   // --- Handle Specific Key Toggle Releases (usually no state change on release) ---
   if (releasedKeyCode == KEY_ALTL || releasedKeyCode == KEY_ALTR ||
       releasedKeyCode == KEY_CAPS_SLASH || releasedKeyCode == KEY_CAPS_ESC) {
-    keyActionTaken = true; // These keys manage state on press
+    keyActionTaken = true; // These keys manage state on press, release is handled by default HID release
   } else if (releasedKeyCode == LAYER_0) { // Layer 0 Override Key
     layer0_override_active = false;
     updateNeeded = true;
@@ -511,7 +522,8 @@ void keyReleased(Key* key, LayoutKey* layout) {
   // --- Fallback to other key release actions ---
   if (!keyActionTaken) {
     if (releasedKeyCode == KEY_NULL) { return; } // Should have been caught by activeKey check
-    if (macroManager.isMacroKey(releasedKeyCode)) { return; } // Macros are typically press/release type actions handled by manager or single shot
+    // if (macroManager.isMacroKey(releasedKeyCode)) { return; } // Removed: isMacroKey not a member.
+    // Macros executed by executeMacro in keyPressed are often single-shot or self-managing for releases.
 
     // Brightness, Trill, System keys are typically momentary or handled by press
     // Check if it's one of those to avoid sending Keyboard.release if not needed

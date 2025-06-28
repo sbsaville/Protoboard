@@ -5,10 +5,18 @@
 #include "keydefs.h"
 #include "rgbleds.h"
 #include <cstdint> // Required for uint16_t
+#include <vector>  // Required for std::vector
+
+// Forward declaration
+struct Layer;
+
+// Global vector of active layers, defined in Protoboard.cpp
+extern std::vector<Layer> activeLayers;
+
 
 // Enum for Layer Activation Types
 enum class LayerActivationType {
-    DEFAULT,        // Layer 0, always active if no other layer is
+    LAYER_IS_DEFAULT, // Renamed from DEFAULT to avoid macro collision
     SINGLE_PRESS,   // Momentary: Active while key is held
     COMBO_PRESS,    // Momentary: Active while all combo keys are held
     TOGGLE,         // Toggle: Press once to activate, press again to deactivate
@@ -22,7 +30,7 @@ enum class LayerActivationType {
 
 // Struct to define a layer
 struct Layer {
-    const char* name; // For debugging and identification
+    // const char* name; // Removed as per user feedback
     KeyMapEntry (*keymap)[columnsCount];
     LayerActivationType activationType;
     uint16_t activationKeys[MAX_COMBO_KEYS]; // Keycodes that activate this layer
@@ -41,9 +49,9 @@ struct Layer {
     uint16_t toggleOffKey;
 
     // Constructor
-    Layer(const char* n, KeyMapEntry (*km)[columnsCount], LayerActivationType type,
+    Layer(KeyMapEntry (*km)[columnsCount], LayerActivationType type,
           std::initializer_list<uint16_t> keys, uint16_t offKey = 0)
-        : name(n), keymap(km), activationType(type), numActivationKeys(0),
+        : /*name(n),*/ keymap(km), activationType(type), numActivationKeys(0),
           isActive(false), tapCount(0), lastTapTime(0), waitingForSecondTap(false),
           toggleOffKey(offKey) {
         // Copy activation keys from initializer_list
@@ -64,8 +72,8 @@ struct Layer {
         }
     }
 
-    // Default constructor for placeholder/inactive layers if needed
-    Layer() : name("Uninitialized"), keymap(nullptr), activationType(LayerActivationType::DEFAULT), numActivationKeys(0), isActive(false), tapCount(0), lastTapTime(0), waitingForSecondTap(false), toggleOffKey(0) {}
+     // Default constructor for placeholder/inactive layers if needed
+    Layer() : /*name("Uninitialized"),*/ keymap(nullptr), activationType(LayerActivationType::LAYER_IS_DEFAULT), numActivationKeys(0), isActive(false), tapCount(0), lastTapTime(0), waitingForSecondTap(false), toggleOffKey(0) {}
 };
 
 const KeyMapEntry layer0_default[rowsCount][columnsCount] = {
