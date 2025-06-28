@@ -25,8 +25,7 @@ LedColor Nav      = CRGB(0x0000FF);
 LedColor LedAdj   = CRGB(0xFFFFFF);
 LedColor LEDoff   = CRGB(0x000000);
 LedColor Macro    = CRGB(0xFF69B4);
-LedColor Toggle1  = CRGB(0xFF0000);
-LedColor Toggle2  = CRGB(0x8000FF);
+LedColor Toggle   = CRGB(0x00FF00);
 LedColor VimNav   = CRGB(0x33FF33);
 
 struct LayoutKey {
@@ -143,7 +142,7 @@ LayoutKey _PDOT_       = {KEYPAD_PERIOD,   &Chara2};      LayoutKey* PDOT    = &
 LayoutKey _TAB_        = {KEY_TAB,         &Modifier};    LayoutKey* TAB     = &_TAB_;
 LayoutKey _TILDE_      = {KEY_TILDE,       &Chara1};      LayoutKey* TILDE   = &_TILDE_;
 LayoutKey _CAPS_       = {KEY_CAPS_LOCK,   &Capslock};    LayoutKey* CAPS    = &_CAPS_;
-LayoutKey _LSHFT_      = {KEY_LEFT_SHIFT,  &Modifier};    LayoutKey* LSHFT   = &_LSHFT_;
+LayoutKey _LSHFT_      = {KEY_LEFT_SHIFT,  &Capslock};    LayoutKey* LSHFT   = &_LSHFT_;
 LayoutKey _LCRTL_      = {KEY_LEFT_CTRL,   &Modifier};    LayoutKey* LCRTL   = &_LCRTL_;
 LayoutKey _LGUI_       = {KEY_LEFT_GUI,    &Modifier};    LayoutKey* LGUI    = &_LGUI_;
 LayoutKey _LALT_       = {KEY_LEFT_ALT,    &Modifier};    LayoutKey* LALT    = &_LALT_;
@@ -184,7 +183,7 @@ LayoutKey _ENTER_      = {KEY_ENTER,        &Letter};     LayoutKey* ENTER   = &
 LayoutKey _COMMA_      = {KEY_COMMA,        &Chara1};     LayoutKey* COMMA   = &_COMMA_;
 LayoutKey _PERIOD_     = {KEY_PERIOD,       &Chara1};     LayoutKey* PERIOD  = &_PERIOD_;
 LayoutKey _SLASH_      = {KEY_SLASH,        &Chara1};     LayoutKey* SLASH   = &_SLASH_;
-LayoutKey _RSHFT_      = {KEY_RIGHT_SHIFT,  &Modifier};   LayoutKey* RSHFT   = &_RSHFT_;
+LayoutKey _RSHFT_      = {KEY_RIGHT_SHIFT,  &Capslock};   LayoutKey* RSHFT   = &_RSHFT_;
 LayoutKey _RSHFT_CAPS_ = {KEY_RIGHT_SHIFT, KEY_CAPS_LOCK, &Modifier}; LayoutKey* RSHFT_CAPS = &_RSHFT_CAPS_;
 LayoutKey _RCRTL_      = {KEY_RIGHT_CTRL,   &Modifier};   LayoutKey* RCRTL   = &_RCRTL_;
 LayoutKey _RGUI_       = {KEY_RIGHT_GUI,    &Modifier};   LayoutKey* RGUI    = &_RGUI_;

@@ -232,25 +232,25 @@ void remapKeys() {
   layout0[3][0]  = (CAPS_SLSH == 1) ? BSLSH :
                    (CAPS_ESC == 1) ? ESC : CAPS;
   if (ALT_L == 1) {
-    ALTL->ledColor = &Toggle1;
+    ALTL->ledColor = &Modifier;
   } else {
     ALTL->ledColor = &ALTL->defaultColor;
   }
   if (ALT_R == 1) {
-    ALTR->ledColor = &Toggle1;
+    ALTR->ledColor = &Modifier;
   } else {
     ALTR->ledColor = &ALTL->defaultColor;
   }
   if (CAPS_SLSH == 1) {
     CAPS_ESC = 0;
-    CAPSLSH->ledColor = &Toggle2;
+    CAPSLSH->ledColor = &Toggle;
   } else {
     CAPSLSH->ledColor = &ALTL->defaultColor;
   }
   if (CAPS_ESC == 1) {
     CAPS_SLSH = 0;
-    CAPSESC->ledColor = &Toggle2;
-    ESC->ledColor = &Toggle2;
+    CAPSESC->ledColor = &Toggle;
+    ESC->ledColor = &Toggle;
   } else {
     CAPSESC->ledColor = &CAPSESC->defaultColor;
     ESC->ledColor = &ESC->defaultColor;
