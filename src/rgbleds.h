@@ -149,7 +149,7 @@ void rgbleds::setup() {
 
   for (int flash = 0; flash < 2; flash++) {
     for (int i = 0; i < NUM_LEDS; i++) {
-      leds[i] = Layer;
+      leds[i] = defaultLayerColor; // Changed from Layer
     }
     FastLED.show();
     delay(100);
