@@ -33,7 +33,6 @@ const unsigned long DOUBLE_TAP_WINDOW_MS = 200;
 static int last_double_tap_candidate_row = -1;
 static int last_double_tap_candidate_col = -1;
 static unsigned long last_double_tap_press_time = 0;
-static bool double_tap_first_press_sent = false; // To track if first press was sent for a key that might be double tapped
 
 // Add near the top with other external variables
 bool prev_L_1 = 0;

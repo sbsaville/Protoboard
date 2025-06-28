@@ -290,7 +290,7 @@ void trillbar::handleMode2(int actionUnits) {
   if (actionUnits == 0) return;
 
   ledsOverride = true;
-  scanLEDs(layout0);
+  scanLEDs(layer0);
 
   if (actionUnits > 0) {
     for (int i = 0; i < actionUnits; i++) {

@@ -5,7 +5,7 @@
 #include "keydefs.h"
 #include "rgbleds.h"
 
-KeyMapEntry layout0[rowsCount][columnsCount] = {
+KeyMapEntry layer0[rowsCount][columnsCount] = {
   {{ESC},    {F1},    {F2},    {F3},    {F4},    {F5},    {F6},    {F7},    {F8},    {F9},     {F10},   {F11},         {F12},    {DEL}  },
   {{TILDE},  {NUM1},  {NUM2},  {NUM3},  {NUM4},  {NUM5},  {NUM6},  {NUM7},  {NUM8},  {NUM9},   {NUM0},  {MINUS},       {EQUAL},  {PGDN} },
   {{TAB},    {Q},     {W},     {E},     {R},     {T},     {Y},     {U},     {I},     {O},      {P},     {LBRACK},      {RBRACK}, {BSLSH}},
@@ -14,7 +14,7 @@ KeyMapEntry layout0[rowsCount][columnsCount] = {
   {{LCRTL},  {LGUI},  {LALT},  {LYR1},  {LYR2},  {SPC},   {BKSPC}, {LYR3},  {LYR4},  {RALT},   {RCRTL}, {LEFT},        {DOWN},   {RIGHT}}
 };
 
-KeyMapEntry layout1[rowsCount][columnsCount] = {
+KeyMapEntry layer1[rowsCount][columnsCount] = {
   {{NUL},  {F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {NUL}},
   {{PMUL}, {PDIV},  {PADD},  {PSUB},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
   {{PAD7}, {PAD8},  {PAD9},  {QUOTE}, {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
@@ -23,7 +23,7 @@ KeyMapEntry layout1[rowsCount][columnsCount] = {
   {{PAD0}, {PAD0},  {PDOT},  {LYR1},  {LYR2},  {SPC},   {BKSPC}, {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}}
 };
 
-KeyMapEntry layout1_2[rowsCount][columnsCount] = {
+KeyMapEntry layer1_2[rowsCount][columnsCount] = {
   {{ESC},    {F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {DEL}},
   {{LPAR},   {PMUL},  {PDIV},  {PADD},  {PSUB},  {RPAR},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {DNEQL}, {EQUAL}, {NUL}},
   {{TAB},    {PAD7},  {PAD8},  {PAD9},  {CARAT}, {SQRT},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
@@ -32,7 +32,7 @@ KeyMapEntry layout1_2[rowsCount][columnsCount] = {
   {{L12L},   {PAD0},  {PDOT},  {PAD0},  {LYR0},  {SPC},   {BKSPC}, {LYR0},  {NUL},   {PDOT},  {PAD0},  {LEFT},  {DOWN},  {L12L}}
 };
 
-KeyMapEntry layout2[rowsCount][columnsCount] = {
+KeyMapEntry layer2[rowsCount][columnsCount] = {
   {{ESC},    {F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {NUL}},
   {{NUL},    {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
   {{ALTT},   {HOME},  {UP},    {END},   {PGUP},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
@@ -41,7 +41,7 @@ KeyMapEntry layout2[rowsCount][columnsCount] = {
   {{L12L},   {PAD0},  {PDOT},  {LYR1},  {LYR2},  {DEL},   {BKSPC}, {LYR3},  {NUL},   {RALT},  {RCRTL}, {BKSPC}, {PGDN},  {DEL}}
 };
 
-KeyMapEntry layout2_3[rowsCount][columnsCount] = {
+KeyMapEntry layer2_3[rowsCount][columnsCount] = {
   {{NUL},    {F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {NUL}},
   {{NUL},    {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
   {{NUL},    {QSTN},  {NUL},   {EXCLM}, {ASTR},  {NUL},   {NUL},   {UNDS},  {NUL},   {NUL},   {PRCNT}, {NUL},   {NUL},   {NUL}},
@@ -50,7 +50,7 @@ KeyMapEntry layout2_3[rowsCount][columnsCount] = {
   {{NUL},    {NUL},   {NUL},   {NUL},   {LYR2},  {SPC},   {BKSPC}, {LYR3},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}}
 };
 
-KeyMapEntry layout3[rowsCount][columnsCount] = {
+KeyMapEntry layer3[rowsCount][columnsCount] = {
   {{NUL},    {F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {NUL}},
   {{NUL},    {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PLSMNS},{DNEQL}, {NUL}},
   {{NUL},    {QUOTE}, {DBLQ},  {EXCLM}, {ASTR},  {LCHEV}, {RCHEV}, {UNDS},  {NUL},   {NUL},   {PIPE},  {NUL},   {NUL},   {NUL}},
@@ -59,7 +59,7 @@ KeyMapEntry layout3[rowsCount][columnsCount] = {
   {{NUL},    {NUL},   {NUL},   {NUL},   {LYR2},  {DEL},   {BKSPC}, {LYR3},  {LYR4},  {NUL},   {NUL},   {BKSPC}, {PGDN},  {DEL}}
 };
 
-KeyMapEntry layout3_4[rowsCount][columnsCount] = {
+KeyMapEntry layer3_4[rowsCount][columnsCount] = {
   {{NUL},    {SF13},  {SF14},  {SF15},  {SF16},  {SF17},  {SF18},  {SF19},  {SF20},  {SF21},  {SF22},  {SF23},  {SF24},  {NUL}},
   {{LOOPCT}, {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PMUL},  {PDIV},  {PADD},  {PSUB},  {NUL},   {NUL}},
   {{NUL},    {NUL},   {NUL},   {EMCRN}, {NUL},   {NUL},   {NUL},   {NUL},   {PAD7},  {PAD8},  {PAD9},  {CARAT}, {NUL},   {NUL}},
@@ -68,7 +68,7 @@ KeyMapEntry layout3_4[rowsCount][columnsCount] = {
   {{NUL},    {RBOT},  {NUL},   {NUL},   {NUL},   {SPC},   {BKSPC}, {LYR3},  {LYR4},  {PAD0},  {PDOT},  {NUL},   {NUL},   {NUL}}
 };
 
-KeyMapEntry layout4[rowsCount][columnsCount] = {
+KeyMapEntry layer4[rowsCount][columnsCount] = {
   {{CAPSESC},{F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {BKSPC}},
   {{BR0},    {BR1},   {BR2},   {BR3},   {BR4},   {BR5},   {BR6},   {BR7},   {BR8},   {BR9},   {BR10},  {NUL},   {NUL},   {INCR}},
   {{TAB},    {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {INSRT}, {NUL},   {PSBRK}, {NUL},   {NUL},   {DECR}},

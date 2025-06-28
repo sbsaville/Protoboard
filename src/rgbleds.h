@@ -131,14 +131,14 @@ void scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]) {
 }
 
 // Wrapper functions for each layout
-void leds0()     { scanLEDs(layout0); }
-void leds1()     { scanLEDs(layout1); }
-void leds1_2()   { scanLEDs(layout1_2); }
-void leds2()     { scanLEDs(layout2); }
-void leds2_3()   { scanLEDs(layout2_3); }
-void leds3()     { scanLEDs(layout3); }
-void leds3_4()   { scanLEDs(layout3_4); }
-void leds4()     { scanLEDs(layout4); }
+void leds0()     { scanLEDs(layer0); }
+void leds1()     { scanLEDs(layer1); }
+void leds1_2()   { scanLEDs(layer1_2); }
+void leds2()     { scanLEDs(layer2); }
+void leds2_3()   { scanLEDs(layer2_3); }
+void leds3()     { scanLEDs(layer3); }
+void leds3_4()   { scanLEDs(layer3_4); }
+void leds4()     { scanLEDs(layer4); }
 
 
 void rgbleds::setup() {

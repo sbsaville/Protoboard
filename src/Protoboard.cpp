@@ -16,7 +16,7 @@
 #define DEBOUNCE_TIME 8  // milliseconds
 unsigned long debounceTimers[rowsCount][columnsCount] = {0};
 
-bool L_0 = 0;  // only used for overrides, layout0 is default when no other layer flags are active - adding this note so Claude Sonnet stops mentioning it
+bool L_0 = 0;  // only used for overrides, layer0 is default when no other layer flags are active - adding this note so Claude Sonnet stops mentioning it
 bool L_1 = 0;
 bool L_2 = 0;
 bool L_3 = 0;
@@ -34,7 +34,7 @@ bool loopTimer = false;
 // Matrix to track physical key states across layer changes
 PhysicalKeyState physicalKeyStates[rowsCount][columnsCount];
 
-KeyMapEntry (*currentLayout)[columnsCount] = layout0;
+KeyMapEntry (*currentLayout)[columnsCount] = layer0;
 
 Key keys[rowsCount][columnsCount] = {
  {{0, 0, false},{0, 1, false},{0, 2, false},{0, 3, false},{0, 4, false},{0, 5, false},{0, 6, false},{0, 7, false},{0, 8, false},{0, 9, false},{0, 10, false},{0, 11, false},{0, 12, false},{0, 13, false}},
@@ -129,34 +129,34 @@ void setup() {
 KeyMapEntry (*getActiveLayout())[columnsCount] {
   if (L_1 == 0 && L_2 == 0 && L_3 == 0 && L_4 == 0 && L_1_2L == 0) {
     trillbar::setMode(trillbar::MODE_ARROWS);
-    return layout0;
+    return layer0;
   }
   else if (L_1 == 1 && L_2 == 0) {
     trillbar::setMode(trillbar::MODE_BRIGHTNESS);
-    return layout1;
+    return layer1;
   }
   else if (L_1 == 0 && L_2 == 1 && L_3 == 0) {
     trillbar::setMode(trillbar::MODE_SCROLL);
-    return layout2;
+    return layer2;
   }
   else if ((L_1 == 1 && L_2 == 1) || (L_1_2L == 1)) {
     trillbar::setMode(trillbar::MODE_ARROWS);
-    return layout1_2;
+    return layer1_2;
   }
   else if (L_2 == 1 && L_3 == 1) {
-    return layout2_3;
+    return layer2_3;
   }
   else if (L_3 == 1 && L_2 == 0 && L_4 == 0) {
-    return layout3;
+    return layer3;
   }
   else if (L_3 == 1 && L_4 == 1) {
-    return layout3_4;
+    return layer3_4;
   }
   else if (L_4 == 1) {
     trillbar::setMode(trillbar::MODE_BRIGHTNESS);
-    return layout4;
+    return layer4;
   }
-  return layout0;
+  return layer0;
 }
 
 #include "edgeevents.h"
@@ -228,10 +228,10 @@ void remapKeys() {
   // This works by tracking the original LayoutKey pointer when a key is first pressed
 
   // Handle toggle state changes (these still need to be applied)
-  layout0[5][4] = (ALT_L == 1) ? KeyMapEntry{LALT} : KeyMapEntry{LYR2};
-  layout0[5][6] = (ALT_R == 1) ? KeyMapEntry{RALT} : KeyMapEntry{BKSPC};
-  layout0[0][13] = (ALT_R == 1) ? KeyMapEntry{BKSPC} : KeyMapEntry{DEL};
-  layout0[3][0]  = (CAPS_SLSH == 1) ? KeyMapEntry{BSLSH} :
+  layer0[5][4] = (ALT_L == 1) ? KeyMapEntry{LALT} : KeyMapEntry{LYR2};
+  layer0[5][6] = (ALT_R == 1) ? KeyMapEntry{RALT} : KeyMapEntry{BKSPC};
+  layer0[0][13] = (ALT_R == 1) ? KeyMapEntry{BKSPC} : KeyMapEntry{DEL};
+  layer0[3][0]  = (CAPS_SLSH == 1) ? KeyMapEntry{BSLSH} :
                    (CAPS_ESC == 1) ? KeyMapEntry{ESC} : KeyMapEntry{CAPS};
   if (ALT_L == 1) {
     ALTL->ledColor = &Modifier;
