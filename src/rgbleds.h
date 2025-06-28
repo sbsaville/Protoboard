@@ -83,31 +83,45 @@ void updateLockStates() {
 }
 
 
-void scanLEDs(LayoutKey* layout[rowsCount][columnsCount]) {
+void scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]) {
   for (int row = 0; row < rowsCount; row++) {
     for (int col = 0; col < columnsCount; col++) {
       int ledIndex = XYMatrix[row][col];
 
       // Check if there's an active key being held from another layer
       bool isKeyPressed = physicalKeyStates[row][col].isPressed;
-      LayoutKey* activeKey = physicalKeyStates[row][col].activeKey;
+      LayoutKey* activeKeyFromState = physicalKeyStates[row][col].activeKey; // Renamed to avoid conflict
 
-      // Use the active key if available (for keys held during layer change)
-      // otherwise use the current layout's key
-      LayoutKey* key = isKeyPressed && activeKey ? activeKey : layout[row][col];
+      LayoutKey* keyToUse = nullptr;
 
-      if (key != nullptr && key->ledColor != nullptr) { // Check for null pointers
-        leds[ledIndex] = *(key->ledColor);
+      if (isKeyPressed && activeKeyFromState != nullptr) {
+        // If a key is physically pressed and we have its original LayoutKey, use that
+        keyToUse = activeKeyFromState;
+      } else {
+        // Otherwise, use the primary key from the current layout's KeyMapEntry
+        KeyMapEntry currentEntry = layout[row][col];
+        if (currentEntry.primaryKey != nullptr) {
+          keyToUse = currentEntry.primaryKey;
+        } else {
+          // Fallback to NUL if primaryKey is somehow null (should be rare)
+          keyToUse = NUL;
+        }
+      }
 
-        if (key == NMLCK) {
+      if (keyToUse != nullptr && keyToUse->ledColor != nullptr) { // Check for null pointers
+        leds[ledIndex] = *(keyToUse->ledColor);
+
+        if (keyToUse == NMLCK) {
           numLockFound = true;
-        } else if (key == CAPS) {
+        } else if (keyToUse == CAPS) {
           capsLockFound = true;
-        } else if (key == SCRLL) {
+        } else if (keyToUse == SCRLL) {
           scrollLockFound = true;
         }
       } else {
-        leds[ledIndex] = CRGB::Black; // Default to black if null
+        // This case should ideally not be reached if NUL is used as a fallback.
+        // If keyToUse is NUL, its ledColor should be LEDoff (black).
+        leds[ledIndex] = CRGB::Black;
       }
     }
   }

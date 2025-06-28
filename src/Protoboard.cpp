@@ -34,7 +34,7 @@ bool loopTimer = false;
 // Matrix to track physical key states across layer changes
 PhysicalKeyState physicalKeyStates[rowsCount][columnsCount];
 
-LayoutKey* (*currentLayout)[columnsCount] = layout0;
+KeyMapEntry (*currentLayout)[columnsCount] = layout0;
 
 Key keys[rowsCount][columnsCount] = {
  {{0, 0, false},{0, 1, false},{0, 2, false},{0, 3, false},{0, 4, false},{0, 5, false},{0, 6, false},{0, 7, false},{0, 8, false},{0, 9, false},{0, 10, false},{0, 11, false},{0, 12, false},{0, 13, false}},
@@ -50,7 +50,15 @@ Key* getKey(uint8_t row, uint8_t column) {
 }
 
 LayoutKey* getLayoutKey(uint8_t row, uint8_t column) {
-  return currentLayout[row][column];
+  // Return the primary key from the KeyMapEntry
+  // Add null check for safety, though ideally entries always have a primaryKey (even if it's NUL)
+  KeyMapEntry entry = currentLayout[row][column];
+  if (entry.primaryKey == nullptr) {
+    // This case should ideally not happen if layouts are defined correctly.
+    // Return a pointer to the NUL key definition as a safe default.
+    return NUL;
+  }
+  return entry.primaryKey;
 }
 
 // Function to initialize the key tracking matrix
@@ -118,7 +126,7 @@ void setup() {
 
 
 
-LayoutKey* (*getActiveLayout())[columnsCount] {
+KeyMapEntry (*getActiveLayout())[columnsCount] {
   if (L_1 == 0 && L_2 == 0 && L_3 == 0 && L_4 == 0 && L_1_2L == 0) {
     trillbar::setMode(trillbar::MODE_ARROWS);
     return layout0;
@@ -196,7 +204,7 @@ void testKeyPreservation() {
 // Updates key mappings when changing layers while preserving physical key states
 void updateLayerMappings() {
   // Get the current active layout
-  LayoutKey* (*newLayout)[columnsCount] = getActiveLayout();
+  KeyMapEntry (*newLayout)[columnsCount] = getActiveLayout();
 
   // Only proceed if the layout has changed
   if (newLayout != currentLayout) {
@@ -220,11 +228,11 @@ void remapKeys() {
   // This works by tracking the original LayoutKey pointer when a key is first pressed
 
   // Handle toggle state changes (these still need to be applied)
-  layout0[5][4] = (ALT_L == 1) ? LALT : LYR2;
-  layout0[5][6] = (ALT_R == 1) ? RALT : BKSPC;
-  layout0[0][13] = (ALT_R == 1) ? BKSPC : DEL;
-  layout0[3][0]  = (CAPS_SLSH == 1) ? BSLSH :
-                   (CAPS_ESC == 1) ? ESC : CAPS;
+  layout0[5][4] = (ALT_L == 1) ? KeyMapEntry{LALT} : KeyMapEntry{LYR2};
+  layout0[5][6] = (ALT_R == 1) ? KeyMapEntry{RALT} : KeyMapEntry{BKSPC};
+  layout0[0][13] = (ALT_R == 1) ? KeyMapEntry{BKSPC} : KeyMapEntry{DEL};
+  layout0[3][0]  = (CAPS_SLSH == 1) ? KeyMapEntry{BSLSH} :
+                   (CAPS_ESC == 1) ? KeyMapEntry{ESC} : KeyMapEntry{CAPS};
   if (ALT_L == 1) {
     ALTL->ledColor = &Modifier;
   } else {

@@ -36,6 +36,32 @@ struct LayoutKey {
         : code(code), ledColor(ledColor), defaultColor(*ledColor) {}
 };
 
+// New struct for double-tap functionality
+struct KeyMapEntry {
+    LayoutKey* primaryKey;
+    LayoutKey* doubleTapKey;
+
+    // Constructor for single key
+    KeyMapEntry(LayoutKey* pKey = nullptr) : primaryKey(pKey), doubleTapKey(nullptr) {}
+
+    // Constructor for double-tap key
+    KeyMapEntry(LayoutKey* pKey, LayoutKey* dtKey) : primaryKey(pKey), doubleTapKey(dtKey) {}
+
+    // Default constructor
+    KeyMapEntry() : primaryKey(nullptr), doubleTapKey(nullptr) {}
+
+
+    // Allow initialization with a single LayoutKey* like {ESC}
+    KeyMapEntry(std::initializer_list<LayoutKey*> keys) : primaryKey(nullptr), doubleTapKey(nullptr) {
+        if (keys.size() > 0) {
+            primaryKey = *keys.begin();
+        }
+        if (keys.size() > 1) {
+            doubleTapKey = *(keys.begin() + 1);
+        }
+    }
+};
+
 LayoutKey _LYR1_       = {LAYER_1,         &Layer};       LayoutKey* LYR1    = &_LYR1_;
 LayoutKey _LYR2_       = {LAYER_2,         &Layer};       LayoutKey* LYR2    = &_LYR2_;
 LayoutKey _LYR3_       = {LAYER_3,         &Layer};       LayoutKey* LYR3    = &_LYR3_;

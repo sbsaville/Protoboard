@@ -11,6 +11,10 @@
 
 #define EDGE_DEBUG 0
 
+// Forward declare KeyMapEntry if its definition isn't already included by main.h->keydefs.h path
+// struct KeyMapEntry; // Not strictly needed if keydefs.h is included before this extern.
+extern KeyMapEntry (*currentLayout)[columnsCount]; // From Protoboard.cpp
+
 extern bool L_0;
 extern bool L_1;
 extern bool L_2;
@@ -20,8 +24,16 @@ extern bool L_1_2L;
 extern bool ALT_L;
 extern bool ALT_R;
 extern bool CAPS_SLSH;
+extern bool CAPS_ESC; // Added this as it's used in Protoboard.cpp and likely should be here
 
 bool L2AltTab = false;
+
+// Double-tap feature settings and state
+const unsigned long DOUBLE_TAP_WINDOW_MS = 200;
+static int last_double_tap_candidate_row = -1;
+static int last_double_tap_candidate_col = -1;
+static unsigned long last_double_tap_press_time = 0;
+static bool double_tap_first_press_sent = false; // To track if first press was sent for a key that might be double tapped
 
 // Add near the top with other external variables
 bool prev_L_1 = 0;
@@ -160,21 +172,71 @@ void keyPressed(Key* key, LayoutKey* layout) {
   Serial.print(", col=");
   Serial.println(key->column);
   #endif
-  int code = layout->code;
 
-  // Store the key state information - this must happen before any early returns
   uint8_t row = key->row;
   uint8_t col = key->column;
+  KeyMapEntry currentKeyMapEntry = currentLayout[row][col];
+  LayoutKey* primaryKey = currentKeyMapEntry.primaryKey; // This should be == layout passed in
+  LayoutKey* doubleTapKeyPtr = currentKeyMapEntry.doubleTapKey;
+
+  // Ensure primaryKey is not null, fallback to NUL if it is (shouldn't happen with proper layout defs)
+  if (primaryKey == nullptr) primaryKey = NUL;
+
+  int code = primaryKey->code; // Use primaryKey's code for most operations
+
+  // Store the primary key state information - this must happen before any early returns
   physicalKeyStates[row][col].isPressed = true;
   physicalKeyStates[row][col].activeCode = code;
-  physicalKeyStates[row][col].activeKey = layout;  // Store the original LayoutKey pointer
+  physicalKeyStates[row][col].activeKey = primaryKey;  // Store the original primary LayoutKey pointer
 
-  // Check for null key first (early return)
-  if (code == KEY_NULL) {
-    return;
+  // Double-tap logic
+  if (doubleTapKeyPtr != nullptr && doubleTapKeyPtr != NUL) {
+    unsigned long now = millis();
+    if (last_double_tap_candidate_row == row &&
+        last_double_tap_candidate_col == col &&
+        (now - last_double_tap_press_time) < DOUBLE_TAP_WINDOW_MS) {
+      // This is a double tap
+      #if EDGE_DEBUG
+      Serial.println("Double tap detected!");
+      #endif
+
+      // Perform the double-tap action.
+      // For CAPS, it's a toggle. We press and release it.
+      // Other types of keys might need different handling (e.g. just press if it's a modifier)
+      // For now, assume press and release for simplicity, suitable for CAPS.
+      if (doubleTapKeyPtr->code != KEY_NULL) { // Ensure the double tap key is not NUL
+          Keyboard.press(doubleTapKeyPtr->code);
+          Keyboard.release(doubleTapKeyPtr->code);
+      }
+
+      // Reset double tap tracking for this key
+      last_double_tap_candidate_row = -1;
+      last_double_tap_candidate_col = -1;
+      last_double_tap_press_time = 0;
+      // The primary key is already pressed by the normal flow later.
+      // No need to return; let primary key press also go through.
+    } else {
+      // This is the first press of a potential double-tap key, or the window expired
+      last_double_tap_candidate_row = row;
+      last_double_tap_candidate_col = col;
+      last_double_tap_press_time = now;
+      // The primary key will be pressed by the normal flow later.
+    }
+  } else {
+    // Not a double-tap capable key, clear any pending double-tap state from other keys.
+    // (Or only do this if a *different* key is pressed? Consider implications.)
+    // For now, any non-double-tap-candidate key press resets the tracker.
+    // Or, more simply, if a key *is* a candidate but is too slow, it resets itself above.
+    // If this key is *not* a candidate, it doesn't affect the previous candidate's window.
   }
 
-  // Check macros using new macro system
+  // Proceed with primary key actions (macros, regular press, etc.)
+  // Check for null key (primaryKey might be NUL)
+  if (code == KEY_NULL) {
+    return; // Don't process KEY_NULL further, but double-tap logic above might have run if it had a non-NUL doubleTapKey
+  }
+
+  // Check macros using new macro system (operates on primaryKey->code)
   if (macroManager.executeMacro(code)) {
     return;
   }
@@ -427,5 +489,3 @@ void keyPressed(Key* key, LayoutKey* layout) {
 }
 
   #endif
-
-
