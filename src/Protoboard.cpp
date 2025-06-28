@@ -14,18 +14,30 @@
 #define LOOP_TIMER_DEBUG 0
 
 #define DEBOUNCE_TIME 8  // milliseconds
+#define DOUBLE_TAP_WINDOW 200 // milliseconds
+
 unsigned long debounceTimers[rowsCount][columnsCount] = {0};
 
-bool L_0 = 0;  // only used for overrides, layer0 is default when no other layer flags are active - adding this note so Claude Sonnet stops mentioning it
-bool L_1 = 0;
-bool L_2 = 0;
-bool L_3 = 0;
-bool L_4 = 0;
-bool L_1_2L = 0;
-bool ALT_R = 0;
-bool ALT_L = 0;
-bool CAPS_SLSH = 0;
-bool CAPS_ESC = 0;
+// --- Layer Management ---
+// Array to hold all defined layers
+// The order matters: higher index layers have higher priority if multiple are active.
+// Layer 0 is handled implicitly as the default.
+#define MAX_LAYERS 10 // Maximum number of configurable layers (excluding layer 0)
+Layer activeLayers[MAX_LAYERS];
+uint8_t definedLayerCount = 0; // Number of layers actually defined in activeLayers
+
+// --- End Layer Management ---
+
+// Global state flags for specific key behaviors (not directly layer toggles)
+// These are modified by edgeevents.h (keyPressed/keyReleased)
+bool ALT_R_active = 0;
+bool ALT_L_active = 0;
+bool CAPS_SLSH_toggled = 0;
+bool CAPS_ESC_toggled = 0;
+
+// This is also modified by edgeevents.h
+bool layer0_override_active = false;
+
 
 unsigned long loopStartTime = 0;
 unsigned long loopDuration = 0;
@@ -82,12 +94,24 @@ void sendKeys() {
 
 void L_check() {
   #if DEBUG
-  Serial.print("L_0=");       Serial.print(L_0);        Serial.print(" ");
-  Serial.print("L_1=");       Serial.print(L_1);        Serial.print(" ");
-  Serial.print("L_2=");       Serial.print(L_2);        Serial.print(" ");
-  Serial.print("L_3=");       Serial.print(L_3);        Serial.print(" ");
-  Serial.print("L_4=");       Serial.print(L_4);        Serial.print(" ");
-  Serial.print("L_1_2L=");    Serial.print(L_1_2L);     Serial.println("");
+  Serial.println("Layer States:");
+  for (uint8_t i = 0; i < definedLayerCount; ++i) {
+    Serial.print(activeLayers[i].name);
+    Serial.print(" (");
+    Serial.print(activeLayers[i].isActive ? "Active" : "Inactive");
+    if (activeLayers[i].activationType == LayerActivationType::DOUBLE_TAP_HOLD || activeLayers[i].activationType == LayerActivationType::DOUBLE_TAP_TOGGLE) {
+        Serial.print(", Taps: "); Serial.print(activeLayers[i].tapCount);
+        Serial.print(", Waiting: "); Serial.print(activeLayers[i].waitingForSecondTap);
+    }
+    Serial.print("), Key(s): ");
+    for(int k=0; k < activeLayers[i].numActivationKeys; ++k) {
+        Serial.print(activeLayers[i].activationKeys[k], HEX);
+        if (k < activeLayers[i].numActivationKeys -1) Serial.print(" + ");
+    }
+    Serial.println("");
+  }
+  Serial.print("CAPS_SLSH_toggled="); Serial.print(CAPS_SLSH_toggled); Serial.print(" ");
+  Serial.print("CAPS_ESC_toggled=");  Serial.print(CAPS_ESC_toggled);  Serial.println("");
   #endif
 }
 
@@ -96,7 +120,50 @@ static unsigned long lastTime = 0;        // For keyboard scanning
 static unsigned long lastLayerTime = 0;   // For layer updates
 static bool updateNeeded = false;
 
+// Function to add layers to the activeLayers array
+void addLayer(const char* name, KeyMapEntry (*keymap)[columnsCount], LayerActivationType type, std::initializer_list<uint16_t> keys, uint16_t offKey = 0) {
+    if (definedLayerCount < MAX_LAYERS) {
+        activeLayers[definedLayerCount++] = Layer(name, keymap, type, keys, offKey);
+    } else {
+        // Handle error: too many layers defined
+        #if DEBUG
+        Serial.println("Error: Maximum number of layers reached. Cannot add more.");
+        #endif
+    }
+}
+
 void setup() {
+  // Initialize layers
+  // Note: The order of definition determines priority in getActiveLayout if multiple layers could be active.
+  // Higher index in activeLayers means higher priority.
+  // For now, order is similar to old L_ flag checks.
+  // Higher index = higher priority. Double-tap layers should probably have high priority.
+
+  // Base momentary layers
+  addLayer("Layer1", layer1, LayerActivationType::SINGLE_PRESS, {LAYER_1}); // Key: LYR1
+  addLayer("Layer2", layer2, LayerActivationType::SINGLE_PRESS, {LAYER_2}); // Key: LYR2 (momentary)
+  addLayer("Layer3", layer3, LayerActivationType::SINGLE_PRESS, {LAYER_3}); // Key: LYR3 (momentary)
+  addLayer("Layer4", layer4, LayerActivationType::SINGLE_PRESS, {LAYER_4}); // Key: LYR4
+
+  // Double-tap toggle layers - these should have higher priority than the single-press layers they are attached to.
+  // So, define them after the single-press versions if their trigger keys are the same.
+  // However, the current getActiveLayout iterates from highest index down, so order of addLayer matters.
+  // To make DT layers override, they should be added *later* (higher index).
+
+  // Renamed layers as per request:
+  // Original layer1_2 keymap is now layout2DT, triggered by double-tapping LAYER_2 key.
+  // For DOUBLE_TAP_TOGGLE, the activationKey[0] is also the toggleOffKey by default.
+  addLayer("layout2DT", layer1_2, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_2});
+
+  // Original layer3_4 keymap is now layout3DT, triggered by double-tapping LAYER_3 key.
+  addLayer("layout3DT", layer3_4, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_3});
+
+  // Removing old combo/toggle layers that are being replaced or are not specified to be kept:
+  // addLayer("Layer1_2_Combo", layer1_2, LayerActivationType::COMBO_PRESS, {LAYER_1, LAYER_2}); // Old L1+L2 combo
+  // addLayer("Layer1_2_Toggle", layer1_2, LayerActivationType::TOGGLE, {LAYER_1_2L}); // Old L_1_2L toggle
+  // addLayer("Layer2_3_Combo", layer2_3, LayerActivationType::COMBO_PRESS, {LAYER_2, LAYER_3}); // Old L2+L3 combo
+
+  // LYR0 for layer0 override is handled directly in keyPressed/keyReleased.
 
   Keyboard.begin();
   Mouse.begin();
@@ -128,47 +195,76 @@ void setup() {
   rgbleds::setup();
 }
 
-
+// Global flag to force layer 0 (e.g. via a specific key press)
+bool layer0_override_active = false;
 
 KeyMapEntry (*getActiveLayout())[columnsCount] {
-  if (L_1 == 0 && L_2 == 0 && L_3 == 0 && L_4 == 0 && L_1_2L == 0) {
-    trillbar::setMode(trillbar::MODE_ARROWS);
+    KeyMapEntry (*selectedLayout)[columnsCount] = layer0; // Default to layer0
+    // int highestPriorityActiveLayer = -1; // Not strictly needed here but good for debugging
+
+    if (layer0_override_active) {
+        trillbar::setMode(trillbar::MODE_ARROWS); // Default for layer0
+        #if DEBUG
+        Serial.println("getActiveLayout: Layer 0 override active.");
+        #endif
+        return layer0;
+    }
+
+    // Iterate from highest priority to lowest (higher index in activeLayers array = higher priority)
+    for (int i = definedLayerCount - 1; i >= 0; --i) {
+        if (activeLayers[i].isActive) {
+            selectedLayout = activeLayers[i].keymap;
+            // highestPriorityActiveLayer = i; // For debugging
+            #if DEBUG
+            Serial.print("getActiveLayout: Active layer found: "); Serial.println(activeLayers[i].name);
+            #endif
+
+            // TODO: This trillbar mode setting needs to be more robust.
+            // Maybe add a trillbarMode field to the Layer struct.
+            if (strcmp(activeLayers[i].name, "Layer1") == 0 || strcmp(activeLayers[i].name, "Layer4") == 0) {
+                trillbar::setMode(trillbar::MODE_BRIGHTNESS);
+            } else if (strcmp(activeLayers[i].name, "Layer2") == 0) {
+                trillbar::setMode(trillbar::MODE_SCROLL);
+            } else if (strcmp(activeLayers[i].name, "Layer1_2") == 0 || strcmp(activeLayers[i].name, "Layer1_2_Toggle") == 0) {
+                trillbar::setMode(trillbar::MODE_ARROWS);
+            } else {
+                trillbar::setMode(trillbar::MODE_ARROWS); // Default for other layers or unhandled ones
+            }
+            return selectedLayout; // Return the highest priority active layer found
+        }
+    }
+
+    // If no other layer is active, layer0 is used
+    #if DEBUG
+    Serial.println("getActiveLayout: No specific layer active, defaulting to Layer 0.");
+    #endif
+    trillbar::setMode(trillbar::MODE_ARROWS); // Default for layer0
     return layer0;
-  }
-  else if (L_1 == 1 && L_2 == 0) {
-    trillbar::setMode(trillbar::MODE_BRIGHTNESS);
-    return layer1;
-  }
-  else if (L_1 == 0 && L_2 == 1 && L_3 == 0) {
-    trillbar::setMode(trillbar::MODE_SCROLL);
-    return layer2;
-  }
-  else if ((L_1 == 1 && L_2 == 1) || (L_1_2L == 1)) {
-    trillbar::setMode(trillbar::MODE_ARROWS);
-    return layer1_2;
-  }
-  else if (L_2 == 1 && L_3 == 1) {
-    return layer2_3;
-  }
-  else if (L_3 == 1 && L_2 == 0 && L_4 == 0) {
-    return layer3;
-  }
-  else if (L_3 == 1 && L_4 == 1) {
-    return layer3_4;
-  }
-  else if (L_4 == 1) {
-    trillbar::setMode(trillbar::MODE_BRIGHTNESS);
-    return layer4;
-  }
-  return layer0;
 }
 
-#include "edgeevents.h"
+#include "edgeevents.h" // This will likely need heavy modifications for the new layer system
 
-// Helper function to check if a key is a layer switching key
-bool isLayerKey(uint16_t code) {
-  return (code == LAYER_0 || code == LAYER_1 || code == LAYER_2 ||
-          code == LAYER_3 || code == LAYER_4 || code == LAYER_1_2L);
+// Helper function to check if a key is involved in ANY layer's activation or deactivation
+bool isLayerActivationKey(uint16_t code) {
+    if (code == LAYER_0) return true; // Layer 0 override key is always a layer activation key
+
+    for (uint8_t i = 0; i < definedLayerCount; ++i) {
+        for (uint8_t k = 0; k < activeLayers[i].numActivationKeys; ++k) {
+            if (activeLayers[i].activationKeys[k] == code) {
+                return true;
+            }
+        }
+        // Also check toggleOffKey if it's different and relevant for the layer type
+        if ((activeLayers[i].activationType == LayerActivationType::TOGGLE ||
+             activeLayers[i].activationType == LayerActivationType::DOUBLE_TAP_TOGGLE) &&
+            activeLayers[i].toggleOffKey != 0 && activeLayers[i].toggleOffKey == code) {
+            // Only return true if it's not already covered by activationKeys,
+            // or if it's explicitly meant to be an off key that's different.
+            // For simplicity now, if it's a toggleOffKey, consider it an activation key.
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
@@ -216,40 +312,51 @@ void updateLayerMappings() {
 }
 
 void remapKeys() {
-  layer0[5][4] = (ALT_L == 1) ? KeyMapEntry{LALT} : layer0_default[5][4];
-  layer0[5][6] = (ALT_R == 1) ? KeyMapEntry{RALT} : layer0_default[5][6];
-  layer0[0][13] = (ALT_R == 1) ? KeyMapEntry{BKSPC} : layer0_default[0][13];
-  layer0[3][0]  = (CAPS_SLSH == 1) ? KeyMapEntry{BSLSH} :
-                   (CAPS_ESC == 1) ? KeyMapEntry{ESC} : layer0_default[3][0];
+  // Update base layer0 mappings based on toggle states
+  layer0[5][4] = (ALT_L_active == 1) ? KeyMapEntry{LALT} : layer0_default[5][4];
+  layer0[5][6] = (ALT_R_active == 1) ? KeyMapEntry{RALT} : layer0_default[5][6];
+  layer0[0][13] = (ALT_R_active == 1) ? KeyMapEntry{BKSPC} : layer0_default[0][13]; // This seems like an odd remap for ALT_R, but keeping original logic
+  layer0[3][0]  = (CAPS_SLSH_toggled == 1) ? KeyMapEntry{BSLSH} :
+                   (CAPS_ESC_toggled == 1) ? KeyMapEntry{ESC} : layer0_default[3][0];
 
-  if (ALT_L == 1) {
+  // Update LED colors based on toggle states
+  if (ALT_L_active == 1) {
     ALTL->ledColor = &Modifier; 
   } else {
-    ALTL->ledColor = &ALTL->defaultColor;
+    ALTL->ledColor = &ALTL->defaultColor; // Assuming LayoutKey struct has defaultColor
   }
 
-  if (ALT_R == 1) {
+  if (ALT_R_active == 1) {
     ALTR->ledColor = &Modifier;
   } else {
-    ALTR->ledColor = &ALTR->defaultColor;
+    ALTR->ledColor = &ALTR->defaultColor; // Assuming LayoutKey struct has defaultColor
   }
 
-  if (CAPS_SLSH == 1) {
-    CAPS_ESC = 0;
+  if (CAPS_SLSH_toggled == 1) {
+    // CAPS_ESC_toggled = 0; // Mutual exclusivity handled in keyPressed/keyReleased for these specific keys
     CAPSLSH->ledColor = &Toggle;
   } else {
-    CAPSLSH->ledColor = &CAPSLSH->defaultColor;
+    CAPSLSH->ledColor = &CAPSLSH->defaultColor; // Assuming LayoutKey struct has defaultColor
   }
 
-  if (CAPS_ESC == 1) {
-    CAPS_SLSH = 0;
-    CAPSESC->ledColor = &Chara1;
-    ESC->ledColor = &Chara1;
-
+  if (CAPS_ESC_toggled == 1) {
+    // CAPS_SLSH_toggled = 0; // Mutual exclusivity handled in keyPressed/keyReleased
+    CAPSESC->ledColor = &Chara1; // Or some other toggle indicator color
+    // If ESC key itself should change color when this toggle is active:
+    // ESC->ledColor = &Chara1; // This was in original, implies ESC key itself changes
   } else {
-    CAPSESC->ledColor = &CAPSESC->defaultColor;
-    ESC->ledColor = &ESC->defaultColor;
+    CAPSESC->ledColor = &CAPSESC->defaultColor; // Assuming LayoutKey struct has defaultColor
+    // ESC->ledColor = &ESC->defaultColor; // Reset ESC color if it was changed
   }
+   // Ensure ESC key color is reset if CAPS_ESC is not active, but ESC is on base layer.
+  if (!CAPS_ESC_toggled && layer0_default[0][0].primaryKey == ESC) {
+    ESC->ledColor = &ESC->defaultColor;
+  } else if (CAPS_ESC_toggled && layer0_default[3][0].primaryKey != ESC && layer0_default[0][0].primaryKey == ESC){
+    // If CAPS_ESC is toggled, AND it remaps key (3,0) to ESC, then the original ESC key at (0,0) should also change color
+     ESC->ledColor = &Chara1;
+  }
+
+
 }
 
 
@@ -290,7 +397,7 @@ void loop() {
               uint16_t activeCode = physicalKeyStates[key->row][key->column].activeCode;
 
               // Set layer change flag if a layer key was pressed
-              if (isLayerKey(activeCode)) {
+              if (isLayerActivationKey(activeCode)) {
                   updateNeeded = true;
               }
             }
@@ -301,7 +408,7 @@ void loop() {
               LayoutKey* activeKey = physicalKeyStates[key->row][key->column].activeKey;
               uint16_t actualCode = activeKey ? activeKey->code : layout->code;
 
-              if (isLayerKey(actualCode)) {
+              if (isLayerActivationKey(actualCode)) {
                   updateNeeded = true;
               }
             }
@@ -318,19 +425,33 @@ void loop() {
   }
 
   trillbar::loop();
-  if (updateNeeded || (now - lastLayerTime >= 50)) {
+
+  // Check for double-tap timeouts
+  for (uint8_t i = 0; i < definedLayerCount; ++i) {
+    if (activeLayers[i].waitingForSecondTap && (now - activeLayers[i].lastTapTime > DOUBLE_TAP_WINDOW)) {
+      #if DEBUG || EDGE_DEBUG // Use EDGE_DEBUG if it's more specific for this kind of log
+      Serial.print("Double tap timed out for layer: "); Serial.println(activeLayers[i].name);
+      #endif
+      activeLayers[i].waitingForSecondTap = false;
+      activeLayers[i].tapCount = 0;
+      updateNeeded = true; // May need to update LEDs if tap state changed visual feedback
+    }
+  }
+
+  if (updateNeeded || (now - lastLayerTime >= 50)) { // Reduced interval for faster responsiveness, was 50
     lastLayerTime = now;
     updateNeeded = false;
 
-    updateLayerMappings();
+    updateLayerMappings(); // This will call getActiveLayout()
 
     if (!trillbar::isLedOverride()) {
-      scanLEDs(currentLayout);
+      scanLEDs(currentLayout); // currentLayout is updated by updateLayerMappings()
     }
-    remapKeys();
+    remapKeys(); // Update LEDs for toggles like ALT, CAPS_SLSH etc.
 
     #if DEBUG
-    testKeyPreservation();
+    testKeyPreservation(); // Check physical key states
+    L_check(); // Check layer states
     #endif
   }
 

@@ -4,6 +4,69 @@
 #include "main.h"
 #include "keydefs.h"
 #include "rgbleds.h"
+#include <cstdint> // Required for uint16_t
+
+// Enum for Layer Activation Types
+enum class LayerActivationType {
+    DEFAULT,        // Layer 0, always active if no other layer is
+    SINGLE_PRESS,   // Momentary: Active while key is held
+    COMBO_PRESS,    // Momentary: Active while all combo keys are held
+    TOGGLE,         // Toggle: Press once to activate, press again to deactivate
+    DOUBLE_TAP_HOLD,// Double-Tap: Tap once, then press and hold second time to activate (momentary)
+    DOUBLE_TAP_TOGGLE // Double-Tap: Tap twice quickly to toggle activation
+    // TODO: OneShot functionality could be added here later
+};
+
+// Maximum number of keys that can be part of a combo to activate a layer
+#define MAX_COMBO_KEYS 2 // For now, supporting 2-key combos like L1+L2
+
+// Struct to define a layer
+struct Layer {
+    const char* name; // For debugging and identification
+    KeyMapEntry (*keymap)[columnsCount];
+    LayerActivationType activationType;
+    uint16_t activationKeys[MAX_COMBO_KEYS]; // Keycodes that activate this layer
+    uint8_t numActivationKeys; // How many keys are in activationKeys
+
+    // State variables for layer logic
+    bool isActive;
+    // For double-tap logic
+    uint8_t tapCount;
+    unsigned long lastTapTime;
+    bool waitingForSecondTap; // True if first tap of a double tap has occurred
+
+    // For toggle layers, this specific key deactivates it.
+    // For DOUBLE_TAP_TOGGLE, this is the same as activationKeys[0]
+    // For other toggle types, it could be a different key.
+    uint16_t toggleOffKey;
+
+    // Constructor
+    Layer(const char* n, KeyMapEntry (*km)[columnsCount], LayerActivationType type,
+          std::initializer_list<uint16_t> keys, uint16_t offKey = 0)
+        : name(n), keymap(km), activationType(type), numActivationKeys(0),
+          isActive(false), tapCount(0), lastTapTime(0), waitingForSecondTap(false),
+          toggleOffKey(offKey) {
+        // Copy activation keys from initializer_list
+        // Ensure not to overflow activationKeys
+        for (uint16_t key : keys) {
+            if (numActivationKeys < MAX_COMBO_KEYS) {
+                activationKeys[numActivationKeys++] = key;
+            } else {
+                // Handle error: too many keys for combo
+                // For now, just ignore extra keys. A Serial.print warning could be added.
+                break;
+            }
+        }
+        if (activationType == LayerActivationType::TOGGLE || activationType == LayerActivationType::DOUBLE_TAP_TOGGLE) {
+            if (offKey == 0 && numActivationKeys > 0) { // Default offKey to the first activation key for toggles
+                toggleOffKey = activationKeys[0];
+            }
+        }
+    }
+
+    // Default constructor for placeholder/inactive layers if needed
+    Layer() : name("Uninitialized"), keymap(nullptr), activationType(LayerActivationType::DEFAULT), numActivationKeys(0), isActive(false), tapCount(0), lastTapTime(0), waitingForSecondTap(false), toggleOffKey(0) {}
+};
 
 const KeyMapEntry layer0_default[rowsCount][columnsCount] = {
   {{ESC},    {F1},    {F2},    {F3},    {F4},    {F5},    {F6},    {F7},    {F8},    {F9},     {F10},   {F11},         {F12},    {DEL}  },

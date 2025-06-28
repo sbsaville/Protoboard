@@ -13,34 +13,36 @@
 
 extern KeyMapEntry (*currentLayout)[columnsCount];
 
-extern bool L_0;
-extern bool L_1;
-extern bool L_2;
-extern bool L_3;
-extern bool L_4;
-extern bool L_1_2L;
-extern bool ALT_L;
-extern bool ALT_R;
-extern bool CAPS_SLSH;
-extern bool CAPS_ESC;
+// extern bool L_0; // Replaced by layer0_override_active in Protoboard.cpp
+// extern bool L_1; // Replaced by Layer struct states
+// extern bool L_2; // "
+// extern bool L_3; // "
+// extern bool L_4; // "
+// extern bool L_1_2L; // "
+extern bool ALT_L_active; // Now directly using the renamed global from Protoboard.cpp
+extern bool ALT_R_active; // "
+extern bool CAPS_SLSH_toggled; // "
+extern bool CAPS_ESC_toggled; // "
 
-bool L2AltTab = false;
+bool L2AltTab = false; // Specific state for Alt-Tab behavior, might need review
 
-const unsigned long DOUBLE_TAP_WINDOW_MS = 200;
-static int last_double_tap_candidate_row = -1;
-static int last_double_tap_candidate_col = -1;
-static unsigned long last_double_tap_press_time = 0;
+// DOUBLE_TAP_WINDOW is now defined in Protoboard.cpp
+// static int last_double_tap_candidate_row = -1; // Will be part of Layer struct or managed differently
+// static int last_double_tap_candidate_col = -1; // "
+// static unsigned long last_double_tap_press_time = 0; // "
 
-bool prev_L_1 = 0;
-bool prev_L_2 = 0;
-bool prev_L_3 = 0;
-bool prev_L_4 = 0;
-bool prev_L_1_2L = 0;
+// prev_L_ flags are no longer needed as layer state is more complex
+// bool prev_L_1 = 0;
+// bool prev_L_2 = 0;
+// bool prev_L_3 = 0;
+// bool prev_L_4 = 0;
+// bool prev_L_1_2L = 0;
 
-int LYR0_row = -1;
-int LYR0_col = -1;
+// LYR0_row/col for restoring state after LYR0 not directly needed in this new model's first pass
+// int LYR0_row = -1;
+// int LYR0_col = -1;
 
-extern bool loopTimer;
+extern bool loopTimer; // This seems to be a global toggle, not a layer. Keep for now.
 
 void pressAndRelease(int key) {
   Keyboard.press(key);
@@ -155,280 +157,395 @@ void keyPressed(Key* key, LayoutKey* layout) {
   uint8_t col = key->column;
   KeyMapEntry currentKeyMapEntry = currentLayout[row][col];
   LayoutKey* primaryKey = currentKeyMapEntry.primaryKey;
-  LayoutKey* doubleTapKeyPtr = currentKeyMapEntry.doubleTapKey;
+  // LayoutKey* doubleTapKeyPtr = currentKeyMapEntry.doubleTapKey; // Old double tap, to be removed or integrated
 
-  if (primaryKey == nullptr) primaryKey = NUL;
+  if (primaryKey == nullptr) primaryKey = NUL; // Ensure primaryKey is never null
 
-  int code = primaryKey->code;
+  int pressedKeyCode = primaryKey->code;
 
   physicalKeyStates[row][col].isPressed = true;
-  physicalKeyStates[row][col].activeCode = code;
-  physicalKeyStates[row][col].activeKey = primaryKey;
+  physicalKeyStates[row][col].activeCode = pressedKeyCode; // Store the code of the key definition that was active upon press
+  physicalKeyStates[row][col].activeKey = primaryKey;   // Store a pointer to the key definition itself
 
-  if (doubleTapKeyPtr != nullptr && doubleTapKeyPtr != NUL) {
-    unsigned long now = millis();
-    if (last_double_tap_candidate_row == row &&
-        last_double_tap_candidate_col == col &&
-        (now - last_double_tap_press_time) < DOUBLE_TAP_WINDOW_MS) {
-      #if EDGE_DEBUG
-      Serial.println("Double tap detected!");
-      #endif
-      if (doubleTapKeyPtr->code != KEY_NULL) {
-          Keyboard.press(doubleTapKeyPtr->code);
-          Keyboard.release(doubleTapKeyPtr->code);
+  bool keyActionTaken = false; // Flag to check if any layer/toggle logic handled this press. If so, don't send raw key.
+  unsigned long now = millis();
+
+  // --- Handle Layer Activations and Toggles ---
+  for (uint8_t i = 0; i < definedLayerCount; ++i) {
+    Layer* currentLayer = &activeLayers[i];
+    bool isActivationPress = false;
+    for (uint8_t k = 0; k < currentLayer->numActivationKeys; ++k) {
+        if (currentLayer->activationKeys[k] == pressedKeyCode) {
+            isActivationPress = true;
+            break;
+        }
+    }
+
+    if (isActivationPress) {
+      keyActionTaken = true; // This key press is related to layer management.
+      updateNeeded = true;   // Signal that layer states might have changed.
+
+      switch (currentLayer->activationType) {
+        case LayerActivationType::SINGLE_PRESS:
+          currentLayer->isActive = true;
+          #if EDGE_DEBUG
+          Serial.print("Layer activated (SINGLE_PRESS): "); Serial.println(currentLayer->name);
+          #endif
+          break;
+        case LayerActivationType::COMBO_PRESS:
+          // For combo, all keys must be pressed. This logic assumes this key is one of them.
+          // We need to check if other combo keys are ALSO currently pressed.
+          {
+            bool allComboKeysPressed = true;
+            for (uint8_t k = 0; k < currentLayer->numActivationKeys; ++k) {
+              bool foundPressed = false;
+              if (currentLayer->activationKeys[k] == pressedKeyCode) { // This is the currently pressed key
+                foundPressed = true;
+                continue;
+              }
+              // Check other keys in physicalKeyStates
+              for(uint8_t r=0; r < rowsCount; ++r) {
+                for(uint8_t c=0; c < columnsCount; ++c) {
+                  if (physicalKeyStates[r][c].isPressed && physicalKeyStates[r][c].activeCode == currentLayer->activationKeys[k]) {
+                    foundPressed = true;
+                    break;
+                  }
+                }
+                if (foundPressed && currentLayer->activationKeys[k] != pressedKeyCode) break;
+              }
+              if (!foundPressed) {
+                allComboKeysPressed = false;
+                break;
+              }
+            }
+            if (allComboKeysPressed) {
+              currentLayer->isActive = true;
+              #if EDGE_DEBUG
+              Serial.print("Layer activated (COMBO_PRESS): "); Serial.println(currentLayer->name);
+              #endif
+            }
+          }
+          break;
+        case LayerActivationType::TOGGLE:
+          if (pressedKeyCode == currentLayer->activationKeys[0]) { // Assuming first key is the toggle key
+            currentLayer->isActive = !currentLayer->isActive;
+            #if EDGE_DEBUG
+            Serial.print("Layer toggled: "); Serial.print(currentLayer->name); Serial.println(currentLayer->isActive ? " ON" : " OFF");
+            #endif
+          }
+          // if toggleOffKey is different and pressed, it's handled in keyReleased or a separate check.
+          // For now, simple toggle on activationKey[0]
+          break;
+        case LayerActivationType::DOUBLE_TAP_HOLD:
+          // Handles press-hold activation part of a double-tap sequence
+          if (currentLayer->waitingForSecondTap &&
+              (now - currentLayer->lastTapTime) < DOUBLE_TAP_WINDOW &&
+              currentLayer->activationKeys[0] == pressedKeyCode) {
+            currentLayer->isActive = true; // Active while held
+            currentLayer->waitingForSecondTap = false;
+            currentLayer->tapCount = 0;
+            #if EDGE_DEBUG
+            Serial.print("Layer activated (DOUBLE_TAP_HOLD): "); Serial.println(currentLayer->name);
+            #endif
+          } else if (!currentLayer->isActive) { // Only start new sequence if not already active from a previous valid DT_HOLD that hasn't been released
+            currentLayer->waitingForSecondTap = true;
+            currentLayer->lastTapTime = now;
+            currentLayer->tapCount = 1;
+            #if EDGE_DEBUG
+            Serial.print("Layer waiting for 2nd tap (DOUBLE_TAP_HOLD): "); Serial.println(currentLayer->name);
+            #endif
+          }
+          break;
+        case LayerActivationType::DOUBLE_TAP_TOGGLE:
+          if (currentLayer->isActive && pressedKeyCode == currentLayer->activationKeys[0] && !currentLayer->waitingForSecondTap) {
+            // Layer is already active, its activation key is pressed, and we are NOT in the middle of a new tap sequence for this layer.
+            // This means it's a single press to toggle OFF.
+            currentLayer->isActive = false;
+            currentLayer->waitingForSecondTap = false;
+            currentLayer->tapCount = 0;
+            #if EDGE_DEBUG
+            Serial.print("Layer DEactivated by single press (DOUBLE_TAP_TOGGLE): "); Serial.println(currentLayer->name);
+            #endif
+          } else if (currentLayer->waitingForSecondTap &&
+              (now - currentLayer->lastTapTime) < DOUBLE_TAP_WINDOW &&
+              currentLayer->activationKeys[0] == pressedKeyCode) {
+            // This is the second tap of a double tap to activate
+            currentLayer->isActive = true; // Toggle ON
+            currentLayer->waitingForSecondTap = false;
+            currentLayer->tapCount = 0;
+            #if EDGE_DEBUG
+            Serial.print("Layer activated (DOUBLE_TAP_TOGGLE): "); Serial.println(currentLayer->name);
+            #endif
+          } else if (!currentLayer->isActive) {
+            // Layer is not active, so this is the first tap of a potential double-tap to turn ON
+            currentLayer->waitingForSecondTap = true;
+            currentLayer->lastTapTime = now;
+            currentLayer->tapCount = 1;
+            #if EDGE_DEBUG
+            Serial.print("Layer waiting for 2nd tap (DOUBLE_TAP_TOGGLE): "); Serial.println(currentLayer->name);
+            #endif
+          }
+          // If layer is active and a different key is pressed, or if it's the first tap of an activation sequence while already active (which shouldn't happen with current logic), no change.
+          break;
+        default:
+          break;
       }
-
-      last_double_tap_candidate_row = -1;
-      last_double_tap_candidate_col = -1;
-      last_double_tap_press_time = 0;
-    } else {
-      last_double_tap_candidate_row = row;
-      last_double_tap_candidate_col = col;
-      last_double_tap_press_time = now;
-    }
-  } else {
-
-  }
-
-  if (code == KEY_NULL) {
-    return;
-  }
-
-  if (macroManager.executeMacro(code)) {
-    return;
-  }
-
-  for (uint8_t i = 0; i < sizeof(brightnessLevels)/sizeof(BrightnessLevel); i++) {
-    if (code == brightnessLevels[i].code) {
-      brightness = brightnessLevels[i].brightnessValue;
-      LEDS.setBrightness(brightness);
-      return;
     }
   }
 
-  if (code == LEDS_INC) {
-    ledsINC();
-    return;
-  }
-  else if (code == LEDS_DEC) {
-    ledsDEC();
-    return;
-  }
-
-  if (code == TRILL_MODE1) {
-    trillbar::setMode(trillbar::MODE_ARROWS);
-    return;
-  }
-  else if (code == TRILL_MODE2) {
-    trillbar::setMode(trillbar::MODE_SCROLL);
-    return;
-  }
-  else if (code == TRILL_MODE3) {
-    trillbar::setMode(trillbar::MODE_BRIGHTNESS);
-    return;
-  }
-
-  if (code == MOUSE_LCLICK) {
-    Mouse.set_buttons(1, 0, 0);
-    return;
-  }
-  else if (code == MOUSE_RCLICK) {
-    Mouse.set_buttons(0, 0, 1);
-    return;
+  // --- Handle Specific Key Toggles (not layers) ---
+  if (pressedKeyCode == KEY_ALTL) {
+    ALT_L_active = !ALT_L_active;
+    updateNeeded = true; keyActionTaken = true;
+  } else if (pressedKeyCode == KEY_ALTR) {
+    ALT_R_active = !ALT_R_active;
+    updateNeeded = true; keyActionTaken = true;
+  } else if (pressedKeyCode == KEY_CAPS_SLASH) {
+    CAPS_SLSH_toggled = !CAPS_SLSH_toggled;
+    if (CAPS_SLSH_toggled) CAPS_ESC_toggled = false; // Mutually exclusive
+    updateNeeded = true; keyActionTaken = true;
+  } else if (pressedKeyCode == KEY_CAPS_ESC) {
+    CAPS_ESC_toggled = !CAPS_ESC_toggled;
+    if (CAPS_ESC_toggled) CAPS_SLSH_toggled = false; // Mutually exclusive
+    updateNeeded = true; keyActionTaken = true;
+  } else if (pressedKeyCode == LAYER_0) { // Layer 0 Override Key
+    layer0_override_active = true;
+    updateNeeded = true; keyActionTaken = true;
+    #if EDGE_DEBUG
+    Serial.println("LAYER_0 key pressed - override ACTIVE");
+    #endif
+  } else if (pressedKeyCode == LOOP_COUNT) { // Example of a simple toggle
+      loopTimer = !loopTimer;
+      keyActionTaken = true; // Consumes the key press
+      #if EDGE_DEBUG
+      Serial.print("loopTimer toggled: "); Serial.println(loopTimer);
+      #endif
   }
 
-  if (code == KEY_RELEASE) {
-    Keyboard.set_modifier(0);
-    Keyboard.set_key1(0);
-    Keyboard.send_now();
-    Keyboard.releaseAll();
-    return;
-  }
 
-  if (code == KEY_ALT_TAB) {
-    Keyboard.press(KEY_LEFT_ALT);
-    Keyboard.send_now();
-    Keyboard.press(KEY_TAB);
-    Keyboard.release(KEY_TAB);
-    L2AltTab = true;
-    return;
-  }
+  // --- Fallback to other key actions if not consumed by layer/toggle logic ---
+  if (!keyActionTaken) {
+    if (pressedKeyCode == KEY_NULL) {
+      return; // Do nothing for explicit NUL keys
+    }
 
-  for (uint8_t i = 0; i < sizeof(shiftedKeys)/sizeof(SimpleKeyAction); i++) {
-    if (code == shiftedKeys[i].code) {
-      shiftedKey(shiftedKeys[i].keyToPress);
+    // Macro execution
+    if (macroManager.executeMacro(pressedKeyCode)) {
+      return; // Macro handled it
+    }
+
+    // Brightness controls
+    for (uint8_t i = 0; i < sizeof(brightnessLevels) / sizeof(BrightnessLevel); i++) {
+      if (pressedKeyCode == brightnessLevels[i].code) {
+        brightness = brightnessLevels[i].brightnessValue;
+        LEDS.setBrightness(brightness);
+        Config::saveBrightness(brightness); // Save on change
+        return;
+      }
+    }
+    if (pressedKeyCode == LEDS_INC) { ledsINC(); return; }
+    if (pressedKeyCode == LEDS_DEC) { ledsDEC(); return; }
+
+    // Trillbar modes
+    if (pressedKeyCode == TRILL_MODE1) { trillbar::setMode(trillbar::MODE_ARROWS); return; }
+    if (pressedKeyCode == TRILL_MODE2) { trillbar::setMode(trillbar::MODE_SCROLL); return; }
+    if (pressedKeyCode == TRILL_MODE3) { trillbar::setMode(trillbar::MODE_BRIGHTNESS); return; }
+
+    // Mouse buttons
+    if (pressedKeyCode == MOUSE_LCLICK) { Mouse.set_buttons(1,0,0); return;}
+    if (pressedKeyCode == MOUSE_RCLICK) { Mouse.set_buttons(0,0,1); return;}
+
+    // System keys
+    if (pressedKeyCode == KEY_RELEASE) { Keyboard.releaseAll(); return; }
+    if (pressedKeyCode == KEY_REBOOT) { _reboot_Teensyduino_(); return; }
+
+    // Alt-Tab special handling
+    if (pressedKeyCode == KEY_ALT_TAB) {
+      Keyboard.press(KEY_LEFT_ALT);
+      Keyboard.send_now(); // ensure ALT is registered before TAB
+      Keyboard.press(KEY_TAB);
+      Keyboard.release(KEY_TAB); // TAB is released quickly
+      // L2AltTab = true; // This flag was used to release ALT when LAYER_2 was released. Needs new handling if still desired.
+      // For now, ALT will be released when KEY_ALT_TAB itself is released.
       return;
     }
+
+    // Shifted keys (sends key with SHIFT)
+    for (uint8_t i = 0; i < sizeof(shiftedKeys) / sizeof(SimpleKeyAction); i++) {
+      if (pressedKeyCode == shiftedKeys[i].code) {
+        shiftedKey(shiftedKeys[i].keyToPress);
+        return;
+      }
+    }
+
+    // Emergency Layer Reset (KEY_SET0)
+    if (pressedKeyCode == KEY_SET0) {
+        for(int i=0; i < definedLayerCount; ++i) activeLayers[i].isActive = false;
+        layer0_override_active = false;
+        ALT_L_active = false; ALT_R_active = false;
+        CAPS_SLSH_toggled = false; CAPS_ESC_toggled = false;
+        updateNeeded = true;
+        L_check(); // For debug
+        return;
+    }
+
+    // Default action: press the keycode
+    Keyboard.press(pressedKeyCode);
   }
+}
 
-  if (code == KEY_REBOOT) {
-    _reboot_Teensyduino_();
-    return;
-  }
-
-  // Emergency layer reset
-  if (code == KEY_SET0) {
-    L_1 = 0;
-    L_2 = 0;
-    L_3 = 0;
-    L_4 = 0;
-    L_1_2L = 0;
-    L_0 = false;
-    LYR0_row = -1;
-    LYR0_col = -1;
-    ALT_R = 0;
-    ALT_L = 0;
-    return;
-  }
-
-  switch (code) {
-    case LAYER_1:
-      L_1 = 1;
-      L_check();
-      return;
-    case LAYER_2:
-      L_2 = 1;
-      L_check();
-      return;
-      case LAYER_3:
-      L_3 = 1;
-      L_check();
-      return;
-    case LAYER_4:
-      L_4 = 1;
-      L_check();
-      return;
-    case LOOP_COUNT:
-      loopTimer = 1;
-      return;
-    case LAYER_1_2L:
-      L_1_2L = !L_1_2L;
-      L_1 = 0;
-      L_2 = 0;
-      L_check();
-      return;
-    case KEY_ALTL:
-      ALT_L = !ALT_L;
-      updateNeeded = true;
-      return;
-    case KEY_ALTR:
-      ALT_R = !ALT_R;
-      updateNeeded = true;
-      return;
-    case KEY_CAPS_SLASH:
-      CAPS_SLSH = !CAPS_SLSH;
-      updateNeeded = true;
-      return;
-    case KEY_CAPS_ESC:
-      CAPS_ESC = !CAPS_ESC;
-      updateNeeded = true;
-      return;
-    case LAYER_0:
-      prev_L_1 = L_1;
-      prev_L_2 = L_2;
-      prev_L_3 = L_3;
-      prev_L_4 = L_4;
-      prev_L_1_2L = L_1_2L;
-      LYR0_row = key->row;
-      LYR0_col = key->column;
-      L_0 = 1;
-      L_1 = 0;
-      L_2 = 0;
-      L_3 = 0;
-      L_4 = 0;
-      L_1_2L = 0;
-      L_check();
-      return;
-  }
-
-  Keyboard.press(layout->code);
-
-  }
-
-  void keyReleased(Key* key, LayoutKey* layout) {
-  int code = layout->code;
+void keyReleased(Key* key, LayoutKey* layout) {
+  // int code = layout->code; // This is the code from the CURRENT layout, which might have changed.
   uint8_t row = key->row;
   uint8_t col = key->column;
 
-  LayoutKey* activeKey = physicalKeyStates[row][col].activeKey;
+  // IMPORTANT: Use the key code that was active when the key was PRESSED,
+  // not the one from the current layout, as the layout might have changed.
+  LayoutKey* originallyPressedKey = physicalKeyStates[row][col].activeKey;
+  uint16_t releasedKeyCode = originallyPressedKey ? originallyPressedKey->code : KEY_NULL; // Default to NUL if no active key was stored
 
   #if EDGE_DEBUG
-  Serial.print("Key released: row="); Serial.print(key->row);
-  Serial.print(", col="); Serial.print(key->column);
-  Serial.print(", code="); Serial.print(code);
-  Serial.print(", activeCode="); Serial.print(activeCode);
-  if (activeKey) {
-    Serial.print(", activeKeyCode="); Serial.print(activeKey->code);
+  Serial.print("Key released: row="); Serial.print(row);
+  Serial.print(", col="); Serial.print(col);
+  Serial.print(", originallyPressedKeyCode="); Serial.print(releasedKeyCode, HEX);
+  if (layout && layout->code != releasedKeyCode) {
+    Serial.print(", currentLayoutCode="); Serial.print(layout->code, HEX);
   }
-  Serial.print(", L_0="); Serial.println(L_0);
+  Serial.println();
   #endif
 
-  // Clear the key state tracking
+  // Clear the key state tracking for this physical key FIRST.
   physicalKeyStates[row][col].isPressed = false;
-  physicalKeyStates[row][col].activeCode = 0;
-  physicalKeyStates[row][col].activeKey = nullptr;
+  physicalKeyStates[row][col].activeCode = 0; // Clear the code too
+  physicalKeyStates[row][col].activeKey = nullptr; // Clear the pointer
 
-  // Check for null key first (early return)
-  if ((code == KEY_NULL) && (!activeKey || activeKey->code == KEY_NULL)) {
-    return;
-  }
-  // Special handling for KEY_SET0
-  if (code == KEY_SET0 || (activeKey && activeKey->code == KEY_SET0)) {
-    L_check();
-    Keyboard.releaseAll();
-    return;
-  }
-  // Handle layer resets - prioritize the activeKey if available
-  uint16_t relevantCode = activeKey ? activeKey->code : code;
+  bool keyActionTaken = false; // To decide if Keyboard.release(releasedKeyCode) should be called
 
-  for (uint8_t i = 0; i < sizeof(layerResets)/sizeof(LayerResetAction); i++) {
-    if (relevantCode == layerResets[i].code) {
-      if (relevantCode == LAYER_2 && L2AltTab) {
-        Keyboard.release(KEY_LEFT_ALT);
-        L2AltTab = false;
+  // --- Handle Layer Deactivations ---
+  for (uint8_t i = 0; i < definedLayerCount; ++i) {
+    Layer* currentLayer = &activeLayers[i];
+    bool isActivationKeyRelease = false;
+    for(uint8_t k=0; k < currentLayer->numActivationKeys; ++k) {
+        if (currentLayer->activationKeys[k] == releasedKeyCode) {
+            isActivationKeyRelease = true;
+            break;
+        }
+    }
+
+    if (isActivationKeyRelease) {
+      // keyActionTaken = true; // Releasing a layer key itself usually means it was consumed.
+      updateNeeded = true;
+
+      switch (currentLayer->activationType) {
+        case LayerActivationType::SINGLE_PRESS:
+          currentLayer->isActive = false;
+          #if EDGE_DEBUG
+          Serial.print("Layer deactivated (SINGLE_PRESS release): "); Serial.println(currentLayer->name);
+          #endif
+          keyActionTaken = true;
+          break;
+        case LayerActivationType::COMBO_PRESS:
+          // If any key in a combo is released, the combo layer deactivates.
+          currentLayer->isActive = false;
+          #if EDGE_DEBUG
+          Serial.print("Layer deactivated (COMBO_PRESS release): "); Serial.println(currentLayer->name);
+          #endif
+          keyActionTaken = true;
+          break;
+        case LayerActivationType::DOUBLE_TAP_HOLD:
+          if (currentLayer->isActive) { // Only deactivate if it was successfully activated
+            currentLayer->isActive = false;
+            #if EDGE_DEBUG
+            Serial.print("Layer deactivated (DOUBLE_TAP_HOLD release): "); Serial.println(currentLayer->name);
+            #endif
+          }
+          // Reset tap states regardless, in case it was a partial tap
+          currentLayer->waitingForSecondTap = false;
+          currentLayer->tapCount = 0;
+          keyActionTaken = true;
+          break;
+        case LayerActivationType::TOGGLE:
+           // If activation key is also the deactivation key (toggleOffKey)
+          if (currentLayer->toggleOffKey == releasedKeyCode && !currentLayer->isActive) {
+             // This case could be for a "press to toggle on, press again to toggle off"
+             // but current keyPressed handles the toggle. If toggleOffKey is different,
+             // this is where it would be handled. For now, no action on release for basic toggles.
+          }
+          // For toggles, the key release itself doesn't usually change the layer state
+          // unless it's a specific "toggle-off" key that's different from "toggle-on".
+          // The current plan has toggle-on and toggle-off via the same key press.
+          // However, we mark keyActionTaken = true because the press action was a layer action.
+          keyActionTaken = true;
+          break;
+        case LayerActivationType::DOUBLE_TAP_TOGGLE:
+          // Similar to TOGGLE, release does not change state after activation.
+          // Reset tap states if it was a partial tap that didn't complete.
+          if (currentLayer->waitingForSecondTap) { // If release happened before second tap
+             // currentLayer->waitingForSecondTap = false; // This is handled by timeout or next press
+             // currentLayer->tapCount = 0;
+          }
+          keyActionTaken = true; // The press was a layer action.
+          break;
+        default:
+          break;
       }
-      *(layerResets[i].layerFlag) = 0; // Reset the layer flag
-
-      // Save brightness to SD card when any layer key is released
-      Config::saveBrightness(brightness);
-
-      L_check();
-      return;
     }
   }
 
-  if (relevantCode == LAYER_1_2L) {
-    L_check();
-    return;
-  }
-
-  if (relevantCode == LAYER_0) {
+  // --- Handle Specific Key Toggle Releases (usually no state change on release) ---
+  if (releasedKeyCode == KEY_ALTL || releasedKeyCode == KEY_ALTR ||
+      releasedKeyCode == KEY_CAPS_SLASH || releasedKeyCode == KEY_CAPS_ESC) {
+    keyActionTaken = true; // These keys manage state on press
+  } else if (releasedKeyCode == LAYER_0) { // Layer 0 Override Key
+    layer0_override_active = false;
+    updateNeeded = true;
+    keyActionTaken = true;
     #if EDGE_DEBUG
-    Serial.println("Layer 0 released");
+    Serial.println("LAYER_0 key released - override INACTIVE");
     #endif
-    L_1 = prev_L_1;
-    L_2 = prev_L_2;
-    L_3 = prev_L_3;
-    L_4 = prev_L_4;
-    L_1_2L = prev_L_1_2L;
-    L_0 = false;
-    L_check();
-    return;
+  } else if (releasedKeyCode == LOOP_COUNT) {
+      keyActionTaken = true; // Consumed by press
   }
 
-  switch (code) {
-    case MOUSE_LCLICK:
-    case MOUSE_RCLICK:
-      Mouse.set_buttons(0, 0, 0);
-      return;
-  }
 
-  if (activeKey) {
-    Keyboard.release(activeKey->code);
-  } else {
-    Keyboard.release(code);
-  }
+  // --- Fallback to other key release actions ---
+  if (!keyActionTaken) {
+    if (releasedKeyCode == KEY_NULL) { return; } // Should have been caught by activeKey check
+    if (macroManager.isMacroKey(releasedKeyCode)) { return; } // Macros are typically press/release type actions handled by manager or single shot
 
+    // Brightness, Trill, System keys are typically momentary or handled by press
+    // Check if it's one of those to avoid sending Keyboard.release if not needed
+    bool isControlKey = false;
+    for (uint8_t i = 0; i < sizeof(brightnessLevels) / sizeof(BrightnessLevel); i++) {
+        if (releasedKeyCode == brightnessLevels[i].code) { isControlKey = true; break;}
+    }
+    if (releasedKeyCode == LEDS_INC || releasedKeyCode == LEDS_DEC ||
+        releasedKeyCode == TRILL_MODE1 || releasedKeyCode == TRILL_MODE2 || releasedKeyCode == TRILL_MODE3 ||
+        releasedKeyCode == KEY_RELEASE || releasedKeyCode == KEY_REBOOT || releasedKeyCode == KEY_SET0) {
+        isControlKey = true;
+    }
+     for (uint8_t i = 0; i < sizeof(shiftedKeys) / sizeof(SimpleKeyAction); i++) { // Shifted keys are also single shot
+        if (releasedKeyCode == shiftedKeys[i].code) {isControlKey = true; break;}
+    }
+
+    if (isControlKey) return;
+
+
+    // Mouse buttons
+    if (releasedKeyCode == MOUSE_LCLICK || releasedKeyCode == MOUSE_RCLICK) {
+      Mouse.set_buttons(0,0,0); return;
+    }
+
+    // Alt-Tab: release the ALT key
+    if (releasedKeyCode == KEY_ALT_TAB) {
+        Keyboard.release(KEY_LEFT_ALT);
+        // L2AltTab = false; // Reset if this mechanism is reused
+        return;
+    }
+
+    // Default action: release the key that was originally pressed
+    Keyboard.release(releasedKeyCode);
+  }
 }
 
-  #endif
+#endif
