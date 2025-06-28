@@ -425,15 +425,32 @@ void loop() {
   for (size_t i = 0; i < activeLayers.size(); ++i) { // Use size_t and activeLayers.size()
     if (activeLayers[i].waitingForSecondTap && (now - activeLayers[i].lastTapTime > DOUBLE_TAP_WINDOW)) {
       #if DEBUG || EDGE_DEBUG
-      Serial.print("Double tap timed out for layer index: "); Serial.println(i);
+      Serial.print("Double tap (1st tap) timed out for layer index: "); Serial.println(i);
       #endif
       activeLayers[i].waitingForSecondTap = false;
       activeLayers[i].tapCount = 0;
-      updateNeeded = true; // May need to update LEDs if tap state changed visual feedback
+      updateNeeded = true;
+    }
+    // Timeout for the release of the second tap (if it was held too long without other action)
+    if (activeLayers[i].awaitingSecondTapRelease && (now - activeLayers[i].lastTapTime > DOUBLE_TAP_WINDOW)) {
+      // This implies the key was held longer than the window after the 2nd tap, and not yet released.
+      // The keyReleased logic handles deactivation if held then released.
+      // This timeout ensures that if it's held *indefinitely* (or another event interrupts before release), it deactivates.
+      #if DEBUG || EDGE_DEBUG
+      Serial.print("Double tap (2nd tap hold) timed out, deactivating layer index: "); Serial.println(i);
+      #endif
+      if(activeLayers[i].activationType == LayerActivationType::DOUBLE_TAP_TOGGLE || activeLayers[i].activationType == LayerActivationType::DOUBLE_TAP_HOLD) {
+        // For DOUBLE_TAP_TOGGLE, this means the "hold for momentary" part timed out.
+        // For DOUBLE_TAP_HOLD, it also means it timed out.
+        activeLayers[i].isActive = false;
+      }
+      activeLayers[i].awaitingSecondTapRelease = false;
+      activeLayers[i].tapCount = 0; // Reset tap count
+      updateNeeded = true;
     }
   }
 
-  if (updateNeeded || (now - lastLayerTime >= 50)) { // Reduced interval for faster responsiveness, was 50
+  if (updateNeeded || (now - lastLayerTime >= 50)) {
     lastLayerTime = now;
     updateNeeded = false;
 

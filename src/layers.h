@@ -33,8 +33,9 @@ struct Layer {
     bool isActive;
     // For double-tap logic
     uint8_t tapCount;
-    unsigned long lastTapTime;
+    unsigned long lastTapTime; // For 1st tap of DT, or for 2nd tap press time when awaitingSecondTapRelease
     bool waitingForSecondTap; // True if first tap of a double tap has occurred
+    bool awaitingSecondTapRelease; // True if 2nd tap occurred, waiting for its release to decide toggle vs momentary
 
     // For toggle layers, this specific key deactivates it.
     // For DOUBLE_TAP_TOGGLE, this is the same as activationKeys[0]
@@ -45,7 +46,7 @@ struct Layer {
     Layer(KeyMapEntry (*km)[columnsCount], LayerActivationType type,
           std::initializer_list<uint16_t> keys, uint16_t offKey = 0)
         : /*name(n),*/ keymap(km), activationType(type), numActivationKeys(0),
-          isActive(false), tapCount(0), lastTapTime(0), waitingForSecondTap(false),
+          isActive(false), tapCount(0), lastTapTime(0), waitingForSecondTap(false), awaitingSecondTapRelease(false),
           toggleOffKey(offKey) {
         // Copy activation keys from initializer_list
         // Ensure not to overflow activationKeys
@@ -99,7 +100,7 @@ KeyMapEntry layer1_2[rowsCount][columnsCount] = {
   {{TAB},    {PAD7},  {PAD8},  {PAD9},  {CARAT}, {SQRT},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
   {{NUL},    {PAD4},  {PAD5},  {PAD6},  {EQUAL}, {DBLQ},  {NUL},   {NUL},   {LSEQL}, {GREQL}, {NUL},   {NUL},   {ENTER}, {NUL}},
   {{LSHFT},  {PAD1},  {PAD2},  {PAD3},  {PENT},  {NUL},   {NUL},   {NUL},   {LCHEV}, {RCHEV}, {NUL},   {NUL},   {UP},    {NMLCK}},
-  {{L12L},   {PAD0},  {PDOT},  {PAD0},  {LYR0},  {SPC},   {BKSPC}, {LYR0},  {NUL},   {PDOT},  {PAD0},  {LEFT},  {DOWN},  {L12L}}
+  {{L12L},   {PAD0},  {PDOT},  {PAD0},  {LYR2},  {SPC},   {BKSPC}, {LYR0},  {NUL},   {PDOT},  {PAD0},  {LEFT},  {DOWN},  {L12L}} // Changed LYR0 at [5][4] to LYR2
 };
 
 KeyMapEntry layer2[rowsCount][columnsCount] = {

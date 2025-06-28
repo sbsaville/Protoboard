@@ -262,38 +262,34 @@ void keyPressed(Key* key, LayoutKey* layout) {
           }
           break;
         case LayerActivationType::DOUBLE_TAP_TOGGLE:
-          if (currentLayer->isActive && pressedKeyCode == currentLayer->activationKeys[0] && !currentLayer->waitingForSecondTap) {
-            // Layer is already active, its activation key is pressed, and we are NOT in the middle of a new tap sequence for this layer.
-            // This means it's a single press to toggle OFF.
-            currentLayer->isActive = false;
-            currentLayer->waitingForSecondTap = false;
-            currentLayer->tapCount = 0;
-            #if EDGE_DEBUG
-            // Serial.print("Layer DEactivated by single press (DOUBLE_TAP_TOGGLE): "); Serial.println(currentLayer->name);
-            Serial.print("Layer DEactivated by single press (DOUBLE_TAP_TOGGLE): Index "); Serial.println(i);
+          if (currentLayer->isActive && pressedKeyCode == currentLayer->activationKeys[0] && !currentLayer->waitingForSecondTap && !currentLayer->awaitingSecondTapRelease) {
+            // Layer is ON, and this is a new, single press of its activation key (not part of an ongoing DT sequence)
+            currentLayer->isActive = false; // Toggle OFF
+            currentLayer->tapCount = 0;     // Reset tap count
+             #if EDGE_DEBUG
+            Serial.print("Layer DEactivated by single press (DT_TOGGLE): Index "); Serial.println(i);
             #endif
-          } else if (currentLayer->waitingForSecondTap &&
-              (now - currentLayer->lastTapTime) < DOUBLE_TAP_WINDOW &&
-              currentLayer->activationKeys[0] == pressedKeyCode) {
-            // This is the second tap of a double tap to activate
-            currentLayer->isActive = true; // Toggle ON
+          } else if (currentLayer->waitingForSecondTap && (now - currentLayer->lastTapTime) < DOUBLE_TAP_WINDOW && pressedKeyCode == currentLayer->activationKeys[0]) {
+            // This is the SECOND PRESS of a double tap sequence
+            currentLayer->isActive = true; // Activate the layer
             currentLayer->waitingForSecondTap = false;
-            currentLayer->tapCount = 0;
+            currentLayer->awaitingSecondTapRelease = true; // Now waiting for the release of this second tap
+            currentLayer->lastTapTime = now; // Record time of this second press for hold duration check
+            currentLayer->tapCount = 2; // Mark as 2nd tap processed
             #if EDGE_DEBUG
-            // Serial.print("Layer activated (DOUBLE_TAP_TOGGLE): "); Serial.println(currentLayer->name);
-            Serial.print("Layer activated (DOUBLE_TAP_TOGGLE): Index "); Serial.println(i);
+            Serial.print("Layer ACTIVE, awaiting 2nd tap release (DT_TOGGLE): Index "); Serial.println(i);
             #endif
-          } else if (!currentLayer->isActive) {
-            // Layer is not active, so this is the first tap of a potential double-tap to turn ON
+          } else if (!currentLayer->isActive && !currentLayer->awaitingSecondTapRelease) {
+            // This is the FIRST PRESS of a double tap sequence (layer is off, not already awaiting release of 2nd tap)
             currentLayer->waitingForSecondTap = true;
-            currentLayer->lastTapTime = now;
+            currentLayer->lastTapTime = now; // Record time of this first press
             currentLayer->tapCount = 1;
             #if EDGE_DEBUG
-            // Serial.print("Layer waiting for 2nd tap (DOUBLE_TAP_TOGGLE): "); Serial.println(currentLayer->name);
-            Serial.print("Layer waiting for 2nd tap (DOUBLE_TAP_TOGGLE): Index "); Serial.println(i);
+            Serial.print("Layer waiting for 2nd tap (DT_TOGGLE): Index "); Serial.println(i);
             #endif
           }
-          // If layer is active and a different key is pressed, or if it's the first tap of an activation sequence while already active (which shouldn't happen with current logic), no change.
+          // Note: if currentLayer->awaitingSecondTapRelease is true, a new press of the same key before release is ignored here.
+          // It will be handled by keyReleased or timeout.
           break;
         default:
           break;
@@ -489,13 +485,36 @@ void keyReleased(Key* key, LayoutKey* layout) {
           keyActionTaken = true;
           break;
         case LayerActivationType::DOUBLE_TAP_TOGGLE:
-          // Similar to TOGGLE, release does not change state after activation.
-          // Reset tap states if it was a partial tap that didn't complete.
-          if (currentLayer->waitingForSecondTap) { // If release happened before second tap
-             // currentLayer->waitingForSecondTap = false; // This is handled by timeout or next press
-             // currentLayer->tapCount = 0;
+          if (currentLayer->awaitingSecondTapRelease && releasedKeyCode == currentLayer->activationKeys[0]) {
+            // This is the release of the second tap
+            currentLayer->awaitingSecondTapRelease = false;
+            unsigned long holdDuration = millis() - currentLayer->lastTapTime; // lastTapTime was set at 2nd press
+
+            if (holdDuration >= DOUBLE_TAP_WINDOW) { // Held longer than the window (or your DT_CONFIRM_WINDOW)
+              currentLayer->isActive = false; // Deactivate (momentary behavior)
+              #if EDGE_DEBUG
+              Serial.print("Layer DEactivated (DT_TOGGLE, long hold on 2nd tap): Index "); Serial.println(i);
+              #endif
+            } else {
+              // Short release, layer remains active (toggled ON)
+              #if EDGE_DEBUG
+              Serial.print("Layer REMAINS active (DT_TOGGLE, short release on 2nd tap): Index "); Serial.println(i);
+              #endif
+            }
+            currentLayer->tapCount = 0; // Reset tap count
+            keyActionTaken = true;
+          } else if (currentLayer->waitingForSecondTap && releasedKeyCode == currentLayer->activationKeys[0]) {
+            // This is the release of the FIRST tap.
+            // waitingForSecondTap remains true, timeout will handle it if no second tap comes.
+            // Or next press will check it.
+            // No change in isActive state here.
+            keyActionTaken = true; // The press was a layer action.
+          } else {
+            // This release is not part of an active DT sequence for this layer,
+            // but if the layer is active and this is its activation key,
+            // the press might have turned it off.
+             keyActionTaken = true; // The press was a layer action.
           }
-          keyActionTaken = true; // The press was a layer action.
           break;
         default:
           break;
