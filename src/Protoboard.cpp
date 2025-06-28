@@ -27,6 +27,9 @@ bool ALT_L = 0;
 bool CAPS_SLSH = 0;
 bool CAPS_ESC = 0;
 
+// NEW: Storage for the default map of layer0
+static KeyMapEntry defaultLayer0Map[rowsCount][columnsCount];
+
 unsigned long loopStartTime = 0;
 unsigned long loopDuration = 0;
 bool loopTimer = false;
@@ -89,6 +92,14 @@ void L_check() {
   #endif
 }
 
+// Function to initialize the defaultLayer0Map with the initial state of layer0
+void initializeDefaultLayer0Map() {
+  for (uint8_t r = 0; r < rowsCount; r++) {
+    for (uint8_t c = 0; c < columnsCount; c++) {
+      defaultLayer0Map[r][c] = layer0[r][c];
+    }
+  }
+}
 
 static unsigned long lastTime = 0;        // For keyboard scanning
 static unsigned long lastLayerTime = 0;   // For layer updates
@@ -102,6 +113,9 @@ void setup() {
 
   // Initialize the key tracking matrix
   initKeyTrackingMatrix();
+
+  // Initialize the default layer0 map
+  initializeDefaultLayer0Map();
 
   delay(1000);
 
@@ -228,11 +242,12 @@ void remapKeys() {
   // This works by tracking the original LayoutKey pointer when a key is first pressed
 
   // Handle toggle state changes (these still need to be applied)
-  layer0[5][4] = (ALT_L == 1) ? KeyMapEntry{LALT} : KeyMapEntry{LYR2};
-  layer0[5][6] = (ALT_R == 1) ? KeyMapEntry{RALT} : KeyMapEntry{BKSPC};
-  layer0[0][13] = (ALT_R == 1) ? KeyMapEntry{BKSPC} : KeyMapEntry{DEL};
+  // Use defaultLayer0Map for the "normal" key states
+  layer0[5][4] = (ALT_L == 1) ? KeyMapEntry{LALT} : defaultLayer0Map[5][4];
+  layer0[5][6] = (ALT_R == 1) ? KeyMapEntry{RALT} : defaultLayer0Map[5][6];
+  layer0[0][13] = (ALT_R == 1) ? KeyMapEntry{BKSPC} : defaultLayer0Map[0][13];
   layer0[3][0]  = (CAPS_SLSH == 1) ? KeyMapEntry{BSLSH} :
-                   (CAPS_ESC == 1) ? KeyMapEntry{ESC} : KeyMapEntry{CAPS};
+                   ((CAPS_ESC == 1) ? KeyMapEntry{ESC} : defaultLayer0Map[3][0]);
   if (ALT_L == 1) {
     ALTL->ledColor = &Modifier;
   } else {
