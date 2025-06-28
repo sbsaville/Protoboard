@@ -6,12 +6,12 @@
 #include "rgbleds.h"
 
 KeyMapEntry layout0[rowsCount][columnsCount] = {
-  {{ESC},    {F1},    {F2},    {F3},    {F4},    {F5},    {F6},    {F7},    {F8},    {F9},     {F10},   {F11},    {F12},    {DEL}  },
-  {{TILDE},  {NUM1},  {NUM2},  {NUM3},  {NUM4},  {NUM5},  {NUM6},  {NUM7},  {NUM8},  {NUM9},   {NUM0},  {MINUS},  {EQUAL},  {PGDN} },
-  {{TAB},    {Q},     {W},     {E},     {R},     {T},     {Y},     {U},     {I},     {O},      {P},     {LBRACK}, {RBRACK}, {BSLSH}},
-  {{CAPS},   {A},     {S},     {D},     {F},     {G},     {H},     {J},     {K},     {L},      {SMCLN}, {QUOTE},  {ENTER},  {HOME} },
-  {{LSHFT},  {Z},     {X},     {C},     {V},     {B},     {N},     {M},     {COMMA}, {PERIOD}, {SLASH}, {RSHFT, CAPS},  {UP},     {END}  },
-  {{LCRTL},  {LGUI},  {LALT},  {LYR1},  {LYR2},  {SPC},   {BKSPC}, {LYR3},  {LYR4},  {RALT},   {RCRTL}, {LEFT},   {DOWN},   {RIGHT}}
+  {{ESC},    {F1},    {F2},    {F3},    {F4},    {F5},    {F6},    {F7},    {F8},    {F9},     {F10},   {F11},         {F12},    {DEL}  },
+  {{TILDE},  {NUM1},  {NUM2},  {NUM3},  {NUM4},  {NUM5},  {NUM6},  {NUM7},  {NUM8},  {NUM9},   {NUM0},  {MINUS},       {EQUAL},  {PGDN} },
+  {{TAB},    {Q},     {W},     {E},     {R},     {T},     {Y},     {U},     {I},     {O},      {P},     {LBRACK},      {RBRACK}, {BSLSH}},
+  {{CAPS},   {A},     {S},     {D},     {F},     {G},     {H},     {J},     {K},     {L},      {SMCLN}, {QUOTE},       {ENTER},  {HOME} },
+  {{LSHFT},  {Z},     {X},     {C},     {V},     {B},     {N},     {M},     {COMMA}, {PERIOD}, {SLASH}, {RSHFT, CAPS}, {UP},     {END}  },
+  {{LCRTL},  {LGUI},  {LALT},  {LYR1},  {LYR2},  {SPC},   {BKSPC}, {LYR3},  {LYR4},  {RALT},   {RCRTL}, {LEFT},        {DOWN},   {RIGHT}}
 };
 
 KeyMapEntry layout1[rowsCount][columnsCount] = {
