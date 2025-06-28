@@ -115,8 +115,8 @@ void L_check() {
   #endif
 }
 
-// static unsigned long lastTime = 0;        // For keyboard scanning - Replaced by now in loop
-// static unsigned long lastLayerTime = 0;   // For layer updates - Replaced by now in loop
+static unsigned long lastTime = 0;        // For keyboard scanning
+static unsigned long lastLayerTime = 0;   // For layer updates
 static bool updateNeeded = false;
 
 // Function to add layers to the activeLayers vector
