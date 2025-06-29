@@ -443,6 +443,7 @@ void keyPressed(Key* key, LayoutKey* layout) {
         layer0_override_active = false;
         ALT_L = false; ALT_R = false;
         CAPS_SLSH = false; CAPS_ESC = false;
+        Keyboard.releaseAll();
         updateNeeded = true;
         L_check(); // For debug
         return;

@@ -126,11 +126,11 @@ void scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]) {
 
 void leds0()     { scanLEDs(layer0); }
 void leds1()     { scanLEDs(layer1); }
-void leds1_2()   { scanLEDs(layer1_2); }
+void leds1_2()   { scanLEDs(layer2DT); }
 void leds2()     { scanLEDs(layer2); }
 void leds2_3()   { scanLEDs(layer2_3); }
 void leds3()     { scanLEDs(layer3); }
-void leds3_4()   { scanLEDs(layer3_4); }
+void leds3_4()   { scanLEDs(layer3DT); }
 void leds4()     { scanLEDs(layer4); }
 
 
@@ -149,7 +149,7 @@ void rgbleds::setup() {
 
   for (int flash = 0; flash < 2; flash++) {
     for (int i = 0; i < NUM_LEDS; i++) {
-      leds[i] = defaultLayerColor; // Changed from Layer
+      leds[i] = LayerKey; // Changed from Layer
     }
     FastLED.show();
     delay(100);

@@ -51,7 +51,6 @@ const uint16_t LAYER_4                       = 5   | 0xA000;
 
 const uint16_t KEY_CAPS_SLASH                = 17  | 0xA000;
 const uint16_t KEY_CAPS_ESC                  = 18  | 0xA000;
-const uint16_t LAYER_1_2L                    = 19  | 0xA000;
 const uint16_t KEY_ALTL                      = 20  | 0xA000;
 const uint16_t KEY_ALTR                      = 21  | 0xA000;
 

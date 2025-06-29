@@ -6,7 +6,7 @@
 typedef CRGB LedColor;
 using LedColor = CRGB;
 
-LedColor defaultLayerColor = CRGB(0x00FFFF); // Renamed from Layer to avoid type collision
+LedColor LayerKey = CRGB(0x00FFFF); // Renamed from Layer to avoid type collision
 LedColor Letter   = CRGB(0x8000FF);
 LedColor Number   = CRGB(0x0000FF);
 LedColor Numnav   = CRGB(0x0000FF);
@@ -57,16 +57,15 @@ struct KeyMapEntry {
     }
 };
 
-LayoutKey _LYR1_       = {LAYER_1,         &defaultLayerColor};       LayoutKey* LYR1    = &_LYR1_;
-LayoutKey _LYR2_       = {LAYER_2,         &defaultLayerColor};       LayoutKey* LYR2    = &_LYR2_;
-LayoutKey _LYR3_       = {LAYER_3,         &defaultLayerColor};       LayoutKey* LYR3    = &_LYR3_;
-LayoutKey _LYR4_       = {LAYER_4,         &defaultLayerColor};       LayoutKey* LYR4    = &_LYR4_;
-LayoutKey _L1_2L_      = {LAYER_1_2L,      &Special};     LayoutKey* L12L    = &_L1_2L_;
+LayoutKey _LYR1_       = {LAYER_1,         &LayerKey};    LayoutKey* LYR1    = &_LYR1_;
+LayoutKey _LYR2_       = {LAYER_2,         &LayerKey};    LayoutKey* LYR2    = &_LYR2_;
+LayoutKey _LYR3_       = {LAYER_3,         &LayerKey};    LayoutKey* LYR3    = &_LYR3_;
+LayoutKey _LYR4_       = {LAYER_4,         &LayerKey};    LayoutKey* LYR4    = &_LYR4_;
 LayoutKey _CAPSLSH_    = {KEY_CAPS_SLASH,  &Special};     LayoutKey* CAPSLSH = &_CAPSLSH_;
 LayoutKey _CAPSESC_    = {KEY_CAPS_ESC,    &Special};     LayoutKey* CAPSESC = &_CAPSESC_;
 LayoutKey _ALTL_       = {KEY_ALTL,        &Special};     LayoutKey* ALTL    = &_ALTL_;
 LayoutKey _ALTR_       = {KEY_ALTR,        &Special};     LayoutKey* ALTR    = &_ALTR_;
-LayoutKey _LYR0_       = {LAYER_0,         &defaultLayerColor};       LayoutKey* LYR0    = &_LYR0_;
+LayoutKey _LYR0_       = {LAYER_0,         &LayerKey};    LayoutKey* LYR0    = &_LYR0_;
 
 LayoutKey _RLEASE_     = {KEY_RELEASE,     &Special};     LayoutKey* RLEASE  = &_RLEASE_;
 LayoutKey _SET0_       = {KEY_SET0,        &Special};     LayoutKey* SET0    = &_SET0_;

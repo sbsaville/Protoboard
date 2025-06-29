@@ -144,19 +144,19 @@ void setup() {
   // To make DT layers override, they should be added *later* (higher index).
 
   // Renamed layers as per request:
-  // Original layer1_2 keymap is now layout2DT, triggered by double-tapping LAYER_2 key.
+  // Original layer2DT keymap is now layout2DT, triggered by double-tapping LAYER_2 key.
   // For DOUBLE_TAP_TOGGLE, the activationKey[0] is also the toggleOffKey by default.
-  addLayer(layer1_2, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_2}); // Formerly "layout2DT"
+  addLayer(layer2DT, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_2}); // Formerly "layout2DT"
 
-  // Original layer3_4 keymap is now layout3DT, triggered by double-tapping LAYER_3 key.
-  addLayer(layer3_4, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_3}); // Formerly "layout3DT"
+  // Original layer3DT keymap is now layout3DT, triggered by double-tapping LAYER_3 key.
+  addLayer(layer3DT, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_3}); // Formerly "layout3DT"
 
   // Restore Layer2_3 Combo
   addLayer(layer2_3, LayerActivationType::COMBO_PRESS, {LAYER_2, LAYER_3});
 
   // Removing other old combo/toggle layers that are being replaced or are not specified to be kept:
-  // addLayer(layer1_2, LayerActivationType::COMBO_PRESS, {LAYER_1, LAYER_2}); // Old L1+L2 combo (replaced by layout2DT)
-  // addLayer(layer1_2, LayerActivationType::TOGGLE, {LAYER_1_2L}); // Old L1_2L toggle for layer1_2 (keymap now used by layout2DT)
+  // addLayer(layer2DT, LayerActivationType::COMBO_PRESS, {LAYER_1, LAYER_2}); // Old L1+L2 combo (replaced by layout2DT)
+  // addLayer(layer2DT, LayerActivationType::TOGGLE, {LAYER_1_2L}); // Old L1_2L toggle for layer2DT (keymap now used by layout2DT)
 
   // LYR0 for layer0 override is handled directly in keyPressed/keyReleased.
 
@@ -221,7 +221,7 @@ KeyMapEntry (*getActiveLayout())[columnsCount] {
                 trillbar::setMode(trillbar::MODE_BRIGHTNESS);
             } else if (activeLayers[i].keymap == layer2) {
                 trillbar::setMode(trillbar::MODE_SCROLL);
-            } else if (activeLayers[i].keymap == layer1_2 || activeLayers[i].keymap == layer3_4) { // layer1_2 is layout2DT, layer3_4 is layout3DT
+            } else if (activeLayers[i].keymap == layer2DT || activeLayers[i].keymap == layer3DT) { // layer2DT is layout2DT, layer3DT is layout3DT
                 trillbar::setMode(trillbar::MODE_ARROWS);
             } else {
                 trillbar::setMode(trillbar::MODE_ARROWS); // Default for other layers or unhandled ones
