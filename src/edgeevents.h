@@ -424,9 +424,8 @@ void keyPressed(Key* key, LayoutKey* layout) {
       Keyboard.send_now(); // ensure ALT is registered before TAB
       Keyboard.press(KEY_TAB);
       Keyboard.release(KEY_TAB); // TAB is released quickly
-      // L2AltTab = true; // This flag was used to release ALT when LAYER_2 was released. Needs new handling if still desired.
-      // For now, ALT will be released when KEY_ALT_TAB itself is released.
-      return;
+      L2AltTab = true; // Set the flag that Alt is now being held for Layer 2
+      return; // The release of ALT is now handled by Layer 2 deactivation
     }
 
     // Shifted keys (sends key with SHIFT)
@@ -500,9 +499,16 @@ void keyReleased(Key* key, LayoutKey* layout) {
         case LayerActivationType::SINGLE_PRESS:
           currentLayer->isActive = false;
           #if EDGE_DEBUG
-          // Serial.print("Layer deactivated (SINGLE_PRESS release): "); Serial.println(currentLayer->name);
           Serial.print("Layer deactivated (SINGLE_PRESS release): Index "); Serial.println(i);
           #endif
+          // Check for Alt-Tab special handling on Layer 2 deactivation
+          if (releasedKeyCode == LAYER_2 && L2AltTab) {
+            Keyboard.release(KEY_LEFT_ALT);
+            L2AltTab = false;
+            #if EDGE_DEBUG
+            Serial.println("Alt-Tab sequence finished, ALT released.");
+            #endif
+          }
           keyActionTaken = true;
           break;
         case LayerActivationType::COMBO_PRESS:
@@ -623,12 +629,12 @@ void keyReleased(Key* key, LayoutKey* layout) {
       Mouse.set_buttons(0,0,0); return;
     }
 
-    // Alt-Tab: release the ALT key
-    if (releasedKeyCode == KEY_ALT_TAB) {
-        Keyboard.release(KEY_LEFT_ALT);
-        // L2AltTab = false; // Reset if this mechanism is reused
-        return;
-    }
+    // Alt-Tab: release the ALT key - THIS IS NOW HANDLED BY LAYER 2 DEACTIVATION
+    // if (releasedKeyCode == KEY_ALT_TAB) {
+    //     Keyboard.release(KEY_LEFT_ALT);
+    //     // L2AltTab = false; // Reset if this mechanism is reused
+    //     return;
+    // }
 
     // Default action: release the key that was originally pressed
     Keyboard.release(releasedKeyCode);
