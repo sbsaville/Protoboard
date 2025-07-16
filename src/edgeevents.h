@@ -423,10 +423,9 @@ void keyPressed(Key* key, LayoutKey* layout) {
       Keyboard.press(KEY_LEFT_ALT);
       Keyboard.send_now(); // ensure ALT is registered before TAB
       Keyboard.press(KEY_TAB);
-      Keyboard.release(KEY_TAB); // TAB is released quickly
-      // L2AltTab = true; // This flag was used to release ALT when LAYER_2 was released. Needs new handling if still desired.
-      // For now, ALT will be released when KEY_ALT_TAB itself is released.
-      return;
+      Keyboard.release(KEY_TAB);
+      L2AltTab = true;
+      return; 
     }
 
     // Shifted keys (sends key with SHIFT)
@@ -504,6 +503,10 @@ void keyReleased(Key* key, LayoutKey* layout) {
           // Serial.print("Layer deactivated (SINGLE_PRESS release): "); Serial.println(currentLayer->name);
           Serial.print("Layer deactivated (SINGLE_PRESS release): Index "); Serial.println(i);
           #endif
+          if (releasedKeyCode == LAYER_2 && L2AltTab) {
+            Keyboard.release(KEY_LEFT_ALT);
+            L2AltTab = false;
+          }
           keyActionTaken = true;
           break;
         case LayerActivationType::COMBO_PRESS:
@@ -618,20 +621,10 @@ void keyReleased(Key* key, LayoutKey* layout) {
 
     if (isControlKey) return;
 
-
-    // Mouse buttons
     if (releasedKeyCode == MOUSE_LCLICK || releasedKeyCode == MOUSE_RCLICK) {
       Mouse.set_buttons(0,0,0); return;
     }
 
-    // Alt-Tab: release the ALT key
-    if (releasedKeyCode == KEY_ALT_TAB) {
-        Keyboard.release(KEY_LEFT_ALT);
-        // L2AltTab = false; // Reset if this mechanism is reused
-        return;
-    }
-
-    // Default action: release the key that was originally pressed
     Keyboard.release(releasedKeyCode);
   }
 }
