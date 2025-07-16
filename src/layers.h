@@ -75,12 +75,12 @@ struct Layer {
 extern std::vector<Layer> activeLayers;
 
 const KeyMapEntry layer0_default[rowsCount][columnsCount] = {
-  {{ESC},    {F1},    {F2},    {F3},    {F4},    {F5},    {F6},    {F7},    {F8},    {F9},     {F10},   {F11},        {F12},    {DEL}  },
-  {{TILDE},  {NUM1},  {NUM2},  {NUM3},  {NUM4},  {NUM5},  {NUM6},  {NUM7},  {NUM8},  {NUM9},   {NUM0},  {MINUS},      {EQUAL},  {PGDN} },
-  {{TAB},    {Q},     {W},     {E},     {R},     {T},     {Y},     {U},     {I},     {O},      {P},     {LBRACK},     {RBRACK}, {BSLSH}},
-  {{CAPS},   {A},     {S},     {D},     {F},     {G},     {H},     {J},     {K},     {L},      {SMCLN}, {QUOTE},      {ENTER},  {HOME} },
-  {{LSHFT},  {Z},     {X},     {C},     {V},     {B},     {N},     {M},     {COMMA}, {PERIOD}, {SLASH}, {RSHFT,CAPS}, {UP},     {END}  },
-  {{LCRTL},  {LGUI},  {LALT},  {LYR1},  {LYR2},  {SPC},   {BKSPC}, {LYR3},  {LYR4},  {RALT},   {RCRTL}, {LEFT},       {DOWN},   {RIGHT}}
+  {{ESC},    {F1},    {F2},    {F3},    {F4},    {F5},    {F6},    {F7},    {F8},    {F9},     {F10},   {F11},        {F12},   {DEL}  },
+  {{TILDE},  {NUM1},  {NUM2},  {NUM3},  {NUM4},  {NUM5},  {NUM6},  {NUM7},  {NUM8},  {NUM9},   {NUM0},  {MINUS},      {EQUAL}, {HOME} },
+  {{TAB},    {Q},     {W},     {E},     {R},     {T},     {Y},     {U},     {I},     {O},      {P},     {LBRACK},     {RBRACK},{BSLSH}},
+  {{ESC},    {A},     {S},     {D},     {F},     {G},     {H},     {J},     {K},     {L},      {SMCLN}, {QUOTE},      {ENTER}, {END}  },
+  {{LSHFT},  {Z},     {X},     {C},     {V},     {B},     {N},     {M},     {COMMA}, {PERIOD}, {SLASH}, {RSHFT,CAPS}, {UP},    {RIGHT}},
+  {{LCRTL},  {LGUI},  {LALT},  {LYR1},  {LYR2},  {SPC},   {BKSPC}, {LYR3},  {LYR4},  {RALT},   {RGUI},  {RCRTL},      {LEFT},  {DOWN} }
 };
 
 extern KeyMapEntry layer0[rowsCount][columnsCount];
@@ -94,22 +94,22 @@ KeyMapEntry layer1[rowsCount][columnsCount] = {
   {{PAD0},    {PAD0},  {PDOT},  {LYR1},  {LYR2},  {SPC},   {BKSPC}, {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}}
 };
 
-KeyMapEntry layer2DT[rowsCount][columnsCount] = {
-  {{ESC,SET0},{F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {DEL}},
-  {{LPAR},    {PMUL},  {PDIV},  {PADD},  {PSUB},  {RPAR},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {DNEQL}, {EQUAL}, {NUL}},
-  {{TAB},     {PAD7},  {PAD8},  {PAD9},  {CARAT}, {SQRT},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
-  {{NUL},     {PAD4},  {PAD5},  {PAD6},  {EQUAL}, {DBLQ},  {NUL},   {NUL},   {LSEQL}, {GREQL}, {NUL},   {NUL},   {ENTER}, {NUL}},
-  {{LSHFT},   {PAD1},  {PAD2},  {PAD3},  {PENT},  {NUL},   {NUL},   {NUL},   {LCHEV}, {RCHEV}, {NUL},   {NUL},   {UP},    {NMLCK}},
-  {{LCRTL},   {PAD0},  {PDOT},  {PAD0},  {LYR2},  {SPC},   {BKSPC}, {LYR0},  {NUL},   {PDOT},  {PAD0},  {LEFT},  {DOWN},  {RIGHT}}
-};
-
 KeyMapEntry layer2[rowsCount][columnsCount] = {
   {{ESC,SET0},{F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {NUL}},
   {{NUL},     {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
   {{ALTT},    {HOME},  {UP},    {END},   {PGUP},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
   {{NUL},     {LEFT},  {DOWN},  {RIGHT}, {PGDN},  {NUL},   {LEFT},  {DOWN},  {UP},    {RIGHT}, {NUL},   {NUL},   {ENTER}, {LCLK}},
   {{LSHFT},   {NUL},   {NUL},   {NUL},   {PENT},  {BSLSH}, {HASH},  {AMPS},  {LCHEV}, {RCHEV}, {NUL},   {NUL},   {PGUP},  {NMLCK}},
-  {{LCRTL},   {PAD0},  {PDOT},  {LYR1},  {LYR2},  {DEL},   {BKSPC}, {LYR3},  {NUL},   {RALT},  {RCRTL}, {BKSPC}, {PGDN},  {DEL}}
+  {{LCRTL},   {NUL},   {NUL},   {LYR1},  {LYR2},  {DEL},   {BKSPC}, {LYR3},  {NUL},   {RALT},  {RGUI},  {RCRTL}, {PGDN},  {DEL}}
+};
+
+KeyMapEntry layer2DT[rowsCount][columnsCount] = {
+  {{ESC,SET0},{F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {DEL}},
+  {{LPAR},    {PMUL},  {PDIV},  {PADD},  {PSUB},  {RPAR},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {DNEQL}, {EQUAL}, {NUL}},
+  {{TAB},     {PAD7},  {PAD8},  {PAD9},  {CARAT}, {SQRT},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
+  {{NUL},     {PAD4},  {PAD5},  {PAD6},  {EQUAL}, {DBLQ},  {NUL},   {NUL},   {LSEQL}, {GREQL}, {NUL},   {NUL},   {ENTER}, {NUL}},
+  {{LSHFT},   {PAD1},  {PAD2},  {PAD3},  {PENT},  {NUL},   {NUL},   {NUL},   {LCHEV}, {RCHEV}, {NUL},   {NUL},   {UP},    {NMLCK}},
+  {{LCRTL},   {PAD0},  {PDOT},  {PAD0},  {LYR2},  {SPC},   {BKSPC}, {LYR0},  {NUL},   {PDOT},  {PAD0},  {RCRTL}, {LEFT},  {RIGHT}}
 };
 
 KeyMapEntry layer2_3[rowsCount][columnsCount] = {
@@ -127,7 +127,7 @@ KeyMapEntry layer3[rowsCount][columnsCount] = {
   {{NUL},     {QUOTE}, {DBLQ},  {EXCLM}, {ASTR},  {LCHEV}, {RCHEV}, {UNDS},  {NUL},   {NUL},   {PIPE},  {NUL},   {NUL},   {NUL}},
   {{NUL},     {NUL},   {NUL},   {LBRACE},{LBRACK},{LPAR},  {RPAR},  {RBRACK},{RBRACE},{NUL},   {NUL},   {NUL},   {ENTER}, {NUL}},
   {{NUL},     {NUL},   {NUL},   {NUL},   {CMTST}, {BSLSH}, {HASH},  {CMTED}, {LSEQL}, {GREQL}, {NUL},   {NUL},   {PGUP},  {NUL}},
-  {{NUL},     {NUL},   {NUL},   {NUL},   {LYR2},  {DEL},   {BKSPC}, {LYR3},  {LYR4},  {NUL},   {NUL},   {BKSPC}, {PGDN},  {DEL}}
+  {{LCRTL},   {LGUI},  {LALT},  {NUL},   {LYR2},  {DEL},   {BKSPC}, {LYR3},  {LYR4},  {NUL},   {NUL},   {RCRTL}, {PGDN},  {DEL}}
 };
 
 KeyMapEntry layer3DT[rowsCount][columnsCount] = {
@@ -136,7 +136,7 @@ KeyMapEntry layer3DT[rowsCount][columnsCount] = {
   {{NUL},     {NUL},   {NUL},   {EMCRN}, {NUL},   {NUL},   {NUL},   {NUL},   {PAD7},  {PAD8},  {PAD9},  {CARAT}, {NUL},   {NUL}},
   {{NUL},     {AMRN},  {NUL},   {NUL},   {NUL},   {GMAIL}, {NUL},   {NUL},   {PAD4},  {PAD5},  {PAD6},  {NUL},   {ENTER}, {NUL}},
   {{NUL},     {NUL},   {NUL},   {NUL},   {NUL},   {LNBRK}, {NUL},   {NUL},   {PAD1},  {PAD2},  {PAD3},  {NUL},   {NUL},   {NMLCK}},
-  {{NUL},     {RBOT},  {NUL},   {NUL},   {LYR0},  {SPC},   {BKSPC}, {LYR3},  {PAD0},  {PAD0},  {PDOT},  {NUL},   {NUL},   {NUL}}
+  {{NUL},     {RBOT},  {NUL},   {NUL},   {LYR0},  {SPC},   {BKSPC}, {LYR3},  {PAD0},  {PAD0},  {PDOT},  {RCRTL}, {NUL},   {NUL}}
 };
 
 KeyMapEntry layer4[rowsCount][columnsCount] = {

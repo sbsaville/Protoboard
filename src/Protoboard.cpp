@@ -311,9 +311,9 @@ void remapKeys() {
   // Update base layer0 mappings based on toggle states
   layer0[5][4] = (ALT_L == 1) ? KeyMapEntry{LALT} : layer0_default[5][4];
   layer0[5][6] = (ALT_R == 1) ? KeyMapEntry{RALT} : layer0_default[5][6];
-  layer0[0][13] = (ALT_R == 1) ? KeyMapEntry{BKSPC} : layer0_default[0][13]; // This seems like an odd remap for ALT_R, but keeping original logic
+  layer0[0][13] = (ALT_R == 1) ? KeyMapEntry{BKSPC} : layer0_default[0][13];
   layer0[3][0]  = (CAPS_SLSH == 1) ? KeyMapEntry{BSLSH} :
-                   (CAPS_ESC == 1) ? KeyMapEntry{ESC} : layer0_default[3][0];
+                   (CAPS_ESC == 1) ? KeyMapEntry{CAPS} : layer0_default[3][0];
 
   // Update LED colors based on toggle states
   if (ALT_L == 1) {
