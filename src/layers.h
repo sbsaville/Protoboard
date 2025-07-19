@@ -97,10 +97,10 @@ KeyMapEntry layer1[rowsCount][columnsCount] = {
 KeyMapEntry layer2[rowsCount][columnsCount] = {
   {{ESC,SET0},{F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {NUL}},
   {{NUL},     {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
-  {{ALTT},    {HOME},  {UP},    {END},   {PGUP},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
+  {{ALTTAB},  {HOME},  {UP},    {END},   {PGUP},  {NUL},   {HOME},  {PGDN},  {PGUP},  {END},   {NUL},   {NUL},   {NUL},   {NUL}},
   {{NUL},     {LEFT},  {DOWN},  {RIGHT}, {PGDN},  {NUL},   {LEFT},  {DOWN},  {UP},    {RIGHT}, {NUL},   {NUL},   {ENTER}, {LCLK}},
   {{LSHFT},   {NUL},   {NUL},   {NUL},   {PENT},  {BSLSH}, {HASH},  {AMPS},  {LCHEV}, {RCHEV}, {NUL},   {NUL},   {PGUP},  {NMLCK}},
-  {{LCRTL},   {NUL},   {NUL},   {LYR1},  {LYR2},  {DEL},   {BKSPC}, {LYR3},  {NUL},   {RALT},  {RGUI},  {RCRTL}, {PGDN},  {DEL}}
+  {{LCRTL},   {LGUI},  {LALT},  {LYR1},  {LYR2},  {DEL},   {BKSPC}, {LYR3},  {NUL},   {RALT},  {RGUI},  {RCRTL}, {PGDN},  {PGDN}}
 };
 
 KeyMapEntry layer2DT[rowsCount][columnsCount] = {
@@ -126,8 +126,8 @@ KeyMapEntry layer3[rowsCount][columnsCount] = {
   {{NUL},     {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PLSMNS},{DNEQL}, {NUL}},
   {{NUL},     {QUOTE}, {DBLQ},  {EXCLM}, {ASTR},  {LCHEV}, {RCHEV}, {UNDS},  {NUL},   {NUL},   {PIPE},  {NUL},   {NUL},   {NUL}},
   {{NUL},     {NUL},   {NUL},   {LBRACE},{LBRACK},{LPAR},  {RPAR},  {RBRACK},{RBRACE},{NUL},   {NUL},   {NUL},   {ENTER}, {NUL}},
-  {{NUL},     {NUL},   {NUL},   {NUL},   {CMTST}, {BSLSH}, {HASH},  {CMTED}, {LSEQL}, {GREQL}, {NUL},   {NUL},   {PGUP},  {NUL}},
-  {{LCRTL},   {LGUI},  {LALT},  {NUL},   {LYR2},  {DEL},   {BKSPC}, {LYR3},  {LYR4},  {NUL},   {NUL},   {RCRTL}, {PGDN},  {DEL}}
+  {{LSHFT},   {NUL},   {NUL},   {NUL},   {CMTST}, {BSLSH}, {HASH},  {CMTED}, {LSEQL}, {GREQL}, {NUL},   {RSHFT}, {PGUP},  {NUL}},
+  {{LCRTL},   {LGUI},  {LALT},  {NUL},   {LYR2},  {DEL},   {BKSPC}, {LYR3},  {LYR4},  {RALT},  {RGUI},  {RCRTL}, {PGDN},  {DEL}}
 };
 
 KeyMapEntry layer3DT[rowsCount][columnsCount] = {
