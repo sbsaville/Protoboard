@@ -107,6 +107,13 @@ const uint16_t CMNTSTRT                      = 404 | 0xA000;
 const uint16_t CMNTEND                       = 405 | 0xA000;
 const uint16_t LOOP_COUNT                    = 406 | 0xA000;
 const uint16_t MACRO_SQUAREROOT              = 407 | 0xA000;
+const uint16_t APOSTROPHE_S                  = 408 | 0xA000;
+const uint16_t APOSTROPHE_T                  = 409 | 0xA000;
+const uint16_t APOSTROPHE_M                  = 410 | 0xA000;
+const uint16_t APOSTROPHE_D                  = 411 | 0xA000;
+const uint16_t APOSTROPHE_VE                 = 412 | 0xA000;
+const uint16_t APOSTROPHE_RE                 = 413 | 0xA000;
+const uint16_t APOSTROPHE_LL                 = 414 | 0xA000;
 
 //                          administrative
 const uint16_t KEY_NULL                      = 600 | 0xA000;

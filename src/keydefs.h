@@ -79,6 +79,13 @@ LayoutKey _CMTST_      = {CMNTSTRT,        &Macro};       LayoutKey* CMTST   = &
 LayoutKey _CMTED_      = {CMNTEND,         &Macro};       LayoutKey* CMTED   = &_CMTED_;
 LayoutKey _LOOPCT_     = {LOOP_COUNT,      &Special};     LayoutKey* LOOPCT  = &_LOOPCT_;
 LayoutKey _SQRT_       = {MACRO_SQUAREROOT,&Macro};       LayoutKey* SQRT    = &_SQRT_;
+LayoutKey _APST_S_     = {APOSTROPHE_S,    &Macro};       LayoutKey* APST_S  = &_APST_S_;
+LayoutKey _APST_T_     = {APOSTROPHE_T,    &Macro};       LayoutKey* APST_T  = &_APST_T_;
+LayoutKey _APST_M_     = {APOSTROPHE_M,    &Macro};       LayoutKey* APST_M  = &_APST_M_;
+LayoutKey _APST_D_     = {APOSTROPHE_D,    &Macro};       LayoutKey* APST_D  = &_APST_D_;
+LayoutKey _APST_VE_    = {APOSTROPHE_VE,   &Macro};       LayoutKey* APST_VE = &_APST_VE_;
+LayoutKey _APST_RE_    = {APOSTROPHE_RE,   &Macro};       LayoutKey* APST_RE = &_APST_RE_;
+LayoutKey _APST_LL_    = {APOSTROPHE_LL,   &Macro};       LayoutKey* APST_LL = &_APST_LL_;
 
 LayoutKey _ESC_        = {KEY_ESC,         &Modifier};    LayoutKey* ESC     = &_ESC_;
 LayoutKey _F1_         = {KEY_F1,          &FKeys1};      LayoutKey* F1      = &_F1_;
