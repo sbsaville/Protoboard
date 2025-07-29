@@ -250,7 +250,7 @@ LayoutKey _TRL1_       = {TRILL_MODE1,      &Special};    LayoutKey* TRL1    = &
 LayoutKey _TRL2_       = {TRILL_MODE2,      &Special};    LayoutKey* TRL2    = &_TRL2_;
 LayoutKey _TRL3_       = {TRILL_MODE3,      &Special};    LayoutKey* TRL3    = &_TRL3_;
 LayoutKey _ALTTAB_     = {KEY_ALT_TAB,      &Special};    LayoutKey* ALTTAB  = &_ALTTAB_;
-LayoutKey _RBOT_       = {KEY_REBOOT,       &Special};    LayoutKey* RBOT    = &_RBOT_;
+LayoutKey _RBOOT_       = {KEY_REBOOT,       &Special};    LayoutKey* RBOOT    = &_RBOOT_;
 LayoutKey _LCLK_       = {MOUSE_LCLICK,     &Special};    LayoutKey* LCLK    = &_LCLK_;
 LayoutKey _RCLK_       = {MOUSE_RCLICK,     &Special};    LayoutKey* RCLK    = &_RCLK_;
 LayoutKey _BR0_        = {LEDS_BR0,         &LedAdj};     LayoutKey* BR0     = &_BR0_;

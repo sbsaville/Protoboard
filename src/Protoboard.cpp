@@ -126,32 +126,15 @@ void addLayer(KeyMapEntry (*keymap)[columnsCount], LayerActivationType type, std
 }
 
 void setup() {
-  // Initialize layers
-  // Note: The order of definition determines priority in getActiveLayout if multiple layers could be active.
-  // Higher index in activeLayers means higher priority.
-  // For now, order is similar to old L_ flag checks.
-  // Higher index = higher priority. Double-tap layers should probably have high priority.
+  addLayer(layer1, LayerActivationType::SINGLE_PRESS, {LAYER_1});
+  addLayer(layer2, LayerActivationType::SINGLE_PRESS, {LAYER_2});
+  addLayer(layer3, LayerActivationType::SINGLE_PRESS, {LAYER_3});
+  addLayer(layer4, LayerActivationType::SINGLE_PRESS, {LAYER_4});
 
-  // Base momentary layers
-  addLayer(layer1, LayerActivationType::SINGLE_PRESS, {LAYER_1}); // Key: LYR1
-  addLayer(layer2, LayerActivationType::SINGLE_PRESS, {LAYER_2}); // Key: LYR2 (momentary)
-  addLayer(layer3, LayerActivationType::SINGLE_PRESS, {LAYER_3}); // Key: LYR3 (momentary)
-  addLayer(layer4, LayerActivationType::SINGLE_PRESS, {LAYER_4}); // Key: LYR4
+  addLayer(layer2DT, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_2});
+  addLayer(layer3DT, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_3});
+  addLayer(layer4DT, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_4});
 
-  // Double-tap toggle layers - these should have higher priority than the single-press layers they are attached to.
-  // So, define them after the single-press versions if their trigger keys are the same.
-  // However, the current getActiveLayout iterates from highest index down, so order of addLayer matters.
-  // To make DT layers override, they should be added *later* (higher index).
-
-  // Renamed layers as per request:
-  // Original layer2DT keymap is now layout2DT, triggered by double-tapping LAYER_2 key.
-  // For DOUBLE_TAP_TOGGLE, the activationKey[0] is also the toggleOffKey by default.
-  addLayer(layer2DT, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_2}); // Formerly "layout2DT"
-
-  // Original layer3DT keymap is now layout3DT, triggered by double-tapping LAYER_3 key.
-  addLayer(layer3DT, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_3}); // Formerly "layout3DT"
-
-  // Restore Layer2_3 Combo
   addLayer(layer2_3, LayerActivationType::COMBO_PRESS, {LAYER_2, LAYER_3});
 
   // Removing other old combo/toggle layers that are being replaced or are not specified to be kept:
@@ -221,7 +204,7 @@ KeyMapEntry (*getActiveLayout())[columnsCount] {
                 trillbar::setMode(trillbar::MODE_BRIGHTNESS);
             } else if (activeLayers[i].keymap == layer2) {
                 trillbar::setMode(trillbar::MODE_SCROLL);
-            } else if (activeLayers[i].keymap == layer2DT || activeLayers[i].keymap == layer3DT) { // layer2DT is layout2DT, layer3DT is layout3DT
+            } else if (activeLayers[i].keymap == layer2DT || activeLayers[i].keymap == layer3DT) {
                 trillbar::setMode(trillbar::MODE_ARROWS);
             } else {
                 trillbar::setMode(trillbar::MODE_ARROWS); // Default for other layers or unhandled ones

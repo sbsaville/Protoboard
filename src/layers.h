@@ -135,19 +135,27 @@ KeyMapEntry layer3DT[rowsCount][columnsCount] = {
   {{LOOPCT},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PMUL},  {PDIV},  {PADD},  {PSUB},  {NUL},   {NUL}},
   {{NUL},     {NUL},   {NUL},   {EMCRN}, {NUL},   {NUL},   {NUL},   {NUL},   {PAD7},  {PAD8},  {PAD9},  {CARAT}, {NUL},   {NUL}},
   {{NUL},     {AMRN},  {NUL},   {NUL},   {NUL},   {GMAIL}, {NUL},   {NUL},   {PAD4},  {PAD5},  {PAD6},  {NUL},   {ENTER}, {NUL}},
-  {{NUL},     {NUL},   {NUL},   {NUL},   {NUL},   {LNBRK}, {NUL},   {NUL},   {PAD1},  {PAD2},  {PAD3},  {NUL},   {NUL},   {NMLCK}},
-  {{NUL},     {RBOT},  {NUL},   {NUL},   {LYR0},  {SPC},   {BKSPC}, {LYR3},  {PAD0},  {PAD0},  {PDOT},  {RCRTL}, {NUL},   {NUL}}
+  {{LSHFT},   {NUL},   {NUL},   {NUL},   {NUL},   {LNBRK}, {NUL},   {NUL},   {PAD1},  {PAD2},  {PAD3},  {NUL},   {NUL},   {NMLCK}},
+  {{LCRTL},   {LGUI},  {LALT},  {NUL},   {LYR0},  {SPC},   {BKSPC}, {LYR3},  {PAD0},  {PAD0},  {PDOT},  {RCRTL}, {NUL},   {NUL}}
 };
 
 KeyMapEntry layer4[rowsCount][columnsCount] = {
+  {{CAPSESC,SET0},{F13},   {F14},   {F15},   {F16},    {F17},   {F18},   {F19},   {F20},   {F21},    {F22},   {F23},   {F24},   {BKSPC}},
+  {{BR0},         {NUL},   {NUL},   {NUL},   {NUL},    {NUL},   {NUL},   {NUL},   {NUL},   {NUL},    {NUL},   {NUL},   {NUL},   {NUL}},
+  {{TAB},         {NUL},   {NUL},   {NUL},   {APST_RE},{APST_T},{NUL},   {NUL},   {NUL},   {NUL},    {NUL},   {NUL},   {NUL},   {NUL}},
+  {{CAPSLSH},     {NUL},   {APST_S},{APST_D},{NUL},    {NUL},   {NUL},   {NUL},   {NUL},   {APST_LL},{NUL},   {NUL},   {ENTER}, {NUL}},
+  {{LSHFT},       {NUL},   {NUL},   {NUL},   {APST_VE},{NUL},   {NUL},   {APST_M},{NUL},   {NUL},    {NUL},   {NUL},   {NUL},   {NUL}},
+  {{LCRTL},       {LGUI},  {LALT},  {NUL},   {ALTL},   {SPC},   {ALTR},  {LYR3},  {LYR4},  {NUL},    {NUL},   {NUL},   {NUL},   {NUL}}
+};
+
+KeyMapEntry layer4DT[rowsCount][columnsCount] = {
   {{CAPSESC,SET0},{F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {BKSPC}},
   {{BR0},         {BR1},   {BR2},   {BR3},   {BR4},   {BR5},   {BR6},   {BR7},   {BR8},   {BR9},   {BR10},  {NUL},   {NUL},   {INCR}},
   {{TAB},         {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {INSRT}, {NUL},   {PSBRK}, {NUL},   {NUL},   {DECR}},
   {{CAPSLSH},     {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {SCRLL}, {NUL},   {NUL},   {ENTER}, {NUL}},
   {{SET0},        {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PRNT},  {NUL},   {NUL},   {NUL},   {NUL},   {RWND},  {REC},   {FFWD}},
-  {{RLEASE},      {RBOT},  {NUL},   {NUL},   {ALTL},  {SPC},   {ALTR},  {LYR3},  {LYR4},  {NUL},   {NUL},   {PREV},  {PLYPS}, {NEXT}}
+  {{RLEASE},      {RBOOT}, {NUL},   {NUL},   {ALTL},  {SPC},   {ALTR},  {LYR3},  {LYR4},  {NUL},   {NUL},   {PREV},  {PLYPS}, {NEXT}}
 };
-
 
 /*
 KeyMapEntry layoutNUL[rowsCount][columnsCount] = {
