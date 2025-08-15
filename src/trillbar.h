@@ -70,6 +70,7 @@ private:
 
   // Flag for triple touch
   static bool tripleActionTriggered;          // Prevent repeated play/pause
+  static bool quadActionTriggered;            // Prevent repeated mute
 
   static unsigned long lastTouchCountChange;
   static const unsigned int touchDebounceTime = 10;
@@ -86,6 +87,7 @@ private:
   static void handleMode3(int actionUnits);   // Scrolling
   static void handleDualTouch();              // Volume control
   static void handleTripleTouch();            // Media control
+  static void handleQuadTouch();              // Mute control
   static void handleTouchRelease();
 };
 
@@ -124,6 +126,7 @@ unsigned long trillbar::lastRead = 0;
 unsigned long trillbar::baseInterval = 1;
 unsigned long trillbar::activeInterval = 5;
 bool trillbar::tripleActionTriggered = false;
+bool trillbar::quadActionTriggered = false;
 unsigned long trillbar::lastTouchCountChange = 0;
 
 // Calculate adaptive sensitivity based on movement speed using a linear acceleration curve
@@ -377,6 +380,17 @@ void trillbar::handleTripleTouch() {
   }
 }
 
+void trillbar::handleQuadTouch() {
+  if (!quadActionTriggered) {
+    sendKeyPress(KEY_MEDIA_MUTE, 1);
+    quadActionTriggered = true;
+
+    #if TRILL_DEBUG
+    Serial.println("Mute");
+    #endif
+  }
+}
+
 void trillbar::handleTouchRelease() {
   // Check if it was a quick tap (for gesture detection only)
   unsigned long touchDuration = millis() - startTime;
@@ -418,6 +432,7 @@ void trillbar::handleTouchRelease() {
   // Reset state
   holdCounter = 0;
   tripleActionTriggered = false;  // Reset triple touch flag
+  quadActionTriggered = false;    // Reset quad touch flag
 }
 
 // Public interface implementation
@@ -568,7 +583,11 @@ void trillbar::loop() {
           }
           else if (touchCount >= 3 || adjustedSize > 50) {
             // Triple touch or very large single touch - media control
-            handleTripleTouch();
+            if (touchCount >= 4) {
+              handleQuadTouch();
+            } else {
+              handleTripleTouch();
+            }
           }
         }
         #if TRILL_DEBUG

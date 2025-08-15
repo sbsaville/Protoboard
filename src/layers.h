@@ -109,7 +109,7 @@ KeyMapEntry layer2DT[rowsCount][columnsCount] = {
   {{TAB},     {PAD7},  {PAD8},  {PAD9},  {CARAT}, {SQRT},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
   {{NUL},     {PAD4},  {PAD5},  {PAD6},  {EQUAL}, {DBLQ},  {NUL},   {NUL},   {LSEQL}, {GREQL}, {NUL},   {NUL},   {ENTER}, {NUL}},
   {{LSHFT},   {PAD1},  {PAD2},  {PAD3},  {PENT},  {NUL},   {NUL},   {NUL},   {LCHEV}, {RCHEV}, {NUL},   {NUL},   {UP},    {NMLCK}},
-  {{LCRTL},   {PAD0},  {PDOT},  {PAD0},  {LYR2},  {SPC},   {BKSPC}, {LYR0},  {NUL},   {PDOT},  {PAD0},  {RCRTL}, {LEFT},  {RIGHT}}
+  {{LCRTL},   {PAD0},  {PAD0},  {PDOT},  {LYR2},  {SPC},   {BKSPC}, {LYR0},  {NUL},   {PDOT},  {PAD0},  {RCRTL}, {LEFT},  {RIGHT}}
 };
 
 KeyMapEntry layer2_3[rowsCount][columnsCount] = {
@@ -122,38 +122,38 @@ KeyMapEntry layer2_3[rowsCount][columnsCount] = {
 };
 
 KeyMapEntry layer3[rowsCount][columnsCount] = {
-  {{ESC,SET0},{F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {NUL}},
-  {{NUL},     {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PLSMNS},{DNEQL}, {NUL}},
-  {{NUL},     {QUOTE}, {DBLQ},  {EXCLM}, {ASTR},  {LCHEV}, {RCHEV}, {UNDS},  {NUL},   {NUL},   {PIPE},  {NUL},   {NUL},   {NUL}},
-  {{NUL},     {NUL},   {NUL},   {LBRACE},{LBRACK},{LPAR},  {RPAR},  {RBRACK},{RBRACE},{NUL},   {NUL},   {NUL},   {ENTER}, {NUL}},
-  {{LSHFT},   {NUL},   {NUL},   {NUL},   {CMTST}, {BSLSH}, {HASH},  {CMTED}, {LSEQL}, {GREQL}, {NUL},   {RSHFT}, {PGUP},  {NUL}},
-  {{LCRTL},   {LGUI},  {LALT},  {NUL},   {LYR2},  {DEL},   {BKSPC}, {LYR3},  {LYR4},  {RALT},  {RGUI},  {RCRTL}, {PGDN},  {DEL}}
+  {{ESC,SET0},{F13},   {F14},   {F15},   {F16},    {F17},   {F18},   {F19},   {F20},   {F21},    {F22},   {F23},   {F24},   {BKSPC}},
+  {{BR0},     {NUL},   {NUL},   {NUL},   {NUL},    {NUL},   {NUL},   {NUL},   {NUL},   {NUL},    {NUL},   {NUL},   {NUL},   {NUL}},
+  {{TAB},     {QUOTE}, {DBLQ},  {NUL},   {APST_RE},{APST_T},{NUL},   {NUL},   {NUL},   {NUL},    {NUL},   {NUL},   {NUL},   {NUL}},
+  {{CAPSLSH}, {NUL},   {APST_S},{APST_D},{NUL},    {NUL},   {NUL},   {NUL},   {NUL},   {APST_LL},{NUL},   {NUL},   {ENTER}, {NUL}},
+  {{LSHFT},   {NUL},   {NUL},   {NUL},   {APST_VE},{NUL},   {NUL},   {APST_M},{NUL},   {NUL},    {NUL},   {RSHFT}, {NUL},   {NUL}},
+  {{LCRTL},   {LGUI},  {LALT},  {NUL},   {LYR2},   {DEL},   {BKSPC}, {LYR3},  {LYR4},  {RALT},   {RGUI},  {RCRTL}, {NUL},   {NUL}}
 };
 
 KeyMapEntry layer3DT[rowsCount][columnsCount] = {
   {{ESC,SET0},{SF13},  {SF14},  {SF15},  {SF16},  {SF17},  {SF18},  {SF19},  {SF20},  {SF21},  {SF22},  {SF23},  {SF24},  {NUL}},
   {{LOOPCT},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PMUL},  {PDIV},  {PADD},  {PSUB},  {NUL},   {NUL}},
-  {{NUL},     {NUL},   {NUL},   {EMCRN}, {NUL},   {NUL},   {NUL},   {NUL},   {PAD7},  {PAD8},  {PAD9},  {CARAT}, {NUL},   {NUL}},
-  {{NUL},     {AMRN},  {NUL},   {NUL},   {NUL},   {GMAIL}, {NUL},   {NUL},   {PAD4},  {PAD5},  {PAD6},  {NUL},   {ENTER}, {NUL}},
-  {{LSHFT},   {NUL},   {NUL},   {NUL},   {NUL},   {LNBRK}, {NUL},   {NUL},   {PAD1},  {PAD2},  {PAD3},  {NUL},   {NUL},   {NMLCK}},
+  {{TAB},     {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PAD7},  {PAD8},  {PAD9},  {CARAT}, {NUL},   {NUL}},
+  {{NUL},     {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PAD4},  {PAD5},  {PAD6},  {NUL},   {ENTER}, {NUL}},
+  {{LSHFT},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PAD1},  {PAD2},  {PAD3},  {NUL},   {NUL},   {NMLCK}},
   {{LCRTL},   {LGUI},  {LALT},  {NUL},   {LYR0},  {SPC},   {BKSPC}, {LYR3},  {PAD0},  {PAD0},  {PDOT},  {RCRTL}, {NUL},   {NUL}}
 };
 
 KeyMapEntry layer4[rowsCount][columnsCount] = {
-  {{CAPSESC,SET0},{F13},   {F14},   {F15},   {F16},    {F17},   {F18},   {F19},   {F20},   {F21},    {F22},   {F23},   {F24},   {BKSPC}},
-  {{BR0},         {NUL},   {NUL},   {NUL},   {NUL},    {NUL},   {NUL},   {NUL},   {NUL},   {NUL},    {NUL},   {NUL},   {NUL},   {NUL}},
-  {{TAB},         {NUL},   {NUL},   {NUL},   {APST_RE},{APST_T},{NUL},   {NUL},   {NUL},   {NUL},    {NUL},   {NUL},   {NUL},   {NUL}},
-  {{CAPSLSH},     {NUL},   {APST_S},{APST_D},{NUL},    {NUL},   {NUL},   {NUL},   {NUL},   {APST_LL},{NUL},   {NUL},   {ENTER}, {NUL}},
-  {{LSHFT},       {NUL},   {NUL},   {NUL},   {APST_VE},{NUL},   {NUL},   {APST_M},{NUL},   {NUL},    {NUL},   {NUL},   {NUL},   {NUL}},
-  {{LCRTL},       {LGUI},  {LALT},  {NUL},   {ALTL},   {SPC},   {ALTR},  {LYR3},  {LYR4},  {NUL},    {NUL},   {NUL},   {NUL},   {NUL}}
+  {{CAPSESC,SET0},{F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {NUL}},
+  {{NUL},         {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PLSMNS},{DNEQL}, {NUL}},
+  {{NUL},         {QUOTE}, {DBLQ},  {EXCLM}, {ASTR},  {LCHEV}, {RCHEV}, {UNDS},  {NUL},   {NUL},   {PIPE},  {NUL},   {NUL},   {NUL}},
+  {{CAPSLSH},     {NUL},   {NUL},   {LBRACE},{LBRACK},{LPAR},  {RPAR},  {RBRACK},{RBRACE},{NUL},   {NUL},   {NUL},   {ENTER}, {NUL}},
+  {{LSHFT},       {NUL},   {NUL},   {NUL},   {CMTST}, {BSLSH}, {HASH},  {CMTED}, {LSEQL}, {GREQL}, {NUL},   {RSHFT}, {PGUP},  {NUL}},
+  {{LCRTL},       {LGUI},  {LALT},  {NUL},   {ALTL},  {SPC},   {ALTR},  {LYR3},  {LYR4},  {RALT},  {RGUI},  {RCRTL}, {NUL},   {NUL}}
 };
 
 KeyMapEntry layer4DT[rowsCount][columnsCount] = {
   {{CAPSESC,SET0},{F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {BKSPC}},
   {{BR0},         {BR1},   {BR2},   {BR3},   {BR4},   {BR5},   {BR6},   {BR7},   {BR8},   {BR9},   {BR10},  {NUL},   {NUL},   {INCR}},
-  {{TAB},         {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {INSRT}, {NUL},   {PSBRK}, {NUL},   {NUL},   {DECR}},
-  {{CAPSLSH},     {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {SCRLL}, {NUL},   {NUL},   {ENTER}, {NUL}},
-  {{SET0},        {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PRNT},  {NUL},   {NUL},   {NUL},   {NUL},   {RWND},  {REC},   {FFWD}},
+  {{TAB},         {NUL},   {NUL},   {EMCRN}, {NUL},   {NUL},   {NUL},   {NUL},   {INSRT}, {NUL},   {PSBRK}, {NUL},   {NUL},   {DECR}},
+  {{CAPSLSH},     {AMRN},  {NUL},   {NUL},   {NUL},   {GMAIL}, {NUL},   {NUL},   {NUL},   {SCRLL}, {NUL},   {NUL},   {ENTER}, {NUL}},
+  {{SET0},        {NUL},   {NUL},   {NUL},   {NUL},   {LNBRK}, {PRNT},  {NUL},   {NUL},   {NUL},   {NUL},   {RWND},  {REC},   {FFWD}},
   {{RLEASE},      {RBOOT}, {NUL},   {NUL},   {ALTL},  {SPC},   {ALTR},  {LYR3},  {LYR4},  {NUL},   {NUL},   {PREV},  {PLYPS}, {NEXT}}
 };
 

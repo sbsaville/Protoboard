@@ -79,7 +79,7 @@ void updateLockStates() {
   Capslock = (keyboard_leds & 2) ? Toggle : Modifier;
   Numlock = (keyboard_leds & 1) ? Toggle : Special;
   Numnav  = (keyboard_leds & 1) ? Number : Toggle;
-  Scrllock = (keyboard_leds & 4) ? Special : Toggle;
+  Scrllock = (keyboard_leds & 4) ? Toggle : Special;
 }
 
 
