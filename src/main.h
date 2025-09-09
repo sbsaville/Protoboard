@@ -95,8 +95,30 @@ const uint16_t E_MACRON                      = 200 | 0xA000; // ē
 const uint16_t GREAT_EQUAL                   = 201 | 0xA000; // ≥
 const uint16_t LESS_EQUAL                    = 202 | 0xA000; // ≤
 const uint16_t NOT_EQUAL                     = 203 | 0xA000; // ≠
-const uint16_t PLUS_MINUS                    = 204 | 0xA000; // ±
-const uint16_t KEY_DEGREES                   = 205 | 0xA000; // °
+const uint16_t KEY_APPROX                    = 204 | 0xA000; // ≈
+const uint16_t PLUSORMINUS                   = 205 | 0xA000; // ±
+const uint16_t KEY_DEGREES                   = 206 | 0xA000; // °
+const uint16_t KEY_INFINITY                  = 207 | 0xA000; // ∞
+const uint16_t KEY_UNION                     = 208 | 0xA000; // ∪
+const uint16_t KEY_PI                        = 209 | 0xA000; // π
+const uint16_t KEY_THETA                     = 210 | 0xA000; // θ
+const uint16_t KEY_ALPHA                     = 211 | 0xA000; // α
+const uint16_t KEY_BETA                      = 212 | 0xA000; // β
+const uint16_t KEY_DELTA                     = 213 | 0xA000; // δ
+const uint16_t KEY_LAMBDA                    = 214 | 0xA000; // λ
+const uint16_t KEY_MU                        = 215 | 0xA000; // μ
+const uint16_t KEY_SIGMA                     = 216 | 0xA000; // σ
+const uint16_t KEY_PHI                       = 217 | 0xA000; // φ
+const uint16_t KEY_RATIO                     = 218 | 0xA000; // ∶
+const uint16_t KEY_SOLIDUS                   = 219 | 0xA000; //
+const uint16_t L_KAGI_KAKKO                  = 220 | 0xA000; // 「
+const uint16_t R_KAGI_KAKKO                  = 221 | 0xA000; // 」
+const uint16_t LN_KAGI_KAKKO                 = 222 | 0xA000; // 『
+const uint16_t RN_KAGI_KAKKO                 = 223 | 0xA000; // 』
+const uint16_t L_DBL_BRACKET                 = 224 | 0xA000; // ⟦ 
+const uint16_t R_DBL_BRACKET                 = 225 | 0xA000; // ⟧
+const uint16_t L_DBL_PAREN                   = 226 | 0xA000; // ⸨
+const uint16_t R_DBL_PAREN                   = 227 | 0xA000; // ⸩
 
 //                            macros
 const uint16_t MACRO_GMAIL                   = 400 | 0xA000;
@@ -114,6 +136,14 @@ const uint16_t APOSTROPHE_D                  = 411 | 0xA000;
 const uint16_t APOSTROPHE_VE                 = 412 | 0xA000;
 const uint16_t APOSTROPHE_RE                 = 413 | 0xA000;
 const uint16_t APOSTROPHE_LL                 = 414 | 0xA000;
+const uint16_t ML_PI                         = 415 | 0xA000;
+const uint16_t ML_INF                        = 416 | 0xA000;
+const uint16_t ML_SQRT                       = 417 | 0xA000;
+const uint16_t ML_GREQ                       = 418 | 0xA000;
+const uint16_t ML_LSEQ                       = 419 | 0xA000;
+const uint16_t ML_UNN                        = 420 | 0xA000;
+// const uint16_t ML_                        = 421 | 0xA000;
+
 
 //                          administrative
 const uint16_t KEY_NULL                      = 600 | 0xA000;
