@@ -275,6 +275,17 @@ LayoutKey _LDBBRK_     = {L_DBL_BRACKET,    &Chara1};     LayoutKey* LDBBRK  = &
 LayoutKey _RDBBRK_     = {R_DBL_BRACKET,    &Chara1};     LayoutKey* RDBBRK  = &_RDBBRK_;
 LayoutKey _LDBPAR_     = {L_DBL_PAREN,      &Chara1};     LayoutKey* LDBPAR  = &_LDBPAR_;
 LayoutKey _RDBPAR_     = {R_DBL_PAREN,      &Chara1};     LayoutKey* RDBPAR  = &_RDBPAR_;
+LayoutKey _SS_0_       = {SUPERSCRIPT_0,    &Chara1};     LayoutKey* SS_0    = &_SS_0_;
+LayoutKey _SS_1_       = {SUPERSCRIPT_1,    &Chara1};     LayoutKey* SS_1    = &_SS_1_;
+LayoutKey _SS_2_       = {SUPERSCRIPT_2,    &Chara1};     LayoutKey* SS_2    = &_SS_2_;
+LayoutKey _SS_3_       = {SUPERSCRIPT_3,    &Chara1};     LayoutKey* SS_3    = &_SS_3_;
+LayoutKey _SS_4_       = {SUPERSCRIPT_4,    &Chara1};     LayoutKey* SS_4    = &_SS_4_;
+LayoutKey _SS_5_       = {SUPERSCRIPT_5,    &Chara1};     LayoutKey* SS_5    = &_SS_5_;
+LayoutKey _SS_6_       = {SUPERSCRIPT_6,    &Chara1};     LayoutKey* SS_6    = &_SS_6_; 
+LayoutKey _SS_7_       = {SUPERSCRIPT_7,    &Chara1};     LayoutKey* SS_7    = &_SS_7_;
+LayoutKey _SS_8_       = {SUPERSCRIPT_8,    &Chara1};     LayoutKey* SS_8    = &_SS_8_;
+LayoutKey _SS_9_       = {SUPERSCRIPT_9,    &Chara1};     LayoutKey* SS_9    = &_SS_9_;
+LayoutKey _MDASH_      = {KEY_EMDASH,       &Chara1};     LayoutKey* MDASH   = &_MDASH_;
 
 LayoutKey _TRL1_       = {TRILL_MODE1,      &Special};    LayoutKey* TRL1    = &_TRL1_;
 LayoutKey _TRL2_       = {TRILL_MODE2,      &Special};    LayoutKey* TRL2    = &_TRL2_;

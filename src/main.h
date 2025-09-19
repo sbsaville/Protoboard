@@ -119,6 +119,17 @@ const uint16_t L_DBL_BRACKET                 = 224 | 0xA000; // ⟦
 const uint16_t R_DBL_BRACKET                 = 225 | 0xA000; // ⟧
 const uint16_t L_DBL_PAREN                   = 226 | 0xA000; // ⸨
 const uint16_t R_DBL_PAREN                   = 227 | 0xA000; // ⸩
+const uint16_t SUPERSCRIPT_0                 = 228 | 0xA000; // ⁰
+const uint16_t SUPERSCRIPT_1                 = 229 | 0xA000; // ¹
+const uint16_t SUPERSCRIPT_2                 = 230 | 0xA000; // ² 
+const uint16_t SUPERSCRIPT_3                 = 231 | 0xA000; // ³
+const uint16_t SUPERSCRIPT_4                 = 232 | 0xA000; // ⁴
+const uint16_t SUPERSCRIPT_5                 = 233 | 0xA000; // ⁵
+const uint16_t SUPERSCRIPT_6                 = 234 | 0xA000; // ⁶
+const uint16_t SUPERSCRIPT_7                 = 235 | 0xA000; // ⁷ 
+const uint16_t SUPERSCRIPT_8                 = 236 | 0xA000; // ⁸
+const uint16_t SUPERSCRIPT_9                 = 237 | 0xA000; // ⁹
+const uint16_t KEY_EMDASH                    = 238 | 0xA000; // —
 
 //                            macros
 const uint16_t MACRO_GMAIL                   = 400 | 0xA000;
