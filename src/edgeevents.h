@@ -68,6 +68,32 @@ void shiftedFKey(int fKey) {
   shiftedKey(fKey);
 }
 
+void pressHyper() {
+  Keyboard.press(KEY_LEFT_GUI);
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press(KEY_LEFT_ALT);
+};
+
+void releaseHyper() {
+  Keyboard.release(KEY_LEFT_ALT);
+  Keyboard.release(KEY_LEFT_CTRL);
+  Keyboard.release(KEY_LEFT_GUI);
+  Keyboard.release(KEY_LEFT_SHIFT);
+};
+
+void pressMeh() {
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press(KEY_LEFT_ALT);
+};
+
+void releaseMeh() {
+  Keyboard.release(KEY_LEFT_CTRL);
+  Keyboard.release(KEY_LEFT_GUI);
+  Keyboard.release(KEY_LEFT_SHIFT);
+};
+
 struct BrightnessLevel {
   int code;
   int brightnessValue;
@@ -118,7 +144,7 @@ const BrightnessLevel brightnessLevels[] = {
 };
 
 const SimpleKeyAction shiftedKeys[] = {
-  {EXCLMAMATION,    KEY_1},
+  {EXCLMAMATION,   KEY_1},
   {KEY_AT,         KEY_2},
   {KEY_HASH,       KEY_3},
   {KEY_DOLLAR,     KEY_4},

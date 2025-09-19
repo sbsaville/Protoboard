@@ -61,6 +61,8 @@ LayoutKey _LYR1_       = {LAYER_1,         &LayerKey};    LayoutKey* LYR1    = &
 LayoutKey _LYR2_       = {LAYER_2,         &LayerKey};    LayoutKey* LYR2    = &_LYR2_;
 LayoutKey _LYR3_       = {LAYER_3,         &LayerKey};    LayoutKey* LYR3    = &_LYR3_;
 LayoutKey _LYR4_       = {LAYER_4,         &LayerKey};    LayoutKey* LYR4    = &_LYR4_;
+LayoutKey _LYR2B_      = {LAYER_2B,        &LayerKey};    LayoutKey* LYR2B   = &_LYR2B_;
+LayoutKey _LYR3B_      = {LAYER_3B,        &LayerKey};    LayoutKey* LYR3B   = &_LYR3B_;
 LayoutKey _CAPSLSH_    = {KEY_CAPS_SLASH,  &Special};     LayoutKey* CAPSLSH = &_CAPSLSH_;
 LayoutKey _CAPSESC_    = {KEY_CAPS_ESC,    &Special};     LayoutKey* CAPSESC = &_CAPSESC_;
 LayoutKey _ALTL_       = {KEY_ALTL,        &Special};     LayoutKey* ALTL    = &_ALTL_;
@@ -175,6 +177,8 @@ LayoutKey _LSHFT_      = {KEY_LEFT_SHIFT,  &Capslock};    LayoutKey* LSHFT   = &
 LayoutKey _LCRTL_      = {KEY_LEFT_CTRL,   &Modifier};    LayoutKey* LCRTL   = &_LCRTL_;
 LayoutKey _LGUI_       = {KEY_LEFT_GUI,    &Modifier};    LayoutKey* LGUI    = &_LGUI_;
 LayoutKey _LALT_       = {KEY_LEFT_ALT,    &Modifier};    LayoutKey* LALT    = &_LALT_;
+LayoutKey _HYPER_      = {KEY_HYPER,       &Modifier};    LayoutKey* HYPER   = &_HYPER_;
+LayoutKey _MEH_        = {KEY_MEH,         &Modifier};    LayoutKey* MEH     = &_MEH_;
 LayoutKey _SPC_        = {KEY_SPACE,       &Letter};      LayoutKey* SPC     = &_SPC_;
 
 LayoutKey _Q_          = {KEY_Q,           &Letter};      LayoutKey* Q       = &_Q_;

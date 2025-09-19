@@ -46,6 +46,9 @@ const uint16_t LAYER_1                       = 2   | 0xA000;
 const uint16_t LAYER_2                       = 3   | 0xA000;
 const uint16_t LAYER_3                       = 4   | 0xA000;
 const uint16_t LAYER_4                       = 5   | 0xA000;
+const uint16_t LAYER_2B                      = 6   | 0xA000;
+const uint16_t LAYER_3B                      = 7   | 0xA000;
+
 
 // maximum of 16 layers since even that is pushing it for teensy 3.6 EEPROM
 
@@ -53,6 +56,8 @@ const uint16_t KEY_CAPS_SLASH                = 17  | 0xA000;
 const uint16_t KEY_CAPS_ESC                  = 18  | 0xA000;
 const uint16_t KEY_ALTL                      = 20  | 0xA000;
 const uint16_t KEY_ALTR                      = 21  | 0xA000;
+const uint16_t KEY_HYPER                     = 22  | 0xA000;
+const uint16_t KEY_MEH                       = 23  | 0xA000;
 
 // I arbitrarily decided that alt+[KEY] should descend from 99 while shift+[KEY] should ascend from 100
 const uint16_t KEY_ALT_TAB                   = 99  | 0xA000;
@@ -163,6 +168,10 @@ const uint16_t KEY_SET0                      = 602 | 0xA000;
 const uint16_t KEY_REBOOT                    = 603 | 0xA000;
 
 //                          non-keyboard things
+const uint16_t MOUSE_YPLUS                   = 896 | 0xA000;
+const uint16_t MOUSE_YMINUS                  = 897 | 0xA000;
+const uint16_t MOUSE_XPLUS                   = 898 | 0xA000;
+const uint16_t MOUSE_XMINUS                  = 899 | 0xA000;
 const uint16_t MOUSE_LCLICK                  = 900 | 0xA000;
 const uint16_t MOUSE_RCLICK                  = 901 | 0xA000;
 const uint16_t TRILL_MODE1                   = 902 | 0xA000;
