@@ -128,14 +128,18 @@ void addLayer(KeyMapEntry (*keymap)[columnsCount], LayerActivationType type, std
 void setup() {
   addLayer(layer1, LayerActivationType::SINGLE_PRESS, {LAYER_1});
   addLayer(layer2, LayerActivationType::SINGLE_PRESS, {LAYER_2});
+  addLayer(layer2b, LayerActivationType::SINGLE_PRESS, {LAYER_2B});
   addLayer(layer3, LayerActivationType::SINGLE_PRESS, {LAYER_3});
+  addLayer(layer3b, LayerActivationType::SINGLE_PRESS, {LAYER_3B});
   addLayer(layer4, LayerActivationType::SINGLE_PRESS, {LAYER_4});
 
   addLayer(layer2DT, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_2});
   addLayer(layer3DT, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_3});
   addLayer(layer4DT, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_4});
 
+  addLayer(layer2_3, LayerActivationType::COMBO_PRESS, {LAYER_1, LAYER_2});
   addLayer(layer2_3, LayerActivationType::COMBO_PRESS, {LAYER_2, LAYER_3});
+  addLayer(layer2_3, LayerActivationType::COMBO_PRESS, {LAYER_3, LAYER_4});
 
   // Removing other old combo/toggle layers that are being replaced or are not specified to be kept:
   // addLayer(layer2DT, LayerActivationType::COMBO_PRESS, {LAYER_1, LAYER_2}); // Old L1+L2 combo (replaced by layout2DT)
