@@ -109,13 +109,13 @@ const uint16_t KEY_PI                        = 209 | 0xA000; // π
 const uint16_t KEY_THETA                     = 210 | 0xA000; // θ
 const uint16_t KEY_ALPHA                     = 211 | 0xA000; // α
 const uint16_t KEY_BETA                      = 212 | 0xA000; // β
-const uint16_t KEY_DELTA                     = 213 | 0xA000; // δ
+const uint16_t KEY_DELTA                     = 213 | 0xA000; // Δ
 const uint16_t KEY_LAMBDA                    = 214 | 0xA000; // λ
 const uint16_t KEY_MU                        = 215 | 0xA000; // μ
-const uint16_t KEY_SIGMA                     = 216 | 0xA000; // σ
+const uint16_t KEY_SIGMA                     = 216 | 0xA000; // Σ
 const uint16_t KEY_PHI                       = 217 | 0xA000; // φ
 const uint16_t KEY_RATIO                     = 218 | 0xA000; // ∶
-const uint16_t KEY_SOLIDUS                   = 219 | 0xA000; //
+const uint16_t KEY_SOLIDUS                   = 219 | 0xA000; // ⁄
 const uint16_t L_KAGI_KAKKO                  = 220 | 0xA000; // 「
 const uint16_t R_KAGI_KAKKO                  = 221 | 0xA000; // 」
 const uint16_t LN_KAGI_KAKKO                 = 222 | 0xA000; // 『
@@ -135,6 +135,10 @@ const uint16_t SUPERSCRIPT_7                 = 235 | 0xA000; // ⁷
 const uint16_t SUPERSCRIPT_8                 = 236 | 0xA000; // ⁸
 const uint16_t SUPERSCRIPT_9                 = 237 | 0xA000; // ⁹
 const uint16_t KEY_EMDASH                    = 238 | 0xA000; // —
+const uint16_t KEY_GAMMA                     = 239 | 0xA000; // γ
+const uint16_t KEY_EPSILON                   = 240 | 0xA000; // ε
+const uint16_t KEY_OMEGA                     = 241 | 0xA000; // Ω
+
 
 //                            macros
 const uint16_t MACRO_GMAIL                   = 400 | 0xA000;

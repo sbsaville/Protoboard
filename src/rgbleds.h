@@ -124,15 +124,15 @@ void scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]) {
   }
 }
 
-void leds0()     { scanLEDs(layer0); }
-void leds1()     { scanLEDs(layer1); }
-void leds2DT()   { scanLEDs(layer2DT); }
-void leds2()     { scanLEDs(layer2); }
-void leds2_3()   { scanLEDs(layer2_3); }
-void leds3()     { scanLEDs(layer3); }
-void leds3DT()   { scanLEDs(layer3DT); }
-void leds4()     { scanLEDs(layer4); }
-void leds4DT()   { scanLEDs(layer4DT); }
+void leds0()         { scanLEDs(layer0); }
+void leds1()         { scanLEDs(layer1); }
+void leds2DT()       { scanLEDs(layer2DT); }
+void leds2()         { scanLEDs(layer2); }
+void ledsSymbols()   { scanLEDs(layerSymbols); }
+void leds3()         { scanLEDs(layerAppostrophe); }
+void leds3DT()       { scanLEDs(layer3DT); }
+void leds4()         { scanLEDs(layer4); }
+void leds4DT()       { scanLEDs(layer4DT); }
 
 
 void rgbleds::setup() {

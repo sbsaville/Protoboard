@@ -264,11 +264,14 @@ LayoutKey _GRKPI_      = {KEY_PI,           &Letter};     LayoutKey* GRKPI   = &
 LayoutKey _THETA_      = {KEY_THETA,        &Letter};     LayoutKey* THETA   = &_THETA_;
 LayoutKey _ALPHA_      = {KEY_ALPHA,        &Letter};     LayoutKey* ALPHA   = &_ALPHA_;
 LayoutKey _BETA_       = {KEY_BETA,         &Letter};     LayoutKey* BETA    = &_BETA_;
+LayoutKey _GAMMA_      = {KEY_GAMMA,        &Letter};     LayoutKey* GAMMA   = &_GAMMA_;
 LayoutKey _DELTA_      = {KEY_DELTA,        &Letter};     LayoutKey* DELTA   = &_DELTA_;
+LayoutKey _EPSILON_    = {KEY_EPSILON,      &Letter};     LayoutKey* EPSILON = &_EPSILON_;
 LayoutKey _LAMBDA_     = {KEY_LAMBDA,       &Letter};     LayoutKey* LAMBDA  = &_LAMBDA_;
 LayoutKey _MU_         = {KEY_MU,           &Letter};     LayoutKey* MU      = &_MU_;
 LayoutKey _SIGMA_      = {KEY_SIGMA,        &Letter};     LayoutKey* SIGMA   = &_SIGMA_;
 LayoutKey _PHI_        = {KEY_PHI,          &Letter};     LayoutKey* PHI     = &_PHI_;
+LayoutKey _OMEGA_      = {KEY_OMEGA,        &Letter};     LayoutKey* OMEGA   = &_OMEGA_;
 LayoutKey _RATIO_      = {KEY_RATIO,        &Chara1};     LayoutKey* RATIO   = &_RATIO_;
 LayoutKey _SLDS_       = {KEY_SOLIDUS,      &Chara1};     LayoutKey* SLDS    = &_SLDS_;
 LayoutKey _LKK_        = {L_KAGI_KAKKO,     &Chara1};     LayoutKey* LKK     = &_LKK_;
