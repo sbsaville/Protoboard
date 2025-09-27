@@ -46,8 +46,9 @@ const uint16_t LAYER_1                       = 2   | 0xA000;
 const uint16_t LAYER_2                       = 3   | 0xA000;
 const uint16_t LAYER_3                       = 4   | 0xA000;
 const uint16_t LAYER_4                       = 5   | 0xA000;
-const uint16_t LAYER_2B                      = 6   | 0xA000;
-const uint16_t LAYER_3B                      = 7   | 0xA000;
+const uint16_t LAYER_1B                      = 6   | 0xA000;
+const uint16_t LAYER_2B                      = 7   | 0xA000;
+const uint16_t LAYER_3B                      = 8   | 0xA000;
 
 
 // maximum of 16 layers since even that is pushing it for teensy 3.6 EEPROM

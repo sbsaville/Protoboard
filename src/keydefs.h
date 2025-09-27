@@ -15,7 +15,7 @@ LedColor Chara2   = CRGB(0xFF5500);
 LedColor Modifier = CRGB(0xFF0000);
 LedColor Capslock = CRGB(0xFF0000);
 LedColor Numlock  = CRGB(0xFFFF00);
-LedColor Scrllock = CRGB(0xFFFF00);
+LedColor SCRLLKock = CRGB(0xFFFF00);
 LedColor FKeys1   = CRGB(0xFF2200);
 LedColor FKeys1b  = CRGB(0xFF0000);
 LedColor FKeys2   = CRGB(0x3300FF);
@@ -61,6 +61,7 @@ LayoutKey _LYR1_       = {LAYER_1,         &LayerKey};    LayoutKey* LYR1    = &
 LayoutKey _LYR2_       = {LAYER_2,         &LayerKey};    LayoutKey* LYR2    = &_LYR2_;
 LayoutKey _LYR3_       = {LAYER_3,         &LayerKey};    LayoutKey* LYR3    = &_LYR3_;
 LayoutKey _LYR4_       = {LAYER_4,         &LayerKey};    LayoutKey* LYR4    = &_LYR4_;
+LayoutKey _LYR1B_      = {LAYER_1B,        &LayerKey};    LayoutKey* LYR1B   = &_LYR1B_;
 LayoutKey _LYR2B_      = {LAYER_2B,        &LayerKey};    LayoutKey* LYR2B   = &_LYR2B_;
 LayoutKey _LYR3B_      = {LAYER_3B,        &LayerKey};    LayoutKey* LYR3B   = &_LYR3B_;
 LayoutKey _CAPSLSH_    = {KEY_CAPS_SLASH,  &Special};     LayoutKey* CAPSLSH = &_CAPSLSH_;
@@ -123,7 +124,7 @@ LayoutKey _F23_        = {KEY_F23,         &FKeys2};      LayoutKey* F23     = &
 LayoutKey _F24_        = {KEY_F24,         &FKeys2};      LayoutKey* F24     = &_F24_;
 
 LayoutKey _PRNT_       = {KEY_PRINTSCREEN, &Special};     LayoutKey* PRNT    = &_PRNT_;
-LayoutKey _SCRLL_      = {KEY_SCROLL_LOCK, &Scrllock};    LayoutKey* SCRLL   = &_SCRLL_;
+LayoutKey _SCRLLK_     = {KEY_SCROLL_LOCK, &SCRLLKock};   LayoutKey* SCRLLK  = &_SCRLLK_;
 LayoutKey _PSBRK_      = {KEY_PAUSE,       &Special};     LayoutKey* PSBRK   = &_PSBRK_;
 
 LayoutKey _NUM1_       = {KEY_1,           &Number};      LayoutKey* NUM1    = &_NUM1_;
@@ -220,7 +221,8 @@ LayoutKey _RSHFT_      = {KEY_RIGHT_SHIFT,  &Capslock};   LayoutKey* RSHFT   = &
 LayoutKey _RCRTL_      = {KEY_RIGHT_CTRL,   &Modifier};   LayoutKey* RCRTL   = &_RCRTL_;
 LayoutKey _RGUI_       = {KEY_RIGHT_GUI,    &Modifier};   LayoutKey* RGUI    = &_RGUI_;
 LayoutKey _RALT_       = {KEY_RIGHT_ALT,    &Modifier};   LayoutKey* RALT    = &_RALT_;
-// The context menu key goes here when I find out what it is
+LayoutKey _MENU_       = {KEY_MENU,         &Modifier};   LayoutKey* MENU    = &_MENU_;
+
 LayoutKey _MUTE_       = {KEY_MEDIA_MUTE,         &Modifier}; LayoutKey* MUTE  = &_MUTE_;
 LayoutKey _PREV_       = {KEY_MEDIA_PREV_TRACK,   &Special};  LayoutKey* PREV  = &_PREV_;
 LayoutKey _NEXT_       = {KEY_MEDIA_NEXT_TRACK,   &Special};  LayoutKey* NEXT  = &_NEXT_;
@@ -237,7 +239,7 @@ LayoutKey _HASH_       = {KEY_HASH,         &Chara2};     LayoutKey* HASH    = &
 LayoutKey _DLLR_       = {KEY_DOLLAR,       &Chara2};     LayoutKey* DLLR    = &_DLLR_;
 LayoutKey _PRCNT_      = {KEY_PERCENT,      &Chara2};     LayoutKey* PRCNT   = &_PRCNT_;
 LayoutKey _CARAT_      = {KEY_CARAT,        &Chara2};     LayoutKey* CARAT   = &_CARAT_;
-LayoutKey _AMPS_       = {AMPERSAND,        &Chara2};     LayoutKey* AMPS    = &_AMPS_;
+LayoutKey _AMPRS_      = {AMPERSAND,        &Chara2};     LayoutKey* AMPRS   = &_AMPRS_;
 LayoutKey _ASTR_       = {KEY_ASTERISK,     &Chara2};     LayoutKey* ASTR    = &_ASTR_;
 LayoutKey _LPAR_       = {L_PARENTHESIS,    &Chara2};     LayoutKey* LPAR    = &_LPAR_;
 LayoutKey _RPAR_       = {R_PARENTHESIS,    &Chara2};     LayoutKey* RPAR    = &_RPAR_;

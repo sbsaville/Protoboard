@@ -127,6 +127,7 @@ void addLayer(KeyMapEntry (*keymap)[columnsCount], LayerActivationType type, std
 
 void setup() {
   addLayer(layer1, LayerActivationType::SINGLE_PRESS, {LAYER_1});
+  addLayer(layer1b, LayerActivationType::SINGLE_PRESS, {LAYER_1B});
   addLayer(layer2, LayerActivationType::SINGLE_PRESS, {LAYER_2});
   addLayer(layerLNav, LayerActivationType::SINGLE_PRESS, {LAYER_2B});
   addLayer(layerAppostrophe, LayerActivationType::SINGLE_PRESS, {LAYER_3});

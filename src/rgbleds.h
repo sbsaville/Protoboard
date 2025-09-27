@@ -79,7 +79,7 @@ void updateLockStates() {
   Capslock = (keyboard_leds & 2) ? Toggle : Modifier;
   Numlock = (keyboard_leds & 1) ? Toggle : Special;
   Numnav  = (keyboard_leds & 1) ? Number : Toggle;
-  Scrllock = (keyboard_leds & 4) ? Toggle : Special;
+  SCRLLKock = (keyboard_leds & 4) ? Toggle : Special;
 }
 
 
@@ -111,7 +111,7 @@ void scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]) {
           numLockFound = true;
         } else if (keyToUse == CAPS) {
           capsLockFound = true;
-        } else if (keyToUse == SCRLL) {
+        } else if (keyToUse == SCRLLK) {
           scrollLockFound = true;
         }
       } else {

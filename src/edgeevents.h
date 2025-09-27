@@ -78,8 +78,8 @@ void pressHyper() {
 void releaseHyper() {
   Keyboard.release(KEY_LEFT_ALT);
   Keyboard.release(KEY_LEFT_CTRL);
-  Keyboard.release(KEY_LEFT_GUI);
   Keyboard.release(KEY_LEFT_SHIFT);
+  Keyboard.release(KEY_LEFT_GUI);
 };
 
 void pressMeh() {
@@ -89,8 +89,8 @@ void pressMeh() {
 };
 
 void releaseMeh() {
+  Keyboard.release(KEY_LEFT_ALT);
   Keyboard.release(KEY_LEFT_CTRL);
-  Keyboard.release(KEY_LEFT_GUI);
   Keyboard.release(KEY_LEFT_SHIFT);
 };
 
@@ -474,6 +474,18 @@ void keyPressed(Key* key, LayoutKey* layout) {
         return;
     }
 
+    // Hyper and Meh keys
+    switch (pressedKeyCode) {
+      case KEY_HYPER:
+        pressHyper();
+        keyActionTaken = true;
+        break;
+      case KEY_MEH:
+        pressMeh();
+        keyActionTaken = true;
+        break;
+    }
+
     // Default action: press the keycode
     Keyboard.press(pressedKeyCode);
   }
@@ -589,13 +601,15 @@ void keyReleased(Key* key, LayoutKey* layout) {
             }
             currentLayer->tapCount = 0; // Reset tap count
             keyActionTaken = true;
-          } else if (currentLayer->waitingForSecondTap && releasedKeyCode == currentLayer->activationKeys[0]) {
+          } 
+          else if (currentLayer->waitingForSecondTap && releasedKeyCode == currentLayer->activationKeys[0]) {
             // This is the release of the FIRST tap.
             // waitingForSecondTap remains true, timeout will handle it if no second tap comes.
             // Or next press will check it.
             // No change in isActive state here.
             keyActionTaken = true; // The press was a layer action.
-          } else {
+          } 
+          else {
             // This release is not part of an active DT sequence for this layer,
             // but if the layer is active and this is its activation key,
             // the press might have turned it off.
@@ -612,15 +626,25 @@ void keyReleased(Key* key, LayoutKey* layout) {
   if (releasedKeyCode == KEY_ALTL || releasedKeyCode == KEY_ALTR ||
       releasedKeyCode == KEY_CAPS_SLASH || releasedKeyCode == KEY_CAPS_ESC) {
     keyActionTaken = true; // These keys manage state on press, release is handled by default HID release
-  } else if (releasedKeyCode == LAYER_0) { // Layer 0 Override Key
+  } 
+  else if (releasedKeyCode == LAYER_0) { // Layer 0 Override Key
     layer0_override_active = false;
     updateNeeded = true;
     keyActionTaken = true;
     #if EDGE_DEBUG
     Serial.println("LAYER_0 key released - override INACTIVE");
     #endif
-  } else if (releasedKeyCode == LOOP_COUNT) {
+  } 
+  else if (releasedKeyCode == LOOP_COUNT) {
       keyActionTaken = true; // Consumed by press
+  } 
+  else if (releasedKeyCode == KEY_HYPER) {
+    releaseHyper();
+    keyActionTaken = true;
+  } 
+  else if (releasedKeyCode == KEY_MEH) {
+    releaseMeh(); 
+    keyActionTaken = true;
   }
 
 
