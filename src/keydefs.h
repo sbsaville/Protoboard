@@ -15,7 +15,7 @@ LedColor Chara2   = CRGB(0xFF5500);
 LedColor Modifier = CRGB(0xFF0000);
 LedColor Capslock = CRGB(0xFF0000);
 LedColor Numlock  = CRGB(0xFFFF00);
-LedColor SCRLLKock = CRGB(0xFFFF00);
+LedColor Scrlock  = CRGB(0xFFFF00);
 LedColor FKeys1   = CRGB(0xFF2200);
 LedColor FKeys1b  = CRGB(0xFF0000);
 LedColor FKeys2   = CRGB(0x3300FF);
@@ -124,7 +124,7 @@ LayoutKey _F23_        = {KEY_F23,         &FKeys2};      LayoutKey* F23     = &
 LayoutKey _F24_        = {KEY_F24,         &FKeys2};      LayoutKey* F24     = &_F24_;
 
 LayoutKey _PRNT_       = {KEY_PRINTSCREEN, &Special};     LayoutKey* PRNT    = &_PRNT_;
-LayoutKey _SCRLLK_     = {KEY_SCROLL_LOCK, &SCRLLKock};   LayoutKey* SCRLLK  = &_SCRLLK_;
+LayoutKey _SCRLLK_     = {KEY_SCROLL_LOCK, &Scrlock};   LayoutKey* SCRLLK  = &_SCRLLK_;
 LayoutKey _PSBRK_      = {KEY_PAUSE,       &Special};     LayoutKey* PSBRK   = &_PSBRK_;
 
 LayoutKey _NUM1_       = {KEY_1,           &Number};      LayoutKey* NUM1    = &_NUM1_;
@@ -221,7 +221,7 @@ LayoutKey _RSHFT_      = {KEY_RIGHT_SHIFT,  &Capslock};   LayoutKey* RSHFT   = &
 LayoutKey _RCRTL_      = {KEY_RIGHT_CTRL,   &Modifier};   LayoutKey* RCRTL   = &_RCRTL_;
 LayoutKey _RGUI_       = {KEY_RIGHT_GUI,    &Modifier};   LayoutKey* RGUI    = &_RGUI_;
 LayoutKey _RALT_       = {KEY_RIGHT_ALT,    &Modifier};   LayoutKey* RALT    = &_RALT_;
-LayoutKey _MENU_       = {KEY_MENU,         &Modifier};   LayoutKey* MENU    = &_MENU_;
+LayoutKey _MENU_       = {KEY_MENU,         &Macro};      LayoutKey* MENU    = &_MENU_;
 
 LayoutKey _MUTE_       = {KEY_MEDIA_MUTE,         &Modifier}; LayoutKey* MUTE  = &_MUTE_;
 LayoutKey _PREV_       = {KEY_MEDIA_PREV_TRACK,   &Special};  LayoutKey* PREV  = &_PREV_;
@@ -260,6 +260,7 @@ LayoutKey _RBRACE_     = {CURL_R_BRACE,     &Chara2};     LayoutKey* RBRACE  = &
 LayoutKey _TILD_       = {SHIFT_TILDE,      &Chara2};     LayoutKey* TILD    = &_TILD_;
 LayoutKey _PLUS_       = {KEY_PLUS,         &Chara2};     LayoutKey* PLUS    = &_PLUS_;
 LayoutKey _DEGR_       = {KEY_DEGREES,      &Chara2};     LayoutKey* DEGR    = &_DEGR_;
+LayoutKey _EMCRN_      = {E_MACRON,         &Letter};     LayoutKey* EMCRN   = &_EMCRN_;
 LayoutKey _INFNY_      = {KEY_INFINITY,     &Chara2};     LayoutKey* INFNY   = &_INFNY_;
 LayoutKey _UNION_      = {KEY_UNION,        &Chara2};     LayoutKey* UNION   = &_UNION_;
 LayoutKey _GRKPI_      = {KEY_PI,           &Letter};     LayoutKey* GRKPI   = &_GRKPI_;
@@ -300,9 +301,15 @@ LayoutKey _TRL1_       = {TRILL_MODE1,      &Special};    LayoutKey* TRL1    = &
 LayoutKey _TRL2_       = {TRILL_MODE2,      &Special};    LayoutKey* TRL2    = &_TRL2_;
 LayoutKey _TRL3_       = {TRILL_MODE3,      &Special};    LayoutKey* TRL3    = &_TRL3_;
 LayoutKey _ALTTAB_     = {KEY_ALT_TAB,      &Special};    LayoutKey* ALTTAB  = &_ALTTAB_;
-LayoutKey _RBOOT_      = {KEY_REBOOT,       &Special};    LayoutKey* RBOOT    = &_RBOOT_;
+LayoutKey _RBOOT_      = {KEY_REBOOT,       &Special};    LayoutKey* RBOOT   = &_RBOOT_;
 LayoutKey _LCLK_       = {MOUSE_LCLICK,     &Special};    LayoutKey* LCLK    = &_LCLK_;
 LayoutKey _RCLK_       = {MOUSE_RCLICK,     &Special};    LayoutKey* RCLK    = &_RCLK_;
+LayoutKey _MMU_        = {MOUSE_MOVE_UP,        &Nav};    LayoutKey* MMU     = &_MMU_;
+LayoutKey _MMD_        = {MOUSE_MOVE_DOWN,      &Nav};    LayoutKey* MMD     = &_MMD_;
+LayoutKey _MML_        = {MOUSE_MOVE_LEFT,      &Nav};    LayoutKey* MML     = &_MML_;
+LayoutKey _MMR_        = {MOUSE_MOVE_RIGHT,     &Nav};    LayoutKey* MMR     = &_MMR_;
+
+
 LayoutKey _BR0_        = {LEDS_BR0,         &LedAdj};     LayoutKey* BR0     = &_BR0_;
 LayoutKey _BR1_        = {LEDS_BR1,         &LedAdj};     LayoutKey* BR1     = &_BR1_;
 LayoutKey _BR2_        = {LEDS_BR2,         &LedAdj};     LayoutKey* BR2     = &_BR2_;
@@ -316,7 +323,6 @@ LayoutKey _BR9_        = {LEDS_BR9,         &LedAdj};     LayoutKey* BR9     = &
 LayoutKey _BR10_       = {LEDS_BR10,        &LedAdj};     LayoutKey* BR10    = &_BR10_;
 LayoutKey _INCR_       = {LEDS_INC,         &LedAdj};     LayoutKey* INCR    = &_INCR_;
 LayoutKey _DECR_       = {LEDS_DEC,         &LedAdj};     LayoutKey* DECR    = &_DECR_;
-LayoutKey _EMCRN_      = {E_MACRON,         &Letter};     LayoutKey* EMCRN   = &_EMCRN_;
 
 LayoutKey _SF13_       = {KEYSF13,          &FKeys2b};    LayoutKey* SF13    = &_SF13_;
 LayoutKey _SF14_       = {KEYSF14,          &FKeys2b};    LayoutKey* SF14    = &_SF14_;

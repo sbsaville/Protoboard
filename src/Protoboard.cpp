@@ -11,6 +11,8 @@
 #include "macros.h"
 
 #define DEBUG 0
+#define LAYER_DEBUG 0
+
 #define LOOP_TIMER_DEBUG 0
 
 #define DEBOUNCE_TIME 8  // milliseconds
@@ -93,7 +95,7 @@ void sendKeys() {
 // Layer key diagnostic tool
 
 void L_check() {
-  #if DEBUG
+  #if LAYER_DEBUG
   Serial.println("Layer States:");
   for (size_t i = 0; i < activeLayers.size(); ++i) {
     Serial.print("Layer Index "); Serial.print(i);
@@ -183,11 +185,11 @@ void setup() {
 
 KeyMapEntry (*getActiveLayout())[columnsCount] {
     KeyMapEntry (*selectedLayout)[columnsCount] = layer0; // Default to layer0
-    // int highestPriorityActiveLayer = -1; // Not strictly needed here but good for debugging
+    // int highestPriorityActiveLayer = -1; // Not strictly needed here but good for LAYER_DEBUG_LAYERSging
 
     if (layer0_override_active) {
         trillbar::setMode(trillbar::MODE_ARROWS); // Default for layer0
-        #if DEBUG
+        #if LAYER_DEBUG
         Serial.println("getActiveLayout: Layer 0 override active.");
         #endif
         return layer0;
@@ -198,7 +200,7 @@ KeyMapEntry (*getActiveLayout())[columnsCount] {
         if (activeLayers[i].isActive) {
             selectedLayout = activeLayers[i].keymap;
             // highestPriorityActiveLayer = i; // For debugging
-            #if DEBUG
+            #if LAYER_DEBUG
             Serial.print("getActiveLayout: Active layer found at index: "); Serial.println(i);
             #endif
 
@@ -219,7 +221,7 @@ KeyMapEntry (*getActiveLayout())[columnsCount] {
     }
 
     // If no other layer is active, layer0 is used
-    #if DEBUG
+    #if LAYER_DEBUG
     Serial.println("getActiveLayout: No specific layer active, defaulting to Layer 0.");
     #endif
     trillbar::setMode(trillbar::MODE_ARROWS); // Default for layer0
@@ -251,44 +253,11 @@ bool isLayerActivationKey(uint16_t code) {
     return false;
 }
 
-/**
- * Test function to verify key preservation across layer changes
- * This helps debug the key preservation system by showing currently pressed keys
- */
-void testKeyPreservation() {
-  #if DEBUG
-  Serial.println("Key preservation test:");
-
-  // Check for any currently pressed keys
-  for (uint8_t i = 0; i < rowsCount; i++) {
-    for (uint8_t j = 0; j < columnsCount; j++) {
-      if (physicalKeyStates[i][j].isPressed) {
-        Serial.print("Key pressed at [");
-        Serial.print(i);
-        Serial.print("][");
-        Serial.print(j);
-        Serial.print("]: code=");
-
-        if (physicalKeyStates[i][j].activeKey) {
-          Serial.print(physicalKeyStates[i][j].activeKey->code);
-          Serial.print(", color=0x");
-          uint32_t color = ((uint32_t)physicalKeyStates[i][j].activeKey->ledColor->r << 16) |
-                           ((uint32_t)physicalKeyStates[i][j].activeKey->ledColor->g << 8) |
-                           physicalKeyStates[i][j].activeKey->ledColor->b;
-          Serial.println(color, HEX);
-        } else {
-          Serial.println("NULL activeKey");
-        }
-      }
-    }
-  }
-  #endif
-}
 
 void updateLayerMappings() {
   KeyMapEntry (*newLayout)[columnsCount] = getActiveLayout();
   if (newLayout != currentLayout) {
-    #if DEBUG
+    #if LAYER_DEBUG
     Serial.println("Layout changed - updating key mappings");
     #endif
     currentLayout = newLayout;
@@ -410,6 +379,8 @@ void loop() {
 
   trillbar::loop();
 
+  updateMouseMovement();
+
   // Check for double-tap timeouts
   for (size_t i = 0; i < activeLayers.size(); ++i) { // Use size_t and activeLayers.size()
     if (activeLayers[i].waitingForSecondTap && (now - activeLayers[i].lastTapTime > DOUBLE_TAP_WINDOW)) {
@@ -459,8 +430,7 @@ void loop() {
     }
     remapKeys(); // Update LEDs for toggles like ALT, CAPS_SLSH etc.
 
-    #if DEBUG
-    testKeyPreservation(); // Check physical key states
+    #if LAYER_DEBUG
     L_check(); // Check layer states
     #endif
   }

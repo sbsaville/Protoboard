@@ -132,7 +132,7 @@ unsigned long trillbar::lastTouchCountChange = 0;
 // Calculate adaptive sensitivity based on movement speed using a linear acceleration curve
 float trillbar::calculateSensitivity(int rawDelta) {
   // Base sensitivity value
-  const float baseSensitivity = 1.0f / 30.0f;
+  const float baseSensitivity = 1.0f / 40.0f;
 
   // Use absolute value for calculations
   int absDelta = abs(rawDelta);
@@ -405,10 +405,9 @@ void trillbar::handleTouchRelease() {
   }
   */
 
-  // Reset mode-specific state
-    ledsOverride = false;
+  ledsOverride = false;
+  Config::saveBrightness(brightness);
 
-  // Enable momentum for scrolling
   if (mode == MODE_SCROLL && abs(velocity) > threshold) {
     momentumActive = true;
     lastUpdate = millis();
@@ -429,10 +428,9 @@ void trillbar::handleTouchRelease() {
   }
   #endif
 
-  // Reset state
   holdCounter = 0;
-  tripleActionTriggered = false;  // Reset triple touch flag
-  quadActionTriggered = false;    // Reset quad touch flag
+  tripleActionTriggered = false;
+  quadActionTriggered = false;
 }
 
 // Public interface implementation

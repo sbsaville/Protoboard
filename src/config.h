@@ -32,14 +32,20 @@ bool Config::sdInitialized = false;
 
 bool Config::init() {
   if (sdInitialized) {
+    Serial.println("SD already initialized");
     return true;
   }
 
+  Serial.print("Attempting to initialize SD card on pin ");
+  Serial.println(SD_CS_PIN);
+  
   if (SD.begin(SD_CS_PIN)) {
     sdInitialized = true;
+    Serial.println("SD card initialized successfully");
     return true;
   }
 
+  Serial.println("SD card initialization FAILED");
   return false;
 }
 
@@ -72,7 +78,11 @@ bool Config::validateConfig(const BrightnessConfig& config) {
 }
 
 bool Config::saveBrightness(int brightness) {
+  Serial.print("Attempting to save brightness: ");
+  Serial.println(brightness);
+  
   if (!init()) {
+    Serial.println("Save failed: SD not initialized");
     return false;
   }
 
@@ -88,12 +98,19 @@ bool Config::saveBrightness(int brightness) {
 
   File file = SD.open(CONFIG_FILE, FILE_WRITE);
   if (!file) {
+    Serial.println("Save failed: Unable to open file for writing");
     return false;
   }
 
   // Write the config structure
   size_t written = file.write((uint8_t*)&config, sizeof(config));
   file.close();
+
+  if (written == sizeof(config)) {
+    Serial.println("Brightness saved successfully");
+  } else {
+    Serial.println("Save failed: Incomplete write");
+  }
 
   return written == sizeof(config);
 }
@@ -128,3 +145,5 @@ int Config::loadBrightness(int defaultValue) {
 }
 
 #endif
+
+

@@ -94,6 +94,121 @@ void releaseMeh() {
   Keyboard.release(KEY_LEFT_SHIFT);
 };
 
+struct MouseMovementState {
+  // Active movement states (affected by SOCD)
+  bool up = false;
+  bool down = false;
+  bool left = false;
+  bool right = false;
+  
+  // Physical key states (tracks what's actually held down)
+  bool upHeld = false;
+  bool downHeld = false;
+  bool leftHeld = false;
+  bool rightHeld = false;
+  
+  unsigned long lastUpTime = 0;
+  unsigned long lastDownTime = 0;
+  unsigned long lastLeftTime = 0;
+  unsigned long lastRightTime = 0;
+} mouseState;
+
+unsigned long lastMouseMoveTime = 0;
+const unsigned long MOUSE_MOVE_INTERVAL = 2;
+
+void startMouseMovement(int direction) {
+  unsigned long now = millis();
+  
+  switch(direction) {
+    case MOUSE_MOVE_UP:
+      mouseState.upHeld = true;
+      mouseState.up = true;
+      mouseState.lastUpTime = now;
+      if (mouseState.downHeld && mouseState.lastDownTime < now) {
+        mouseState.down = false; // SOCD: up beats down
+      }
+      break;
+    case MOUSE_MOVE_DOWN:
+      mouseState.downHeld = true;
+      mouseState.down = true;
+      mouseState.lastDownTime = now;
+      if (mouseState.upHeld && mouseState.lastUpTime < now) {
+        mouseState.up = false; // SOCD: down beats up
+      }
+      break;
+    case MOUSE_MOVE_LEFT:
+      mouseState.leftHeld = true;
+      mouseState.left = true;
+      mouseState.lastLeftTime = now;
+      if (mouseState.rightHeld && mouseState.lastRightTime < now) {
+        mouseState.right = false; // SOCD: left beats right
+      }
+      break;
+    case MOUSE_MOVE_RIGHT:
+      mouseState.rightHeld = true;
+      mouseState.right = true;
+      mouseState.lastRightTime = now;
+      if (mouseState.leftHeld && mouseState.lastLeftTime < now) {
+        mouseState.left = false; // SOCD: right beats left
+      }
+      break;
+  }
+}
+
+void stopMouseMovement(int direction) {
+  switch(direction) {
+    case MOUSE_MOVE_UP: 
+      mouseState.upHeld = false;
+      mouseState.up = false;
+      // If down is still physically held, restore it
+      if (mouseState.downHeld) {
+        mouseState.down = true;
+      }
+      break;
+    case MOUSE_MOVE_DOWN: 
+      mouseState.downHeld = false;
+      mouseState.down = false;
+      // If up is still physically held, restore it
+      if (mouseState.upHeld) {
+        mouseState.up = true;
+      }
+      break;
+    case MOUSE_MOVE_LEFT: 
+      mouseState.leftHeld = false;
+      mouseState.left = false;
+      // If right is still physically held, restore it
+      if (mouseState.rightHeld) {
+        mouseState.right = true;
+      }
+      break;
+    case MOUSE_MOVE_RIGHT: 
+      mouseState.rightHeld = false;
+      mouseState.right = false;
+      // If left is still physically held, restore it
+      if (mouseState.leftHeld) {
+        mouseState.left = true;
+      }
+      break;
+  }
+}
+
+void updateMouseMovement() {
+  if (millis() - lastMouseMoveTime >= MOUSE_MOVE_INTERVAL) {
+    int deltaX = 0, deltaY = 0;
+    
+    if (mouseState.left) deltaX -= 1;
+    if (mouseState.right) deltaX += 1;
+    if (mouseState.up) deltaY -= 1;
+    if (mouseState.down) deltaY += 1;
+    
+    if (deltaX != 0 || deltaY != 0) {
+      Mouse.move(deltaX, deltaY);
+    }
+    
+    lastMouseMoveTime = millis();
+  }
+}
+
 struct BrightnessLevel {
   int code;
   int brightnessValue;
@@ -431,30 +546,31 @@ void keyPressed(Key* key, LayoutKey* layout) {
     if (pressedKeyCode == LEDS_INC) { ledsINC(); return; }
     if (pressedKeyCode == LEDS_DEC) { ledsDEC(); return; }
 
-    // Trillbar modes
     if (pressedKeyCode == TRILL_MODE1) { trillbar::setMode(trillbar::MODE_ARROWS); return; }
     if (pressedKeyCode == TRILL_MODE2) { trillbar::setMode(trillbar::MODE_SCROLL); return; }
     if (pressedKeyCode == TRILL_MODE3) { trillbar::setMode(trillbar::MODE_BRIGHTNESS); return; }
 
-    // Mouse buttons
     if (pressedKeyCode == MOUSE_LCLICK) { Mouse.set_buttons(1,0,0); return;}
     if (pressedKeyCode == MOUSE_RCLICK) { Mouse.set_buttons(0,0,1); return;}
 
-    // System keys
+    if (pressedKeyCode == MOUSE_MOVE_UP || pressedKeyCode == MOUSE_MOVE_DOWN || 
+        pressedKeyCode == MOUSE_MOVE_LEFT || pressedKeyCode == MOUSE_MOVE_RIGHT) {
+      startMouseMovement(pressedKeyCode);
+      return;
+    }
+
     if (pressedKeyCode == KEY_RELEASE) { Keyboard.releaseAll(); return; }
     if (pressedKeyCode == KEY_REBOOT) { _reboot_Teensyduino_(); return; }
 
-    // Alt-Tab special handling
     if (pressedKeyCode == KEY_ALT_TAB) {
       Keyboard.press(KEY_LEFT_ALT);
-      Keyboard.send_now(); // ensure ALT is registered before TAB
+      Keyboard.send_now();
       Keyboard.press(KEY_TAB);
       Keyboard.release(KEY_TAB);
       L2AltTab = true;
       return; 
     }
 
-    // Shifted keys (sends key with SHIFT)
     for (uint8_t i = 0; i < sizeof(shiftedKeys) / sizeof(SimpleKeyAction); i++) {
       if (pressedKeyCode == shiftedKeys[i].code) {
         shiftedKey(shiftedKeys[i].keyToPress);
@@ -474,7 +590,6 @@ void keyPressed(Key* key, LayoutKey* layout) {
         return;
     }
 
-    // Hyper and Meh keys
     switch (pressedKeyCode) {
       case KEY_HYPER:
         pressHyper();
@@ -673,6 +788,12 @@ void keyReleased(Key* key, LayoutKey* layout) {
 
     if (releasedKeyCode == MOUSE_LCLICK || releasedKeyCode == MOUSE_RCLICK) {
       Mouse.set_buttons(0,0,0); return;
+    }
+
+    if (releasedKeyCode == MOUSE_MOVE_UP || releasedKeyCode == MOUSE_MOVE_DOWN || 
+        releasedKeyCode == MOUSE_MOVE_LEFT || releasedKeyCode == MOUSE_MOVE_RIGHT) {
+      stopMouseMovement(releasedKeyCode);
+      return;
     }
 
     Keyboard.release(releasedKeyCode);

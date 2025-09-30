@@ -124,7 +124,7 @@ KeyMapEntry layer2DT[rowsCount][columnsCount] = {
 KeyMapEntry layerLNav[rowsCount][columnsCount] = {
   {{ESC,SET0},{F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {NUL}},
   {{NUL},     {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
-  {{TAB},     {HOME},  {UP},    {END},   {PGUP},  {NUL},   {HOME},  {PGDN},  {PGUP},  {END},   {NUL},   {NUL},   {NUL},   {NUL}},
+  {{TAB},     {HOME},  {UP},    {END},   {PGUP},  {MENU},  {HOME},  {PGDN},  {PGUP},  {END},   {NUL},   {NUL},   {NUL},   {NUL}},
   {{LYR2B},   {LEFT},  {DOWN},  {RIGHT}, {PGDN},  {PENT},  {LEFT},  {DOWN},  {UP},    {RIGHT}, {NUL},   {NUL},   {ENTER}, {LCLK}},
   {{LSHFT},   {NUL},   {NUL},   {NUL},   {NUL},   {PENT},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {RSHFT}, {NUL},   {NMLCK}},
   {{LCRTL},   {LGUI},  {LALT},  {LCRTL}, {LALT},  {DEL},   {BKSPC}, {LYR3},  {NUL},   {RALT},  {RGUI},  {RCRTL}, {NUL},   {NUL}}
@@ -137,7 +137,7 @@ KeyMapEntry layerSymbols[rowsCount][columnsCount] = {
   {{ESC},         {AMPRS}, {DLLR},  {LBRACE},{LBRACK},{LPAR},  {RPAR},  {RBRACK},{RBRACE},{NUL},   {NUL},   {NUL},   {ENTER}, {NUL}},
   {{LSHFT},       {DEGR},  {NUL},   {PRCNT}, {CMTST}, {BSLSH}, {HASH},  {CMTED}, {LSEQL}, {GREQL}, {NUL},   {RSHFT}, {NUL},   {NUL}},
   {{LCRTL},       {LGUI},  {LALT},  {LYR2},  {LYR2},  {DEL},   {BKSPC}, {LYR3},  {LYR4},  {RALT},  {RGUI},  {RCRTL}, {NUL},   {NUL}}
-}; 
+};
 
 KeyMapEntry layerAppostrophe[rowsCount][columnsCount] = {
   {{ESC,SET0},{F13},   {F14},   {F15},   {F16},    {F17},   {F18},   {F19},   {F20},   {F21},    {F22},   {F23},   {F24},   {BKSPC}},
@@ -145,7 +145,7 @@ KeyMapEntry layerAppostrophe[rowsCount][columnsCount] = {
   {{NUL},     {QUOTE}, {DBLQ},  {NUL},   {APST_RE},{APST_T},{NUL},   {NUL},   {NUL},   {NUL},    {NUL},   {NUL},   {NUL},   {NUL}},
   {{NUL},     {NUL},   {APST_S},{APST_D},{NUL},    {NUL},   {NUL},   {NUL},   {NUL},   {APST_LL},{NUL},   {LYR3B}, {ENTER}, {NUL}},
   {{LSHFT},   {NUL},   {NUL},   {NUL},   {APST_VE},{NUL},   {NUL},   {APST_M},{NUL},   {NUL},    {NUL},   {HYPER}, {NUL},   {NUL}},
-  {{LCRTL},   {LGUI},  {LALT},  {LYR2},  {LYR2},   {DEL},   {BKSPC}, {LYR3},  {LYR4},  {RALT},   {RGUI},  {RCRTL}, {NUL},   {NUL}}
+  {{LCRTL},   {LGUI},  {LALT},  {LYR2},  {LYR2},   {DEL},   {BKSPC}, {LYR3},  {LYR4},  {RALT},   {RGUI},  {MEH},   {NUL},   {NUL}}
 };
 
 KeyMapEntry layer3DT[rowsCount][columnsCount] = {
@@ -160,8 +160,8 @@ KeyMapEntry layer3DT[rowsCount][columnsCount] = {
 KeyMapEntry layerRNav[rowsCount][columnsCount] = {
   {{ESC,SET0},{F13},   {F14},   {F15},   {F16},   {F17},   {F18},  {F19},   {F20},   {F21},   {F22},   {F23},   {F24},   {NUL}},
   {{NUL},     {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
-  {{TAB},     {HOME},  {UP},    {END},   {PGUP},  {NUL},   {NUL},  {PGUP},  {HOME},  {UP},    {END},   {NUL},   {NUL},   {NUL}},
-  {{NUL},     {LEFT},  {DOWN},  {RIGHT}, {PGDN},  {NUL},   {NUL},  {PGDN},  {LEFT},  {DOWN},  {RIGHT}, {LYR3B}, {ENTER}, {LCLK}},
+  {{TAB},     {NUL},   {MMU},   {NUL},   {NUL},   {NUL},   {NUL},  {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL}},
+  {{NUL},     {MML},   {MMD},   {MMR},   {NUL},   {NUL},   {NUL},  {NUL},   {LCLK},  {RCLK},  {NUL},   {LYR3B}, {ENTER}, {NUL}},
   {{LSHFT},   {NUL},   {NUL},   {NUL},   {PENT},  {NUL},   {NUL},  {NUL},   {NUL},   {NUL},   {NUL},   {RSHFT}, {PGUP},  {NMLCK}},
   {{LCRTL},   {LGUI},  {LALT},  {LCRTL}, {LALT},  {DEL},   {BKSPC},{LYR3},  {NUL},   {RALT},  {RGUI},  {RCRTL}, {PGDN},  {PGDN}}
 };
@@ -186,11 +186,22 @@ KeyMapEntry layer4DT[rowsCount][columnsCount] = {
 
 /*
 KeyMapEntry layoutNUL[rowsCount][columnsCount] = {
+  //  ESC       F1        F2        F3        F4        F5        F6        F7        F8        F9        F10       F11       F12       DEL      
   {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
+
+  //   ~         1         2         3         4         5         6         7         8         9         0         -         =        End
   {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
+
+  //  Tab        Q         W         E         R         T         Y         U         I         O         P         [         ]         |
   {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
+
+  //  Caps       A         S         D         F         G         H         J         K         L         ;         '       Enter      Home
   {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
+
+  // Shift       Z         X         C         V         B         N         M         ,         .         /       Shift      Up       Right
   {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
+
+  //  Ctrl      Gui       Alt                          Space     Backsp                         Alt       Gui       Ctrl      Left      Down
   {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }}
 };
 */

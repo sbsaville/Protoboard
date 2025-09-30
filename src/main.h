@@ -173,10 +173,10 @@ const uint16_t KEY_SET0                      = 602 | 0xA000;
 const uint16_t KEY_REBOOT                    = 603 | 0xA000;
 
 //                          non-keyboard things
-const uint16_t MOUSE_YPLUS                   = 896 | 0xA000;
-const uint16_t MOUSE_YMINUS                  = 897 | 0xA000;
-const uint16_t MOUSE_XPLUS                   = 898 | 0xA000;
-const uint16_t MOUSE_XMINUS                  = 899 | 0xA000;
+const uint16_t MOUSE_MOVE_UP                 = 896 | 0xA000;
+const uint16_t MOUSE_MOVE_DOWN               = 897 | 0xA000;
+const uint16_t MOUSE_MOVE_LEFT               = 898 | 0xA000;
+const uint16_t MOUSE_MOVE_RIGHT              = 899 | 0xA000;
 const uint16_t MOUSE_LCLICK                  = 900 | 0xA000;
 const uint16_t MOUSE_RCLICK                  = 901 | 0xA000;
 const uint16_t TRILL_MODE1                   = 902 | 0xA000;
