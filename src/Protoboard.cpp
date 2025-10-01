@@ -133,7 +133,7 @@ void setup() {
   addLayer(layer2, LayerActivationType::SINGLE_PRESS, {LAYER_2});
   addLayer(layerLNav, LayerActivationType::SINGLE_PRESS, {LAYER_2B});
   addLayer(layerAppostrophe, LayerActivationType::SINGLE_PRESS, {LAYER_3});
-  addLayer(layerRNav, LayerActivationType::SINGLE_PRESS, {LAYER_3B});
+  addLayer(layerMouse, LayerActivationType::SINGLE_PRESS, {LAYER_3B});
   addLayer(layer4, LayerActivationType::SINGLE_PRESS, {LAYER_4});
 
   addLayer(layer2DT, LayerActivationType::DOUBLE_TAP_TOGGLE, {LAYER_2});
@@ -211,6 +211,8 @@ KeyMapEntry (*getActiveLayout())[columnsCount] {
                 trillbar::setMode(trillbar::MODE_BRIGHTNESS);
             } else if (activeLayers[i].keymap == layer2) {
                 trillbar::setMode(trillbar::MODE_SCROLL);
+            } else if (activeLayers[i].keymap == layerMouse) {
+                trillbar::setMode(trillbar::MODE_MOUSE);
             } else if (activeLayers[i].keymap == layer2DT || activeLayers[i].keymap == layer3DT) {
                 trillbar::setMode(trillbar::MODE_ARROWS);
             } else {

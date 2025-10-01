@@ -551,6 +551,7 @@ void keyPressed(Key* key, LayoutKey* layout) {
     if (pressedKeyCode == TRILL_MODE3) { trillbar::setMode(trillbar::MODE_BRIGHTNESS); return; }
 
     if (pressedKeyCode == MOUSE_LCLICK) { Mouse.set_buttons(1,0,0); return;}
+    if (pressedKeyCode == MOUSE_LCLICK) { Mouse.set_buttons(0,1,0); return;}
     if (pressedKeyCode == MOUSE_RCLICK) { Mouse.set_buttons(0,0,1); return;}
 
     if (pressedKeyCode == MOUSE_MOVE_UP || pressedKeyCode == MOUSE_MOVE_DOWN || 
@@ -786,7 +787,7 @@ void keyReleased(Key* key, LayoutKey* layout) {
 
     if (isControlKey) return;
 
-    if (releasedKeyCode == MOUSE_LCLICK || releasedKeyCode == MOUSE_RCLICK) {
+    if (releasedKeyCode == MOUSE_LCLICK || releasedKeyCode == MOUSE_RCLICK || releasedKeyCode == MOUSE_MCLICK) {
       Mouse.set_buttons(0,0,0); return;
     }
 

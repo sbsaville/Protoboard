@@ -6,6 +6,7 @@
 #define TRILL_DEBUG 0
 #define TRILL_MOMENTUM_DEBUG 0
 #define ACCEL_DEBUG 0
+#define RATE_DEBUG 0
 
 void scanLEDs(LayoutKey* (*layoutMatrix)[columnsCount]);
 void ledsDEC();
@@ -22,13 +23,13 @@ public:
   static const int MODE_ARROWS = 1;
   static const int MODE_BRIGHTNESS = 2;
   static const int MODE_SCROLL = 3;
+  static const int MODE_MOUSE = 4;
 
 private:
   static Trill sensor;
 
   static const float FILTER_WEIGHT;
   static const float TAP_THRESHOLD;
-  static const int SIZE_STABILITY_THRESHOLD;
 
   static bool active;                         
   static unsigned long startTime;             
@@ -40,8 +41,6 @@ private:
   static int lastRawPos;                      
   static int size;                            
   static int lastSize;                        
-  static int sizeRate;                        
-  static bool isStable;                       
   static int adjustedSize;                    
   static int rawDelta;                        
   static float filteredDelta;                 
@@ -85,6 +84,7 @@ private:
   static void handleMode1(int actionUnits);   // Arrows
   static void handleMode2(int actionUnits);   // Brightness
   static void handleMode3(int actionUnits);   // Scrolling
+  static void handleMode4(int actionUnits);   // Mouse movement
   static void handleDualTouch();              // Volume control
   static void handleTripleTouch();            // Media control
   static void handleQuadTouch();              // Mute control
@@ -95,7 +95,6 @@ Trill trillbar::sensor;
 
 const float trillbar::FILTER_WEIGHT = 0.5f;
 const float trillbar::TAP_THRESHOLD = 300.0f;
-const int trillbar::SIZE_STABILITY_THRESHOLD = 600;
 const unsigned long trillbar::updateInterval = 16;
 
 bool trillbar::active = false;
@@ -106,8 +105,6 @@ int trillbar::rawPos = 0;
 int trillbar::lastRawPos = 0;
 int trillbar::size = 0;
 int trillbar::lastSize = 0;
-int trillbar::sizeRate = 0;
-bool trillbar::isStable = true;
 int trillbar::adjustedSize = 0;
 int trillbar::rawDelta = 0;
 float trillbar::filteredDelta = 0;
@@ -124,7 +121,7 @@ bool trillbar::momentumActive = false;
 unsigned long trillbar::lastUpdate = 0;
 unsigned long trillbar::lastRead = 0;
 unsigned long trillbar::baseInterval = 1;
-unsigned long trillbar::activeInterval = 5;
+unsigned long trillbar::activeInterval = 2; // Was 5, try 10 or higher
 bool trillbar::tripleActionTriggered = false;
 bool trillbar::quadActionTriggered = false;
 unsigned long trillbar::lastTouchCountChange = 0;
@@ -132,18 +129,18 @@ unsigned long trillbar::lastTouchCountChange = 0;
 // Calculate adaptive sensitivity based on movement speed using a linear acceleration curve
 float trillbar::calculateSensitivity(int rawDelta) {
   // Base sensitivity value
-  const float baseSensitivity = 1.0f / 40.0f;
+  const float baseSensitivity = 1.0f / 50.0f;
 
   // Use absolute value for calculations
   int absDelta = abs(rawDelta);
 
   // Define the range for scaling
-  const int minDelta = 10;    // Below this, use minimum sensitivity
+  const int minDelta = 1;    // Below this, use minimum sensitivity
   const int maxDelta = 500;   // Above this, use maximum sensitivity
 
   // Define sensitivity multiplier range
-  const float minMultiplier = 0.55f;   // For slow movements
-  const float maxMultiplier = 1.75f;   // For fast movements
+  const float minMultiplier = 0.44f;   // For slow movements
+  const float maxMultiplier = 3.0f;   // For fast movements
 
   // Calculate the normalized position within the range [0.0-1.0]
   float normalizedDelta = constrain(absDelta, minDelta, maxDelta);
@@ -155,10 +152,10 @@ float trillbar::calculateSensitivity(int rawDelta) {
   // Apply multiplier to base sensitivity
   float finalSensitivity = baseSensitivity * multiplier;
 
-  // Diagnostic output - only output every N ms to avoid flooding serial
-  static unsigned long lastDiagnostic = 0;
-  if (millis() - lastDiagnostic > 50) { // Output every 200ms
-    lastDiagnostic = millis();
+  // Diagnostic output - only output every N calls to avoid flooding serial
+  static int debugCounter = 0;
+  if (++debugCounter >= 4) { // Output every Nth call
+    debugCounter = 0;
 
     #if ACCEL_DEBUG
     Serial.print("ACCEL: rawDelta=");
@@ -224,20 +221,14 @@ int trillbar::processMovement() {
   // Calculate raw delta
   rawDelta = rawPos - lastRawPos;
 
-  // Calculate size rate of change
-  sizeRate = lastSize - size; // Positive when size decreasing (finger lifting)
-
-  // Determine if touch is stable (not lifting or pressing down too quickly)
-  isStable = (abs(sizeRate) < SIZE_STABILITY_THRESHOLD);
-
-  // Ignore movements if touch is not stable
-  if (!isStable) {
-    #if TRILL_DEBUG
-    Serial.print("Touch unstable, size rate: ");
-    Serial.println(sizeRate);
-    #endif
-    return 0;
-  }
+  #if ACCEL_DEBUG
+  Serial.print("processMovement: rawPos=");
+  Serial.print(rawPos);
+  Serial.print(" lastRawPos=");
+  Serial.print(lastRawPos);
+  Serial.print(" rawDelta=");
+  Serial.println(rawDelta);
+  #endif
 
   // Apply adaptive sensitivity based on movement speed
   float sensitivity = calculateSensitivity(rawDelta);
@@ -251,6 +242,11 @@ int trillbar::processMovement() {
 
   // Extract whole units of movement (integer part)
   int actionUnits = (int)accumulatedMovement;
+
+  #if TRILL_DEBUG
+  Serial.print(" actionUnits=");
+  Serial.println(actionUnits);
+  #endif
 
   // Keep only the fractional part for next time
   accumulatedMovement -= actionUnits;
@@ -314,14 +310,30 @@ void trillbar::handleMode3(int actionUnits) {
   #endif
 }
 
+// Handle mode 4: Mouse movement
+void trillbar::handleMode4(int actionUnits) {
+  // Use raw delta instead of processed actionUnits for more direct control
+  if (rawDelta == 0) return;
+
+  // Mouse sensitivity - adjust this value to taste
+  const float mouseSensitivity = 1.0f;
+  int mouseUnits = (int)(rawDelta * mouseSensitivity);
+
+  // Apply minimum threshold to avoid tiny movements
+  if (abs(mouseUnits) < 1) return;
+  Mouse.move(-mouseUnits, 0);
+
+  #if TRILL_DEBUG
+  Serial.print("Raw mouse movement - rawDelta: ");
+  Serial.print(rawDelta);
+  Serial.print(", mouseUnits: ");
+  Serial.println(mouseUnits);
+  #endif
+}
+
 // Handle dual touch (volume control)
 void trillbar::handleDualTouch() {
   static int lastAvgPos = -1;
-
-  // Skip if touch is not stable (lifting/pressing)
-  if (!isStable) {
-    return;
-  }
 
   // Calculate spread between touches
   int pos1 = sensor.touchLocation(0);
@@ -406,7 +418,11 @@ void trillbar::handleTouchRelease() {
   */
 
   ledsOverride = false;
-  Config::saveBrightness(brightness);
+  
+  // Only save brightness if we were in brightness mode
+  if (mode == MODE_BRIGHTNESS) {
+    Config::saveBrightness(brightness);
+  }
 
   if (mode == MODE_SCROLL && abs(velocity) > threshold) {
     momentumActive = true;
@@ -495,8 +511,21 @@ void trillbar::loop() {
   if (currentTime - lastRead >= pollingInterval) {
     lastRead = currentTime;
 
+    #if RATE_DEBUG
+    unsigned long readStart = micros();
+    #endif
+    
     // Read sensor data
     sensor.read();
+    
+    #if RATE_DEBUG
+    unsigned long readTime = micros() - readStart;
+    if (readTime > 1000) { // Only log if read takes >1ms
+      Serial.print("Sensor read took: ");
+      Serial.print(readTime);
+      Serial.println(" µs");
+    }
+    #endif
 
     // Get touch count
     int touchCount = sensor.getNumTouches();
@@ -520,7 +549,6 @@ void trillbar::loop() {
     if (touchCount > 0) {
       // Store previous position and size for calculations
       lastRawPos = rawPos;
-      lastSize = size;  // Track previous size for stability detection
 
       // Read position of first touch
       rawPos = sensor.touchLocation(0);
@@ -528,19 +556,22 @@ void trillbar::loop() {
       adjustedSize = size / 200;  // Scale like original
 
       #if TRILL_DEBUG
+      Serial.print("Positions - Last: ");
+      Serial.print(lastRawPos);
+      Serial.print(", Current: ");
+      Serial.print(rawPos);
+      Serial.print(", Delta: ");
+      Serial.print(rawPos - lastRawPos);
+      Serial.print(", Size: ");
+      Serial.println(size);
+      #endif
+
+      #if TRILL_DEBUG
       Serial.print("Raw: ");
       Serial.print(rawPos);
       Serial.print(", Size: ");
       Serial.print(size);
-      if (active) {
-        Serial.print(", Rate: ");
-        Serial.print(sizeRate);
-        Serial.print(", Stable: ");
-        Serial.println(isStable ? "Yes" : "No");
-      }
-      else {
         Serial.println();
-      }
       #endif
 
       // If this is a new touch, reset state
@@ -549,8 +580,6 @@ void trillbar::loop() {
         startTime = currentTime;
         lastRawPos = rawPos;  // Initialize to prevent jumps
         lastSize = size;      // Initialize size tracking
-        sizeRate = 0;         // Reset size rate
-        isStable = false;     // Consider unstable initially
         holdCounter = 0;
         // Reset accumulated movement when starting a new touch
         accumulatedMovement = 0;
@@ -563,29 +592,28 @@ void trillbar::loop() {
       if (holdCounter > 2 && (currentTime - lastTouchCountChange > touchDebounceTime)) {
         int actionUnits = processMovement();
 
-        // Only handle inputs if the touch is stable (not rapidly changing size)
-        if (isStable) {
-          // Handle based on touch count and size
-          if (touchCount == 1 && adjustedSize <= 30) {
-            // Single touch - use current mode
-            switch (mode) {
-              case MODE_ARROWS: handleMode1(actionUnits); break;
-              case MODE_BRIGHTNESS: handleMode2(actionUnits); break;
-              case MODE_SCROLL: handleMode3(actionUnits); break;
-            }
+
+        // Handle based on touch count and size
+        if (touchCount == 1 && adjustedSize <= 30) {
+          // Single touch - use current mode
+          switch (mode) {
+            case MODE_ARROWS: handleMode1(actionUnits); break;
+            case MODE_BRIGHTNESS: handleMode2(actionUnits); break;
+            case MODE_SCROLL: handleMode3(actionUnits); break;;
+            case MODE_MOUSE: handleMode4(actionUnits); break;
           }
-          else if ((touchCount == 2 && adjustedSize > 8) ||
-                   (touchCount == 1 && adjustedSize > 30 && adjustedSize <= 50)) {
-            // Dual touch or medium-large single touch - volume control
-            handleDualTouch();
-          }
-          else if (touchCount >= 3 || adjustedSize > 50) {
-            // Triple touch or very large single touch - media control
-            if (touchCount >= 4) {
-              handleQuadTouch();
-            } else {
-              handleTripleTouch();
-            }
+        }
+        else if ((touchCount == 2 && adjustedSize > 8) ||
+                  (touchCount == 1 && adjustedSize > 30 && adjustedSize <= 50)) {
+          // Dual touch or medium-large single touch - volume control
+          handleDualTouch();
+        }
+        else if (touchCount >= 3 || adjustedSize > 50) {
+          // Triple touch or very large single touch - media control
+          if (touchCount >= 4) {
+            handleQuadTouch();
+          } else {
+            handleTripleTouch();
           }
         }
         #if TRILL_DEBUG
@@ -635,9 +663,7 @@ int trillbar::getMode() {
 }
 
 void trillbar::setMode(int newMode) {
-  if (newMode >= MODE_ARROWS && newMode <= MODE_SCROLL) {
-    mode = newMode;
-  }
+  mode = newMode;
 }
 
 #endif

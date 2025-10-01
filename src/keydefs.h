@@ -303,6 +303,7 @@ LayoutKey _TRL3_       = {TRILL_MODE3,      &Special};    LayoutKey* TRL3    = &
 LayoutKey _ALTTAB_     = {KEY_ALT_TAB,      &Special};    LayoutKey* ALTTAB  = &_ALTTAB_;
 LayoutKey _RBOOT_      = {KEY_REBOOT,       &Special};    LayoutKey* RBOOT   = &_RBOOT_;
 LayoutKey _LCLK_       = {MOUSE_LCLICK,     &Special};    LayoutKey* LCLK    = &_LCLK_;
+LayoutKey _MCLK_       = {MOUSE_MCLICK,     &Special};    LayoutKey* MCLK    = &_MCLK_;
 LayoutKey _RCLK_       = {MOUSE_RCLICK,     &Special};    LayoutKey* RCLK    = &_RCLK_;
 LayoutKey _MMU_        = {MOUSE_MOVE_UP,        &Nav};    LayoutKey* MMU     = &_MMU_;
 LayoutKey _MMD_        = {MOUSE_MOVE_DOWN,      &Nav};    LayoutKey* MMD     = &_MMD_;
