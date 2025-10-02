@@ -1,22 +1,21 @@
-#ifndef SDCONFIG_H
-#define SDCONFIG_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
 #include <SD.h>
 #include <SPI.h>
 
-#define SD_CS_PIN BUILTIN_SDCARD
+// SD card configuration
+#define SD_CS_PIN BUILTIN_SDCARD  // Teensy 3.6 built-in SD card
 #define CONFIG_FILE "brightness.bin"
 
-#define SD_DEBUG 0
-
-// sdconfig structure for brightness
-struct Brightnesssdconfig {
-  uint8_t version;      // sdconfig version for future compatibility
+// Config structure for brightness
+struct BrightnessConfig {
+  uint8_t version;      // Config version for future compatibility
   int brightness;       // Current brightness value
   uint8_t checksum;     // Simple checksum for data integrity
 };
 
-class sdconfig {
+class Config {
 public:
   static bool init();
   static bool saveBrightness(int brightness);
@@ -24,30 +23,25 @@ public:
 
 private:
   static bool sdInitialized;
-  static uint8_t calculateChecksum(const Brightnesssdconfig& config);
-  static bool validatesdconfig(const Brightnesssdconfig& config);
+  static uint8_t calculateChecksum(const BrightnessConfig& config);
+  static bool validateConfig(const BrightnessConfig& config);
 };
 
 // Static member initialization
-bool sdconfig::sdInitialized = false;
+bool Config::sdInitialized = false;
 
-bool sdconfig::init() {
+bool Config::init() {
   if (sdInitialized) {
-    #if SD_DEBUG
-      Serial.println("SD already initialized");
-    #endif
+    Serial.println("SD already initialized");
     return true;
   }
-  #if SD_DEBUG
-    Serial.print("Attempting to initialize SD card on pin ");
-    Serial.println(SD_CS_PIN);
-  #endif
+
+  Serial.print("Attempting to initialize SD card on pin ");
+  Serial.println(SD_CS_PIN);
   
   if (SD.begin(SD_CS_PIN)) {
     sdInitialized = true;
-    #if SD_DEBUG
-      Serial.println("SD card initialized successfully");
-    #endif
+    Serial.println("SD card initialized successfully");
     return true;
   }
 
@@ -55,7 +49,7 @@ bool sdconfig::init() {
   return false;
 }
 
-uint8_t sdconfig::calculateChecksum(const Brightnesssdconfig& config) {
+uint8_t Config::calculateChecksum(const BrightnessConfig& config) {
   uint8_t checksum = 0;
   checksum ^= config.version;
   checksum ^= (config.brightness & 0xFF);
@@ -63,7 +57,7 @@ uint8_t sdconfig::calculateChecksum(const Brightnesssdconfig& config) {
   return checksum;
 }
 
-bool sdconfig::validatesdconfig(const Brightnesssdconfig& config) {
+bool Config::validateConfig(const BrightnessConfig& config) {
   // Check version
   if (config.version != 1) {
     return false;
@@ -83,18 +77,16 @@ bool sdconfig::validatesdconfig(const Brightnesssdconfig& config) {
   return true;
 }
 
-bool sdconfig::saveBrightness(int brightness) {
-  #if SD_DEBUG
-    Serial.print("Attempting to save brightness: ");
-    Serial.println(brightness);
-  #endif
+bool Config::saveBrightness(int brightness) {
+  Serial.print("Attempting to save brightness: ");
+  Serial.println(brightness);
   
   if (!init()) {
     Serial.println("Save failed: SD not initialized");
     return false;
   }
 
-  Brightnesssdconfig config;
+  BrightnessConfig config;
   config.version = 1;
   config.brightness = brightness;
   config.checksum = calculateChecksum(config);
@@ -115,9 +107,7 @@ bool sdconfig::saveBrightness(int brightness) {
   file.close();
 
   if (written == sizeof(config)) {
-    #if SD_DEBUG
-      Serial.println("Brightness saved successfully");
-    #endif
+    Serial.println("Brightness saved successfully");
   } else {
     Serial.println("Save failed: Incomplete write");
   }
@@ -125,7 +115,7 @@ bool sdconfig::saveBrightness(int brightness) {
   return written == sizeof(config);
 }
 
-int sdconfig::loadBrightness(int defaultValue) {
+int Config::loadBrightness(int defaultValue) {
   if (!init()) {
     return defaultValue;
   }
@@ -139,7 +129,7 @@ int sdconfig::loadBrightness(int defaultValue) {
     return defaultValue;
   }
 
-  Brightnesssdconfig config;
+  BrightnessConfig config;
   size_t bytesRead = file.read((uint8_t*)&config, sizeof(config));
   file.close();
 
@@ -147,7 +137,7 @@ int sdconfig::loadBrightness(int defaultValue) {
     return defaultValue;
   }
 
-  if (!validatesdconfig(config)) {
+  if (!validateConfig(config)) {
     return defaultValue;
   }
 

@@ -7,7 +7,7 @@
 #include "rgbleds.h"
 #include "layers.h"
 #include "trillbar.h"
-#include "sdconfig.h"
+#include "config.h"
 #include "macros.h"
 
 #define DEBUG 0
@@ -15,8 +15,8 @@
 
 #define LOOP_TIMER_DEBUG 0
 
-#define DEBOUNCE_TIME 8
-#define DOUBLE_TAP_WINDOW 200
+#define DEBOUNCE_TIME 8  // milliseconds
+#define DOUBLE_TAP_WINDOW 200 // milliseconds
 
 unsigned long debounceTimers[rowsCount][columnsCount] = {0};
 
@@ -28,11 +28,16 @@ unsigned long debounceTimers[rowsCount][columnsCount] = {0};
 // uint8_t definedLayerCount = 0;  // Replaced by activeLayers.size()
 std::vector<Layer> activeLayers; // Definition of the global vector
 
+// --- End Layer Management ---
+
+// Global state flags for specific key behaviors (not directly layer toggles)
+// These are modified by edgeevents.h (keyPressed/keyReleased)
 bool ALT_R = 0;
 bool ALT_L = 0;
 bool CAPS_SLSH = 0;
 bool CAPS_ESC = 0;
 
+// This is also modified by edgeevents.h
 bool layer0_override_active = false;
 
 
@@ -40,10 +45,12 @@ unsigned long loopStartTime = 0;
 unsigned long loopDuration = 0;
 bool loopTimer = false;
 
+// Matrix to track physical key states across layer changes
 PhysicalKeyState physicalKeyStates[rowsCount][columnsCount];
 
+// Define the actual storage for the working layer0 map
 KeyMapEntry layer0[rowsCount][columnsCount];
-KeyMapEntry (*currentLayout)[columnsCount] = layer0;
+KeyMapEntry (*currentLayout)[columnsCount] = layer0; // currentLayout will point to the working layer0
 
 Key keys[rowsCount][columnsCount] = {
  {{0, 0, false},{0, 1, false},{0, 2, false},{0, 3, false},{0, 4, false},{0, 5, false},{0, 6, false},{0, 7, false},{0, 8, false},{0, 9, false},{0, 10, false},{0, 11, false},{0, 12, false},{0, 13, false}},
@@ -59,13 +66,18 @@ Key* getKey(uint8_t row, uint8_t column) {
 }
 
 LayoutKey* getLayoutKey(uint8_t row, uint8_t column) {
+  // Return the primary key from the KeyMapEntry
+  // Add null check for safety, though ideally entries always have a primaryKey (even if it's NUL)
   KeyMapEntry entry = currentLayout[row][column];
   if (entry.primaryKey == nullptr) {
+    // This case should ideally not happen if layouts are defined correctly.
+    // Return a pointer to the NUL key definition as a safe default.
     return NUL;
   }
   return entry.primaryKey;
 }
 
+// Function to initialize the key tracking matrix
 void initKeyTrackingMatrix() {
   for (uint8_t i = 0; i < rowsCount; i++) {
     for (uint8_t j = 0; j < columnsCount; j++) {
@@ -79,6 +91,8 @@ void initKeyTrackingMatrix() {
 void sendKeys() {
     Keyboard.send_now();
 }
+
+// Layer key diagnostic tool
 
 void L_check() {
   #if LAYER_DEBUG
@@ -103,12 +117,14 @@ void L_check() {
   #endif
 }
 
-static unsigned long lastTime = 0;
-static unsigned long lastLayerTime = 0;
+static unsigned long lastTime = 0;        // For keyboard scanning
+static unsigned long lastLayerTime = 0;   // For layer updates
 static bool updateNeeded = false;
 
+// Function to add layers to the activeLayers vector
 void addLayer(KeyMapEntry (*keymap)[columnsCount], LayerActivationType type, std::initializer_list<uint16_t> keys, uint16_t offKey = 0) {
-    activeLayers.emplace_back(keymap, type, keys, offKey);
+    // MAX_LAYERS check no longer needed with std::vector
+    activeLayers.emplace_back(keymap, type, keys, offKey); // Use emplace_back for efficiency
 }
 
 void setup() {
@@ -128,10 +144,17 @@ void setup() {
   addLayer(layerSymbols, LayerActivationType::COMBO_PRESS, {LAYER_2, LAYER_3});
   addLayer(layerSymbols, LayerActivationType::COMBO_PRESS, {LAYER_3, LAYER_4});
 
+  // Removing other old combo/toggle layers that are being replaced or are not specified to be kept:
+  // addLayer(layer2DT, LayerActivationType::COMBO_PRESS, {LAYER_1, LAYER_2}); // Old L1+L2 combo (replaced by layout2DT)
+  // addLayer(layer2DT, LayerActivationType::TOGGLE, {LAYER_1_2L}); // Old L1_2L toggle for layer2DT (keymap now used by layout2DT)
+
+  // LYR0 for layer0 override is handled directly in keyPressed/keyReleased.
+
   Keyboard.begin();
   Mouse.begin();
   Serial.begin(115200);
 
+  // Initialize the key tracking matrix
   initKeyTrackingMatrix();
 
   memcpy(layer0, layer0_default, sizeof(layer0_default));
@@ -148,7 +171,7 @@ void setup() {
   }
 
   // Initialize SD card for config storage
-  sdconfig::init();
+  Config::init();
 
   // Initialize macro system
   initializeMacros();
