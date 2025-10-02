@@ -3,18 +3,19 @@
 #include <Mouse.h>
 #include <cstdint>
 
+#define DEBUG 1
+
+#if DEBUG
+  #define LAYER_DEBUG 0
+  #define LOOP_TIMER_DEBUG 1
+#endif
+
 #include "main.h"
 #include "rgbleds.h"
 #include "layers.h"
 #include "trillbar.h"
 #include "sdconfig.h"
 #include "macros.h"
-
-#define DEBUG 1
-#if DEBUG
-  #define LAYER_DEBUG 0
-  #define LOOP_TIMER_DEBUG 1
-#endif
 
 #define DEBOUNCE_TIME 8
 #define DOUBLE_TAP_WINDOW 200
@@ -39,6 +40,8 @@ bool layer0_override_active = false;
 
 unsigned long loopStartTime = 0;
 unsigned long loopDuration = 0;
+unsigned long lastLoopDuration = 0;
+unsigned long deltaTime = 0;
 unsigned long loopCount = 1;
 bool loopTimer = false;
 
@@ -361,7 +364,28 @@ void loop() {
     }
   }
 
+#if LOOP_TIMER_DEBUG
+if (loopTimer) {
+loopDuration = micros() - loopStartTime;
+lastLoopDuration = loopDuration;
+Serial.print("scan: ");
+Serial.print(loopDuration);
+Serial.print("  |  ");
+}
+#endif
+
   trillbar::loop();
+
+#if LOOP_TIMER_DEBUG
+if (loopTimer) {
+loopDuration = micros() - loopStartTime;
+deltaTime = loopDuration - lastLoopDuration;
+lastLoopDuration = loopDuration;
+Serial.print("trill Δ: ");
+Serial.print(deltaTime);
+Serial.print("  |  ");
+}
+#endif
 
   updateMouseMovement();
 
@@ -424,11 +448,10 @@ void loop() {
   #if LOOP_TIMER_DEBUG
     if (loopTimer) {
         loopDuration = micros() - loopStartTime;
-        Serial.print("final: ");
+        Serial.print("total: ");
         Serial.print(loopDuration);
-        Serial.print(" µs - ");
-        Serial.print(loopCount);
-        Serial.println(" loops");
+        Serial.print(" µs");
+        deltaTime = 0;
     }
   #endif
 

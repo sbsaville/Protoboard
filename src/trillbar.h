@@ -10,6 +10,12 @@
   #define RATE_DEBUG 0
 #endif
 
+extern bool loopTimer;
+extern unsigned long loopStartTime;
+extern unsigned long loopDuration;
+extern unsigned long lastLoopDuration;
+extern unsigned long deltaTime;
+
 void scanLEDs(LayoutKey* (*layoutMatrix)[columnsCount]);
 void ledsDEC();
 void ledsINC();
@@ -451,6 +457,7 @@ void trillbar::setup() {
     Serial.println(ret);
     #endif
   }
+//  sensor.setScanSettings(0, 9); // (Speed, Resolution) - Speed goes from 3 to 0, Resolution from 9 to 16
 }
 
 void trillbar::loop() {
@@ -500,6 +507,17 @@ void trillbar::loop() {
     }
   }
 
+#if LOOP_TIMER_DEBUG
+if (loopTimer) {
+loopDuration = micros() - loopStartTime;
+deltaTime = loopDuration - lastLoopDuration;
+lastLoopDuration = loopDuration;
+Serial.print("momentum Δ: ");
+Serial.print(deltaTime);
+Serial.print("  |  ");
+}
+#endif
+
   // Read trill sensor at appropriate interval
   if (currentTime - lastRead >= pollingInterval) {
     lastRead = currentTime;
@@ -510,6 +528,17 @@ void trillbar::loop() {
     
     // Read sensor data
     sensor.read();
+
+#if LOOP_TIMER_DEBUG
+if (loopTimer) {
+loopDuration = micros() - loopStartTime;
+deltaTime = loopDuration - lastLoopDuration;
+lastLoopDuration = loopDuration;
+Serial.print("sensor.read Δ: ");
+Serial.print(deltaTime);
+Serial.print("  |  ");
+}
+#endif
     
     #if RATE_DEBUG
     unsigned long readTime = micros() - readStart;
@@ -645,6 +674,16 @@ void trillbar::loop() {
       active = false;
     }
   }
+#if LOOP_TIMER_DEBUG
+if (loopTimer) {
+loopDuration = micros() - loopStartTime;
+deltaTime = loopDuration - lastLoopDuration;
+lastLoopDuration = loopDuration;
+Serial.print("polling Δ: ");
+Serial.print(deltaTime);
+Serial.print("  |  ");
+}
+#endif
 }
 
 bool trillbar::isLedOverride() {
