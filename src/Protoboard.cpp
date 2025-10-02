@@ -10,10 +10,11 @@
 #include "sdconfig.h"
 #include "macros.h"
 
-#define DEBUG 0
-#define LAYER_DEBUG 0
-
-#define LOOP_TIMER_DEBUG 1
+#define DEBUG 1
+#if DEBUG
+  #define LAYER_DEBUG 0
+  #define LOOP_TIMER_DEBUG 1
+#endif
 
 #define DEBOUNCE_TIME 8
 #define DOUBLE_TAP_WINDOW 200
@@ -367,7 +368,7 @@ void loop() {
   // Check for double-tap timeouts
   for (size_t i = 0; i < activeLayers.size(); ++i) { // Use size_t and activeLayers.size()
     if (activeLayers[i].waitingForSecondTap && (now - activeLayers[i].lastTapTime > DOUBLE_TAP_WINDOW)) {
-      #if DEBUG || EDGE_DEBUG
+      #if EDGE_DEBUG
       Serial.print("Double tap (1st tap) timed out for layer index: "); Serial.println(i);
       #endif
       activeLayers[i].waitingForSecondTap = false;
@@ -379,7 +380,7 @@ void loop() {
       // This implies the key was held longer than the window after the 2nd tap, and not yet released.
       // The keyReleased logic handles deactivation if held then released.
       // This timeout ensures that if it's held *indefinitely* (or another event interrupts before release), it deactivates.
-      #if DEBUG || EDGE_DEBUG
+      #if EDGE_DEBUG
       Serial.print("Double tap (2nd tap HELD past window) for layer index: "); Serial.println(i);
       Serial.println("  Layer remains active. Release event will determine toggle/momentary.");
       #endif
@@ -391,7 +392,7 @@ void loop() {
 
   // Timeout for key-specific double-tap candidates
   if (key_specific_dt_candidate_row != -1 && (now - key_specific_dt_press_time > DOUBLE_TAP_WINDOW)) {
-      #if DEBUG || EDGE_DEBUG
+      #if EDGE_DEBUG
       Serial.print("Key-specific double-tap candidate timed out for key at [");
       Serial.print(key_specific_dt_candidate_row); Serial.print("]["); Serial.print(key_specific_dt_candidate_col);
       Serial.println("]");
@@ -420,15 +421,16 @@ void loop() {
 
   rgbleds::loop();
 
-  if (loopTimer) {
-    #if LOOP_TIMER_DEBUG
-    loopDuration = micros() - loopStartTime;
-    Serial.print(loopDuration);
-    Serial.print(" µs - ");
-    Serial.print(loopCount);
-    Serial.println(" loops");
-    #endif
-  }
+  #if LOOP_TIMER_DEBUG
+    if (loopTimer) {
+        loopDuration = micros() - loopStartTime;
+        Serial.print("final: ");
+        Serial.print(loopDuration);
+        Serial.print(" µs - ");
+        Serial.print(loopCount);
+        Serial.println(" loops");
+    }
+  #endif
 
   if (loopCount >= LEDrefresh){
     loopCount = 0;

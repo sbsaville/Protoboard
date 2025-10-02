@@ -3,10 +3,12 @@
 
 #include "main.h"
 
-#define TRILL_DEBUG 0
-#define TRILL_MOMENTUM_DEBUG 0
-#define ACCEL_DEBUG 0
-#define RATE_DEBUG 0
+#if DEBUG
+  #define TRILL_DEBUG 0
+  #define TRILL_MOMENTUM_DEBUG 0
+  #define ACCEL_DEBUG 0
+  #define RATE_DEBUG 0
+#endif
 
 void scanLEDs(LayoutKey* (*layoutMatrix)[columnsCount]);
 void ledsDEC();

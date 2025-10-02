@@ -7,7 +7,9 @@
 #define SD_CS_PIN BUILTIN_SDCARD
 #define CONFIG_FILE "brightness.bin"
 
-#define SD_DEBUG 0
+#if DEBUG
+  #define SD_DEBUG 0
+#endif
 
 // sdconfig structure for brightness
 struct Brightnesssdconfig {

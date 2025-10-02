@@ -9,7 +9,9 @@
 #include "sdconfig.h"
 #include "macros.h"
 
-#define EDGE_DEBUG 0
+#if DEBUG
+  #define EDGE_DEBUG 0
+#endif
 
 extern KeyMapEntry (*currentLayout)[columnsCount];
 
