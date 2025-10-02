@@ -353,34 +353,25 @@ void trillbar::handleDualTouch() {
     return;
   }
 
-  // Calculate horizontal movement
   int avgPosDelta = avgPos - lastAvgPos;
 
-  // Lower threshold for better responsiveness (was 100)
   if (abs(avgPosDelta) > 30) {
-    // Update position reference
     lastAvgPos = avgPos;
 
-    // FIXED: Inverted direction and removed throttling
     if (avgPosDelta < 0) {
-      // Moving left - volume up
       sendKeyPress(KEY_MEDIA_VOLUME_INC, 1);
       #if TRILL_DEBUG
       Serial.println("Volume up");
       #endif
     } else {
-      // Moving right - volume down
       sendKeyPress(KEY_MEDIA_VOLUME_DEC, 1);
       #if TRILL_DEBUG
       Serial.println("Volume down");
       #endif
     }
   }
-
-  /* FEATURE 2: ZOOM (based on pinch/spread) - DISABLED FOR NOW */
 }
 
-// Handle triple touch or large touch (media play/pause)
 void trillbar::handleTripleTouch() {
   if (!tripleActionTriggered) {
     sendKeyPress(KEY_MEDIA_PLAY_PAUSE, 1);
@@ -404,7 +395,6 @@ void trillbar::handleQuadTouch() {
 }
 
 void trillbar::handleTouchRelease() {
-  // Check if it was a quick tap (for gesture detection only)
   unsigned long touchDuration = millis() - startTime;
   wasQuickTap = (touchDuration < TAP_THRESHOLD);
 
@@ -421,7 +411,7 @@ void trillbar::handleTouchRelease() {
   
   // Only save brightness if we were in brightness mode
   if (mode == MODE_BRIGHTNESS) {
-    Config::saveBrightness(brightness);
+    sdconfig::saveBrightness(brightness);
   }
 
   if (mode == MODE_SCROLL && abs(velocity) > threshold) {

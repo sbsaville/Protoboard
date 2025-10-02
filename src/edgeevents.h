@@ -6,27 +6,19 @@
 #include "trillbar.h"
 #include "keydefs.h"
 #include "rgbleds.h"
-#include "config.h"
+#include "sdconfig.h"
 #include "macros.h"
 
 #define EDGE_DEBUG 0
 
 extern KeyMapEntry (*currentLayout)[columnsCount];
 
-// extern bool L_0; // Replaced by layer0_override_active in Protoboard.cpp
-// extern bool L_1; // Replaced by Layer struct states
-// extern bool L_2; // "
-// extern bool L_3; // "
-// extern bool L_4; // "
-// extern bool L_1_2L; // "
 extern bool ALT_L;
 extern bool ALT_R;
 extern bool CAPS_SLSH;
 extern bool CAPS_ESC;
 
 bool L2AltTab = false; // Specific state for Alt-Tab behavior, might need review
-
-// DOUBLE_TAP_WINDOW is now defined in Protoboard.cpp
 
 // For Key-Specific Double Taps (like RShift -> CapsLock)
 // These are now global within the compilation unit (Protoboard.cpp via include)
@@ -38,18 +30,7 @@ unsigned long key_specific_dt_press_time = 0;
 // static int last_double_tap_candidate_col = -1; // "
 // static unsigned long last_double_tap_press_time = 0; // "
 
-// prev_L_ flags are no longer needed as layer state is more complex
-// bool prev_L_1 = 0;
-// bool prev_L_2 = 0;
-// bool prev_L_3 = 0;
-// bool prev_L_4 = 0;
-// bool prev_L_1_2L = 0;
-
-// LYR0_row/col for restoring state after LYR0 not directly needed in this new model's first pass
-// int LYR0_row = -1;
-// int LYR0_col = -1;
-
-extern bool loopTimer; // This seems to be a global toggle, not a layer. Keep for now.
+extern bool loopTimer;
 
 void pressAndRelease(int key) {
   Keyboard.press(key);
@@ -95,13 +76,11 @@ void releaseMeh() {
 };
 
 struct MouseMovementState {
-  // Active movement states (affected by SOCD)
   bool up = false;
   bool down = false;
   bool left = false;
   bool right = false;
   
-  // Physical key states (tracks what's actually held down)
   bool upHeld = false;
   bool downHeld = false;
   bool leftHeld = false;
@@ -160,7 +139,6 @@ void stopMouseMovement(int direction) {
     case MOUSE_MOVE_UP: 
       mouseState.upHeld = false;
       mouseState.up = false;
-      // If down is still physically held, restore it
       if (mouseState.downHeld) {
         mouseState.down = true;
       }
@@ -168,7 +146,6 @@ void stopMouseMovement(int direction) {
     case MOUSE_MOVE_DOWN: 
       mouseState.downHeld = false;
       mouseState.down = false;
-      // If up is still physically held, restore it
       if (mouseState.upHeld) {
         mouseState.up = true;
       }
@@ -176,7 +153,6 @@ void stopMouseMovement(int direction) {
     case MOUSE_MOVE_LEFT: 
       mouseState.leftHeld = false;
       mouseState.left = false;
-      // If right is still physically held, restore it
       if (mouseState.rightHeld) {
         mouseState.right = true;
       }
@@ -184,7 +160,6 @@ void stopMouseMovement(int direction) {
     case MOUSE_MOVE_RIGHT: 
       mouseState.rightHeld = false;
       mouseState.right = false;
-      // If left is still physically held, restore it
       if (mouseState.leftHeld) {
         mouseState.left = true;
       }
@@ -218,19 +193,6 @@ struct SimpleKeyAction {
   int code;
   int keyToPress;
 };
-
-// struct LayerResetAction { // Obsolete with new layer system
-//   int code;
-//   bool* layerFlag;
-// };
-
-// const LayerResetAction layerResets[] = { // Obsolete
-//   {LAYER_1, &L_1},
-//   {LAYER_2, &L_2},
-//   {LAYER_3, &L_3},
-//   {LAYER_4, &L_4},
-//   {LOOP_COUNT, &loopTimer}, // loopTimer is handled directly now in keyPressed
-// };
 
 void pressAndReleaseMultiple(int count, ...) {
   va_list args;
@@ -539,7 +501,7 @@ void keyPressed(Key* key, LayoutKey* layout) {
       if (pressedKeyCode == brightnessLevels[i].code) {
         brightness = brightnessLevels[i].brightnessValue;
         LEDS.setBrightness(brightness);
-        Config::saveBrightness(brightness); // Save on change
+        sdconfig::saveBrightness(brightness); // Save on change
         return;
       }
     }
