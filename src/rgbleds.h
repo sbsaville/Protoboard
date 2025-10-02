@@ -10,7 +10,7 @@
 
 #include "main.h"
 #include "layers.h"
-#include "config.h"
+#include "sdconfig.h"
 
 class rgbleds {
   public:
@@ -20,6 +20,7 @@ class rgbleds {
 
 #define NUM_LEDS 84
 #define DATA_PIN 1
+#define FPS 60
 
 bool isNumOn(){
   return (keyboard_leds & 1) == 1;
@@ -138,7 +139,7 @@ void leds4DT()       { scanLEDs(layer4DT); }
 void rgbleds::setup() {
 
   // Load brightness from SD card (fallback to default if not found)
-  brightness = Config::loadBrightness(20);
+  brightness = sdconfig::loadBrightness(20);
 
   LEDS.addLeds<WS2812SERIAL, DATA_PIN, BRG>(leds, NUM_LEDS);
   LEDS.setBrightness(brightness);
@@ -171,9 +172,9 @@ void rgbleds::setup() {
 
 
 void rgbleds::loop() {
-
-  FastLED.show();
-
+  EVERY_N_MILLISECONDS(1000/FPS) {
+    FastLED.show();
+  }
 }
 
 #endif
