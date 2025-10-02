@@ -148,7 +148,7 @@ void rgbleds::setup() {
 
   // Flash all LEDs with Layer color twice at the end of setup
   int originalBrightness = brightness;
-  LEDS.setBrightness(brightness / 4);  // Quarter brightness for startup flash
+  LEDS.setBrightness(std::max(1, brightness / 4));  // Quarter brightness for startup flash
 
   for (int flash = 0; flash < 2; flash++) {
     for (int i = 0; i < NUM_LEDS; i++) {

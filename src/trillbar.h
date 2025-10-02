@@ -453,8 +453,6 @@ void trillbar::setup() {
 
 void trillbar::loop() {
 
-  
-
   unsigned long currentTime = millis();
 
   // Dynamic polling interval based on touch state
