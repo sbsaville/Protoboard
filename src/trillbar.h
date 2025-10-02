@@ -457,7 +457,17 @@ void trillbar::setup() {
     Serial.println(ret);
     #endif
   }
-//  sensor.setScanSettings(0, 9); // (Speed, Resolution) - Speed goes from 3 to 0, Resolution from 9 to 16
+//  sensor.setScanSettings(0, 9);
+////  (Speed, Resolution) - Speed goes from 3 to 0, Resolution from 9 to 16, default (0, 12)
+
+//  sensor.setNoiseThreshold(4);
+////  0 to 255, filters smaller values, default 4
+
+//  sensor.setPrescaler(3);
+////  1 to 8, seems to be a touch sensitivity multiplier, default 3
+
+//  sensor.setAutoScanInterval(1);
+////  nonzero value, default 1 (fastest)
 }
 
 void trillbar::loop() {
