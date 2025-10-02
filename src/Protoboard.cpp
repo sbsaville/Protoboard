@@ -13,7 +13,7 @@
 #define DEBUG 0
 #define LAYER_DEBUG 0
 
-#define LOOP_TIMER_DEBUG 0
+#define LOOP_TIMER_DEBUG 1
 
 #define DEBOUNCE_TIME 8
 #define DOUBLE_TAP_WINDOW 200
@@ -38,6 +38,7 @@ bool layer0_override_active = false;
 
 unsigned long loopStartTime = 0;
 unsigned long loopDuration = 0;
+unsigned long loopCount = 1;
 bool loopTimer = false;
 
 PhysicalKeyState physicalKeyStates[rowsCount][columnsCount];
@@ -293,6 +294,9 @@ void remapKeys() {
 
 
 void loop() {
+
+  loopCount = loopCount + 1; 
+
   if (loopTimer) {
     loopStartTime = micros();
   }
@@ -419,9 +423,14 @@ void loop() {
   if (loopTimer) {
     #if LOOP_TIMER_DEBUG
     loopDuration = micros() - loopStartTime;
-    Serial.print("Loop: ");
     Serial.print(loopDuration);
-    Serial.println(" µs");
+    Serial.print(" µs - ");
+    Serial.print(loopCount);
+    Serial.println(" loops");
     #endif
+  }
+
+  if (loopCount >= LEDrefresh){
+    loopCount = 0;
   }
 }

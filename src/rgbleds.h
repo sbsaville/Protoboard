@@ -20,7 +20,8 @@ class rgbleds {
 
 #define NUM_LEDS 84
 #define DATA_PIN 1
-#define FPS 60
+#define LEDrefresh 3
+extern unsigned long loopCount;
 
 bool isNumOn(){
   return (keyboard_leds & 1) == 1;
@@ -172,7 +173,7 @@ void rgbleds::setup() {
 
 
 void rgbleds::loop() {
-  EVERY_N_MILLISECONDS(1000/FPS) {
+  if (loopCount == LEDrefresh) {
     FastLED.show();
   }
 }

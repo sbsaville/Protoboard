@@ -86,7 +86,7 @@ const KeyMapEntry layer0_default[rowsCount][columnsCount] = {
 extern KeyMapEntry layer0[rowsCount][columnsCount];
 
 KeyMapEntry layer1[rowsCount][columnsCount] = {
-  {{ESC,SET0},{F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},    {F22},   {F23},   {F24},   {NUL}},
+  {{ESC,SET0},{F13},   {F14},   {F15},   {F16},   {F17},   {F18},   {F19},   {F20},   {F21},    {F22},   {F23},   {F24},   {LOOPCT}},
   {{BR0},     {BR1},   {BR2},   {BR3},   {BR4},   {BR5},   {BR6},   {BR7},   {BR8},   {BR9},    {BR10},  {NUL},   {NUL},   {INCR}},
   {{TAB},     {NUL},   {NUL},   {EMCRN}, {NUL},   {NUL},   {NUL},   {NUL},   {INSRT}, {NUL},    {PSBRK}, {NUL},   {NUL},   {NUL}},
   {{LYR1B},   {AMRN},  {NUL},   {NUL},   {NUL},   {GMAIL}, {NUL},   {NUL},   {NUL},   {SCRLLK}, {NUL},   {NUL},   {ENTER}, {DECR}},
