@@ -7,7 +7,7 @@
   #define TRILL_DEBUG 0
   #define TRILL_MOMENTUM_DEBUG 0
   #define ACCEL_DEBUG 0
-  #define RATE_DEBUG 0
+  #define RATE_DEBUG 1
 #endif
 
 extern bool loopTimer;
@@ -520,7 +520,7 @@ void trillbar::loop() {
     }
   }
 
-#if LOOP_TIMER_DEBUG
+#if RATE_DEBUG
 if (loopTimer) {
 loopDuration = micros() - loopStartTime;
 deltaTime = loopDuration - lastLoopDuration;
@@ -534,15 +534,10 @@ Serial.print("  |  ");
   // Read trill sensor at appropriate interval
   if (currentTime - lastRead >= pollingInterval) {
     lastRead = currentTime;
-
-    #if RATE_DEBUG
-    unsigned long readStart = micros();
-    #endif
-    
     // Read sensor data
     sensor.read();
 
-#if LOOP_TIMER_DEBUG
+#if RATE_DEBUG
 if (loopTimer) {
 loopDuration = micros() - loopStartTime;
 deltaTime = loopDuration - lastLoopDuration;
@@ -552,15 +547,6 @@ Serial.print(deltaTime);
 Serial.print("  |  ");
 }
 #endif
-    
-    #if RATE_DEBUG
-    unsigned long readTime = micros() - readStart;
-    if (readTime > 1000) { // Only log if read takes >1ms
-      Serial.print("Sensor read took: ");
-      Serial.print(readTime);
-      Serial.println(" µs");
-    }
-    #endif
 
     // Get touch count
     int touchCount = sensor.getNumTouches();
@@ -628,7 +614,7 @@ Serial.print("  |  ");
         int actionUnits = processMovement();
 
 
-#if LOOP_TIMER_DEBUG
+#if RATE_DEBUG
 if (loopTimer) {
 loopDuration = micros() - loopStartTime;
 deltaTime = loopDuration - lastLoopDuration;
@@ -650,7 +636,7 @@ Serial.print("  |  ");
           }
         }
 
-#if LOOP_TIMER_DEBUG
+#if RATE_DEBUG
 if (loopTimer) {
 loopDuration = micros() - loopStartTime;
 deltaTime = loopDuration - lastLoopDuration;
@@ -709,7 +695,7 @@ Serial.print("  |  ");
       active = false;
     }
   }
-#if LOOP_TIMER_DEBUG
+#if RATE_DEBUG
 if (loopTimer) {
 loopDuration = micros() - loopStartTime;
 deltaTime = loopDuration - lastLoopDuration;

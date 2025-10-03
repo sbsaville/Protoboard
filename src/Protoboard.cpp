@@ -7,7 +7,7 @@
 
 #if DEBUG
   #define LAYER_DEBUG 0
-  #define LOOP_TIMER_DEBUG 1
+  #define LOOP_TIMER_DEBUG 0
 #endif
 
 #include "main.h"
