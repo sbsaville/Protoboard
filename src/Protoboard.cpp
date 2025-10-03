@@ -7,8 +7,19 @@
 
 #if DEBUG
   #define LAYER_DEBUG 0
-  #define LOOP_TIMER_DEBUG 0
+  #define LOOP_TIMER_DEBUG 1
 #endif
+
+bool logThis = false;
+unsigned long loopStartTime = 0;
+unsigned long loopDuration = 0;
+unsigned long loopCheckpoint = 0;
+unsigned long scanCheckpoint = 0;
+unsigned long deltaTime = 0;
+unsigned long loopCount = 1;
+unsigned long skipCount = 0;
+bool loopTimer = false;
+
 
 #include "main.h"
 #include "rgbleds.h"
@@ -36,14 +47,6 @@ bool CAPS_SLSH = 0;
 bool CAPS_ESC = 0;
 
 bool layer0_override_active = false;
-
-
-unsigned long loopStartTime = 0;
-unsigned long loopDuration = 0;
-unsigned long lastLoopDuration = 0;
-unsigned long deltaTime = 0;
-unsigned long loopCount = 1;
-bool loopTimer = false;
 
 PhysicalKeyState physicalKeyStates[rowsCount][columnsCount];
 
@@ -297,14 +300,18 @@ void remapKeys() {
 
 
 void loop() {
-
 #if LOOP_TIMER_DEBUG
 if (loopTimer) {
+  if (skipCount > 0){
+    Serial.print("SKIPPED: ");
+    Serial.println(skipCount);
+  }
+  skipCount++;
   loopDuration = micros() - loopStartTime;
-  Serial.print("last: ");
-  Serial.print(loopDuration);
-  Serial.print("µs");
-  Serial.print("  |  ");
+    // Serial.print("last: ");
+    // Serial.print(loopDuration);
+    // Serial.print("µs");
+    // Serial.print("  |  ");
   deltaTime = 0;
   loopStartTime = micros();
 }
@@ -369,20 +376,18 @@ if (loopTimer) {
 #if LOOP_TIMER_DEBUG
 if (loopTimer) {
 loopDuration = micros() - loopStartTime;
-lastLoopDuration = loopDuration;
-Serial.print("scan: ");
-Serial.print(loopDuration);
-Serial.print("  |  ");
+scanCheckpoint = loopCheckpoint;
+loopCheckpoint = loopDuration;
 }
 #endif
 
   trillbar::loop();
 
 #if LOOP_TIMER_DEBUG
-if (loopTimer) {
+if (loopTimer && logThis) {
 loopDuration = micros() - loopStartTime;
-deltaTime = loopDuration - lastLoopDuration;
-lastLoopDuration = loopDuration;
+deltaTime = loopDuration - loopCheckpoint;
+loopCheckpoint = loopDuration;
 Serial.print("trill Δ: ");
 Serial.print(deltaTime);
 Serial.print("  |  ");
@@ -448,11 +453,13 @@ Serial.print("  |  ");
   rgbleds::loop();
 
   #if LOOP_TIMER_DEBUG
-    if (loopTimer) {
+    if (loopTimer && logThis) {
         loopDuration = micros() - loopStartTime;
         Serial.print("total: ");
         Serial.print(loopDuration);
         Serial.println("µs");
+        logThis = false;
+        skipCount = 0;
     }
   #endif
 }

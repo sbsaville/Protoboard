@@ -10,11 +10,11 @@
   #define RATE_DEBUG 1
 #endif
 
-extern bool loopTimer;
-extern unsigned long loopStartTime;
-extern unsigned long loopDuration;
-extern unsigned long lastLoopDuration;
-extern unsigned long deltaTime;
+// extern bool loopTimer;
+// extern unsigned long loopStartTime;
+// extern unsigned long loopDuration;
+// extern unsigned long loopCheckpoint;
+// extern unsigned long deltaTime;
 
 void scanLEDs(LayoutKey* (*layoutMatrix)[columnsCount]);
 void ledsDEC();
@@ -273,9 +273,9 @@ void trillbar::handleMode1(int actionUnits) {
   if (actionUnits == 0) return;
 
   if (actionUnits > 0) {
-    sendLeftKeys(actionUnits);
+    //sendLeftKeys(actionUnits);
   } else {
-    sendRightKeys(-actionUnits);
+    //sendRightKeys(-actionUnits);
   }
 
   #if TRILL_DEBUG
@@ -520,29 +520,34 @@ void trillbar::loop() {
     }
   }
 
-#if RATE_DEBUG
+  // Read trill sensor at appropriate interval
+  if (currentTime - lastRead >= pollingInterval) {
+
+#if LOOP_TIMER_DEBUG
 if (loopTimer) {
+logThis = true;
 loopDuration = micros() - loopStartTime;
-deltaTime = loopDuration - lastLoopDuration;
-lastLoopDuration = loopDuration;
-Serial.print("momentum Δ: ");
+deltaTime = loopDuration - loopCheckpoint;
+loopCheckpoint = loopDuration;
+Serial.print("scan: ");
+Serial.print(scanCheckpoint);
+Serial.print("  |  ");
+Serial.print("pre-sensor Δ: ");
 Serial.print(deltaTime);
 Serial.print("  |  ");
 }
 #endif
 
-  // Read trill sensor at appropriate interval
-  if (currentTime - lastRead >= pollingInterval) {
     lastRead = currentTime;
     // Read sensor data
     sensor.read();
 
-#if RATE_DEBUG
-if (loopTimer) {
+#if LOOP_TIMER_DEBUG
+if (loopTimer && logThis) {
 loopDuration = micros() - loopStartTime;
-deltaTime = loopDuration - lastLoopDuration;
-lastLoopDuration = loopDuration;
-Serial.print("sensor.read Δ: ");
+deltaTime = loopDuration - loopCheckpoint;
+loopCheckpoint = loopDuration;
+Serial.print("sensor read Δ: ");
 Serial.print(deltaTime);
 Serial.print("  |  ");
 }
@@ -614,11 +619,11 @@ Serial.print("  |  ");
         int actionUnits = processMovement();
 
 
-#if RATE_DEBUG
-if (loopTimer) {
+#if LOOP_TIMER_DEBUG
+if (loopTimer && logThis) {
 loopDuration = micros() - loopStartTime;
-deltaTime = loopDuration - lastLoopDuration;
-lastLoopDuration = loopDuration;
+deltaTime = loopDuration - loopCheckpoint;
+loopCheckpoint = loopDuration;
 Serial.print("processMovement Δ: ");
 Serial.print(deltaTime);
 Serial.print("  |  ");
@@ -636,11 +641,11 @@ Serial.print("  |  ");
           }
         }
 
-#if RATE_DEBUG
-if (loopTimer) {
+#if LOOP_TIMER_DEBUG
+if (loopTimer && logThis) {
 loopDuration = micros() - loopStartTime;
-deltaTime = loopDuration - lastLoopDuration;
-lastLoopDuration = loopDuration;
+deltaTime = loopDuration - loopCheckpoint;
+loopCheckpoint = loopDuration;
 Serial.print("handModes Δ: ");
 Serial.print(deltaTime);
 Serial.print("  |  ");
@@ -695,11 +700,11 @@ Serial.print("  |  ");
       active = false;
     }
   }
-#if RATE_DEBUG
-if (loopTimer) {
+#if LOOP_TIMER_DEBUG
+if (loopTimer && logThis) {
 loopDuration = micros() - loopStartTime;
-deltaTime = loopDuration - lastLoopDuration;
-lastLoopDuration = loopDuration;
+deltaTime = loopDuration - loopCheckpoint;
+loopCheckpoint = loopDuration;
 Serial.print("polling Δ: ");
 Serial.print(deltaTime);
 Serial.print("  |  ");
