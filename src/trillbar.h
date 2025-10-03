@@ -8,6 +8,7 @@
   #define TRILL_MOMENTUM_DEBUG 0
   #define ACCEL_DEBUG 0
   #define RATE_DEBUG 1
+  #define BUFFER_DEBUG 0
 #endif
 
 // extern bool loopTimer;
@@ -68,7 +69,7 @@ private:
   static float threshold;
   static bool momentumActive;
   static unsigned long lastUpdate;            // Timing for updates
-  static const unsigned long updateInterval;  // ~60Hz updates
+  static const unsigned long momentumUpdate;  // ~60Hz updates
 
   // Timing control
   static unsigned long lastRead;              // Last sensor read time
@@ -80,6 +81,17 @@ private:
   static bool quadActionTriggered;            // Prevent repeated mute
 
   static unsigned long lastTouchCountChange;
+
+  // Keypress buffer
+  static const int KEY_BUFFER_SIZE = 1;
+  static int keyBuffer[KEY_BUFFER_SIZE];
+  static int keyBufferHead;
+  static int keyBufferTail;
+  static int keyBufferCount;
+  static unsigned long lastKeySentTime;
+
+  // Mouse movement buffer
+  static int bufferedMouseX;
   static const unsigned int touchDebounceTime = 10;
 
   static float calculateSensitivity(int rawDelta);
@@ -97,13 +109,16 @@ private:
   static void handleTripleTouch();            // Media control
   static void handleQuadTouch();              // Mute control
   static void handleTouchRelease();
+  static void trillBuffer();
+  static void trillKeyBuffer();
+  static void trillMouseBuffer();
 };
 
 Trill trillbar::sensor;
 
 const float trillbar::FILTER_WEIGHT = 0.5f;
 const float trillbar::TAP_THRESHOLD = 300.0f;
-const unsigned long trillbar::updateInterval = 16;
+const unsigned long trillbar::momentumUpdate = 16;
 
 bool trillbar::active = false;
 unsigned long trillbar::startTime = 0;
@@ -133,6 +148,12 @@ unsigned long trillbar::activeInterval = 1;
 bool trillbar::tripleActionTriggered = false;
 bool trillbar::quadActionTriggered = false;
 unsigned long trillbar::lastTouchCountChange = 0;
+int trillbar::keyBuffer[trillbar::KEY_BUFFER_SIZE] = {0};
+int trillbar::keyBufferHead = 0;
+int trillbar::keyBufferTail = 0;
+int trillbar::keyBufferCount = 0;
+unsigned long trillbar::lastKeySentTime = 0;
+int trillbar::bufferedMouseX = 0;
 
 // Calculate adaptive sensitivity based on movement speed using a linear acceleration curve
 float trillbar::calculateSensitivity(int rawDelta) {
@@ -191,25 +212,35 @@ float trillbar::applyFilter(float input) {
 }
 
 // Helper to send repeated key presses
-void trillbar::sendKeyPress(int key, int repeats) {
+void trillbar::sendKeyPress(int key, int repeats) { // This now adds to a buffer
+  int removed = 0;
   for (int i = 0; i < repeats; i++) {
-    Keyboard.press(key);
-    Keyboard.release(key);
+    if (keyBufferCount < KEY_BUFFER_SIZE) {
+      keyBuffer[keyBufferHead] = key;
+      keyBufferHead = (keyBufferHead + 1) % KEY_BUFFER_SIZE;
+      keyBufferCount++;
+    } else {
+      removed++;
+    }
   }
+  #if BUFFER_DEBUG
+  if (removed > 0) {
+    Serial.print("inputs removed: ");
+    Serial.println(removed);
+  }
+  #endif
 }
 
 // Helper for left key presses
 void trillbar::sendLeftKeys(int count) {
   if (count == 0) return;
-  count = abs(count);
-  sendKeyPress(KEY_LEFT, count);
+  sendKeyPress(KEY_LEFT, abs(count));
 }
 
 // Helper for right key presses
 void trillbar::sendRightKeys(int count) {
   if (count == 0) return;
-  count = abs(count);
-  sendKeyPress(KEY_RIGHT, count);
+  sendKeyPress(KEY_RIGHT, abs(count));
 }
 
 // Helper for mouse scrolling
@@ -273,15 +304,10 @@ void trillbar::handleMode1(int actionUnits) {
   if (actionUnits == 0) return;
 
   if (actionUnits > 0) {
-    //sendLeftKeys(actionUnits);
+    sendLeftKeys(actionUnits);
   } else {
-    //sendRightKeys(-actionUnits);
+    sendRightKeys(-actionUnits);
   }
-
-  #if TRILL_DEBUG
-  Serial.print("Arrow keys: ");
-  Serial.println(actionUnits);
-  #endif
 }
 
 // Handle mode 2: LED brightness
@@ -332,7 +358,7 @@ void trillbar::handleMode4(int actionUnits) {
 
   // Apply minimum threshold to avoid tiny movements
   if (abs(mouseUnits) < 1) return;
-  Mouse.move(-mouseUnits, 0);
+  bufferedMouseX -= mouseUnits;
 
   #if TRILL_DEBUG
   Serial.print("Raw mouse movement - rawDelta: ");
@@ -481,7 +507,7 @@ void trillbar::loop() {
   unsigned long pollingInterval = active ? activeInterval : inactiveInterval;
 
   // Process momentum scrolling regardless of touch state
-  if (momentumActive && currentTime - lastUpdate >= updateInterval) {
+  if (momentumActive && currentTime - lastUpdate >= momentumUpdate) {
     lastUpdate = currentTime;
 
     // Apply friction to slow down
@@ -710,6 +736,41 @@ Serial.print(deltaTime);
 Serial.print("  |  ");
 }
 #endif
+
+  trillBuffer();
+
+#if LOOP_TIMER_DEBUG
+if (loopTimer && logThis) {
+loopDuration = micros() - loopStartTime;
+deltaTime = loopDuration - loopCheckpoint;
+loopCheckpoint = loopDuration;
+Serial.print("buffer Δ: ");
+Serial.print(deltaTime);
+Serial.print("  |  ");
+}
+#endif
+}
+
+void trillbar::trillKeyBuffer() {
+  unsigned long currentTime = millis();
+  // Send one key per millisecond from the buffer
+  if (keyBufferCount > 0 && (currentTime - lastKeySentTime >= 1)) {
+    lastKeySentTime = currentTime;
+
+    int key = keyBuffer[keyBufferTail];
+    keyBufferTail = (keyBufferTail + 1) % KEY_BUFFER_SIZE;
+    keyBufferCount--;
+
+    Keyboard.press(key);
+    Keyboard.release(key);
+  }
+}
+
+void trillbar::trillMouseBuffer() {
+  if (bufferedMouseX != 0) {
+    Mouse.move(bufferedMouseX, 0);
+    bufferedMouseX = 0;
+  }
 }
 
 bool trillbar::isLedOverride() {
@@ -723,5 +784,11 @@ int trillbar::getMode() {
 void trillbar::setMode(int newMode) {
   mode = newMode;
 }
+
+void trillbar::trillBuffer() {
+  trillKeyBuffer();
+  trillMouseBuffer();
+}
+
 
 #endif

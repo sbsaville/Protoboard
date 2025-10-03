@@ -18,6 +18,8 @@ unsigned long scanCheckpoint = 0;
 unsigned long deltaTime = 0;
 unsigned long loopCount = 1;
 unsigned long skipCount = 0;
+unsigned long bufferCount = 0;
+unsigned long bufferSkipCount = 0;
 bool loopTimer = false;
 
 
@@ -454,12 +456,27 @@ Serial.print("  |  ");
 
   #if LOOP_TIMER_DEBUG
     if (loopTimer && logThis) {
-        loopDuration = micros() - loopStartTime;
-        Serial.print("total: ");
-        Serial.print(loopDuration);
-        Serial.println("µs");
-        logThis = false;
-        skipCount = 0;
+      loopDuration = micros() - loopStartTime;
+      Serial.print("total: ");
+      Serial.print(loopDuration);
+      Serial.println("µs");
+      if (bufferCount > 0) {
+        Serial.print("buffered for ");
+        Serial.print(bufferSkipCount);
+        Serial.print(" loops");
+        bufferCount = 0;
+      }
+      logThis = false;
     }
+    skipCount = 0;
   #endif
 }
+
+
+/*
+
+
+
+
+
+*/
