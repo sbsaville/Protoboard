@@ -72,7 +72,7 @@ private:
 
   // Timing control
   static unsigned long lastRead;              // Last sensor read time
-  static unsigned long baseInterval;          // Default polling interval
+  static unsigned long inactiveInterval;          // Default polling interval
   static unsigned long activeInterval;        // Faster polling when active
 
   // Flag for triple touch
@@ -128,8 +128,8 @@ float trillbar::threshold = 0.3f;
 bool trillbar::momentumActive = false;
 unsigned long trillbar::lastUpdate = 0;
 unsigned long trillbar::lastRead = 0;
-unsigned long trillbar::baseInterval = 1;
-unsigned long trillbar::activeInterval = 2; // Was 5, try 10 or higher
+unsigned long trillbar::inactiveInterval = 4;
+unsigned long trillbar::activeInterval = 1;
 bool trillbar::tripleActionTriggered = false;
 bool trillbar::quadActionTriggered = false;
 unsigned long trillbar::lastTouchCountChange = 0;
@@ -203,7 +203,6 @@ void trillbar::sendLeftKeys(int count) {
   if (count == 0) return;
   count = abs(count);
   sendKeyPress(KEY_LEFT, count);
-  Keyboard.send_now();
 }
 
 // Helper for right key presses
@@ -479,7 +478,7 @@ void trillbar::loop() {
   unsigned long currentTime = millis();
 
   // Dynamic polling interval based on touch state
-  unsigned long pollingInterval = active ? activeInterval : baseInterval;
+  unsigned long pollingInterval = active ? activeInterval : inactiveInterval;
 
   // Process momentum scrolling regardless of touch state
   if (momentumActive && currentTime - lastUpdate >= updateInterval) {
@@ -629,6 +628,17 @@ Serial.print("  |  ");
         int actionUnits = processMovement();
 
 
+#if LOOP_TIMER_DEBUG
+if (loopTimer) {
+loopDuration = micros() - loopStartTime;
+deltaTime = loopDuration - lastLoopDuration;
+lastLoopDuration = loopDuration;
+Serial.print("processMovement Δ: ");
+Serial.print(deltaTime);
+Serial.print("  |  ");
+}
+#endif
+
         // Handle based on touch count and size
         if (touchCount == 1 && adjustedSize <= 30) {
           // Single touch - use current mode
@@ -639,6 +649,17 @@ Serial.print("  |  ");
             case MODE_MOUSE: handleMode4(actionUnits); break;
           }
         }
+
+#if LOOP_TIMER_DEBUG
+if (loopTimer) {
+loopDuration = micros() - loopStartTime;
+deltaTime = loopDuration - lastLoopDuration;
+lastLoopDuration = loopDuration;
+Serial.print("handModes Δ: ");
+Serial.print(deltaTime);
+Serial.print("  |  ");
+}
+#endif
         else if ((touchCount == 2 && adjustedSize > 8) ||
                   (touchCount == 1 && adjustedSize > 30 && adjustedSize <= 50)) {
           // Dual touch or medium-large single touch - volume control

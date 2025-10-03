@@ -43,6 +43,10 @@ int Trill::begin(Device device, uint8_t i2c_address, TwoWire* wire) {
 
 	/* Start I2C */
 	wire_->begin();
+	// Set I2C to Fast Mode (400kHz) for better performance. Default is 100kHz.
+	// This shortens the blocking time of sensor.read(), preventing stalls from
+	// collisions with high-priority USB interrupts during rapid polling.
+	wire_->setClock(400000L);
 
 	/* Check the type of device attached */
 	if(identify() != 0) {

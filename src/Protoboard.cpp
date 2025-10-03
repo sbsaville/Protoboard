@@ -108,7 +108,6 @@ void L_check() {
   #endif
 }
 
-static unsigned long lastTime = 0;
 static unsigned long lastLayerTime = 0;
 static bool updateNeeded = false;
 
@@ -313,61 +312,58 @@ if (loopTimer) {
 
   unsigned long now = millis();
 
-  if (now - lastTime >= 1) {
-    lastTime = now;
+  // Scan the entire key matrix on every loop pass for maximum responsiveness.
+  for (uint8_t i = 0; i < rowsCount; i++) {
+    digitalWrite(rows[i], LOW);
+    delayMicroseconds(1);
+    // A small delay is often needed for the line to settle. On fast processors like the Teensy 3.6, direct reads are often fast enough.
+    // If ghosting occurs, a `asm volatile("nop");` can be a faster alternative to delayMicroseconds.
+    for (uint8_t j = 0; j < columnsCount; j++) {
+      uint8_t pin = columns[j];
+      uint8_t port = digitalPinToPort(pin);
+      volatile uint8_t* inputRegister = portInputRegister(port);
+      uint8_t bitMask = digitalPinToBitMask(pin);
 
-    for (uint8_t i = 0; i < rowsCount; i++) {
-      digitalWrite(rows[i], LOW);
-      delayMicroseconds(1); // this is needed on physical prototype V2 for some reason or keys one row down will be pressed at the same time
+      Key* key = getKey(i, j);
+      boolean current = !(*inputRegister & bitMask);
+      boolean previous = key->pressed;
 
-      for (uint8_t j = 0; j < columnsCount; j++) {
-        uint8_t pin = columns[j];
-        uint8_t port = digitalPinToPort(pin);
-        volatile uint8_t* inputRegister = portInputRegister(port);
-        uint8_t bitMask = digitalPinToBitMask(pin);
+      if (current != previous) {
+        if (now - debounceTimers[i][j] >= DEBOUNCE_TIME) {
+          key->pressed = current;
+          debounceTimers[i][j] = now;
 
-        Key* key = getKey(i, j);
-        boolean current = !(*inputRegister & bitMask);
-        boolean previous = key->pressed;
+          LayoutKey* layout = getLayoutKey(key->row, key->column);
+          if (current) {
+            keyPressed(key, layout);
 
-        if (current != previous) {
-          if (now - debounceTimers[i][j] >= DEBOUNCE_TIME) {
-            key->pressed = current;
-            debounceTimers[i][j] = now;
+            // Get the actual code that was stored during keyPressed
+            uint16_t activeCode = physicalKeyStates[key->row][key->column].activeCode;
 
-            LayoutKey* layout = getLayoutKey(key->row, key->column);
-            if (current) {
-              keyPressed(key, layout);
-
-              // Get the actual code that was stored during keyPressed
-              uint16_t activeCode = physicalKeyStates[key->row][key->column].activeCode;
-
-              // Set layer change flag if a layer key was pressed
-              if (isLayerActivationKey(activeCode)) {
-                  updateNeeded = true;
-              }
-            }
-            else {
-              keyReleased(key, layout);
-
-              // Check both the current layout code and the stored activeCode for layer keys
-              LayoutKey* activeKey = physicalKeyStates[key->row][key->column].activeKey;
-              uint16_t actualCode = activeKey ? activeKey->code : layout->code;
-
-              if (isLayerActivationKey(actualCode)) {
-                  updateNeeded = true;
-              }
+            // Set layer change flag if a layer key was pressed
+            if (isLayerActivationKey(activeCode)) {
+                updateNeeded = true;
             }
           }
-        } else {
-          // Reset debounce timer when state is stable
-          debounceTimers[i][j] = now;
-        }
-      }
+          else {
+            keyReleased(key, layout);
 
-      // Deactivate the row when done
-      digitalWrite(rows[i], HIGH);
+            // Check both the current layout code and the stored activeCode for layer keys
+            uint16_t releasedCode = physicalKeyStates[key->row][key->column].activeCode;
+
+            if (isLayerActivationKey(releasedCode)) {
+                updateNeeded = true;
+            }
+          }
+        }
+      } else {
+        // Reset debounce timer when state is stable
+        debounceTimers[i][j] = now;
+      }
     }
+
+    // Deactivate the row when done
+    digitalWrite(rows[i], HIGH);
   }
 
 #if LOOP_TIMER_DEBUG
