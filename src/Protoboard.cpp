@@ -299,11 +299,17 @@ void remapKeys() {
 
 void loop() {
 
-  loopCount = loopCount + 1; 
-
-  if (loopTimer) {
-    loopStartTime = micros();
-  }
+#if LOOP_TIMER_DEBUG
+if (loopTimer) {
+  loopDuration = micros() - loopStartTime;
+  Serial.print("last: ");
+  Serial.print(loopDuration);
+  Serial.print("µs");
+  Serial.print("  |  ");
+  deltaTime = 0;
+  loopStartTime = micros();
+}
+#endif
 
   unsigned long now = millis();
 
@@ -450,12 +456,7 @@ Serial.print("  |  ");
         loopDuration = micros() - loopStartTime;
         Serial.print("total: ");
         Serial.print(loopDuration);
-        Serial.print(" µs");
-        deltaTime = 0;
+        Serial.println("µs");
     }
   #endif
-
-  if (loopCount >= LEDrefresh){
-    loopCount = 0;
-  }
 }
