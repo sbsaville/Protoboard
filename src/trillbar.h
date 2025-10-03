@@ -251,6 +251,10 @@ int trillbar::processMovement() {
   // Extract whole units of movement (integer part)
   int actionUnits = (int)accumulatedMovement;
 
+  const int maxActionUnits = 5;
+  actionUnits = max(actionUnits, -maxActionUnits);
+  actionUnits = min(actionUnits, maxActionUnits);
+
   #if TRILL_DEBUG
   Serial.print(" actionUnits=");
   Serial.println(actionUnits);
