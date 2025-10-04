@@ -3,36 +3,36 @@
 
 #include "main.h"
 
-typedef CRGB LedColor;
-using LedColor = CRGB;
+#include <stdint.h>
+using LedColor = uint32_t;
 
-LedColor LayerKey = CRGB(0x00FFFF); // Renamed from Layer to avoid type collision
-LedColor Letter   = CRGB(0x8000FF);
-LedColor Number   = CRGB(0x0000FF);
-LedColor Numnav   = CRGB(0x0000FF);
-LedColor Chara1   = CRGB(0xFF2200);
-LedColor Chara2   = CRGB(0xFF5500);
-LedColor Modifier = CRGB(0xFF0000);
-LedColor Capslock = CRGB(0xFF0000);
-LedColor Numlock  = CRGB(0xFFFF00);
-LedColor Scrlock  = CRGB(0xFFFF00);
-LedColor FKeys1   = CRGB(0xFF2200);
-LedColor FKeys1b  = CRGB(0xFF0000);
-LedColor FKeys2   = CRGB(0x3300FF);
-LedColor FKeys2b  = CRGB(0xFF00FF);
-LedColor Special  = CRGB(0xFFFF00);
-LedColor Nav      = CRGB(0x0000FF);
-LedColor LedAdj   = CRGB(0xFFFFFF);
-LedColor LEDoff   = CRGB(0x000000);
-LedColor Macro    = CRGB(0xFF69B4);
-LedColor Toggle   = CRGB(0x00FF00);
-LedColor VimNav   = CRGB(0x33FF33);
+const LedColor LayerKey = 0x00FFFF; // Renamed from Layer to avoid type collision
+const LedColor Letter   = 0x8000FF;
+const LedColor Number   = 0x0000FF;
+LedColor Numnav   = 0x0000FF;
+const LedColor Chara1   = 0xFF2200;
+const LedColor Chara2   = 0xFF5500;
+const LedColor Modifier = 0xFF0000;
+LedColor Capslock = 0xFF0000;
+LedColor Numlock  = 0xFFFF00;
+LedColor Scrlock  = 0xFFFF00;
+const LedColor FKeys1   = 0xFF2200;
+const LedColor FKeys1b  = 0xFF0000;
+const LedColor FKeys2   = 0x3300FF;
+const LedColor FKeys2b  = 0xFF00FF;
+const LedColor Special  = 0xFFFF00;
+const LedColor Nav      = 0x0000FF;
+const LedColor LedAdj   = 0xFFFFFF;
+const LedColor LEDoff   = 0x000000;
+const LedColor Macro    = 0xFF69B4;
+const LedColor Toggle   = 0x00FF00;
+const LedColor VimNav   = 0x33FF33;
 
 struct LayoutKey {
     uint16_t code;
-    LedColor* ledColor;
+    const LedColor* ledColor;
     LedColor defaultColor;
-    LayoutKey(uint16_t code, LedColor* ledColor)
+    LayoutKey(uint16_t code, const LedColor* ledColor)
         : code(code), ledColor(ledColor), defaultColor(*ledColor) {}
 };
 

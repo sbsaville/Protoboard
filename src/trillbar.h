@@ -17,9 +17,6 @@
 // extern unsigned long loopCheckpoint;
 // extern unsigned long deltaTime;
 
-void scanLEDs(LayoutKey* (*layoutMatrix)[columnsCount]);
-void ledsDEC();
-void ledsINC();
 
 class trillbar {
 public:
@@ -315,17 +312,18 @@ void trillbar::handleMode2(int actionUnits) {
   if (actionUnits == 0) return;
 
   ledsOverride = true;
-  scanLEDs(layer0);
 
   if (actionUnits > 0) {
     for (int i = 0; i < actionUnits; i++) {
-      ledsDEC();
+      rgbleds::ledsDEC();
     }
   } else {
     for (int i = 0; i < -actionUnits; i++) {
-      ledsINC();
+      rgbleds::ledsINC();
     }
   }
+
+  leds0();
 
   #if TRILL_DEBUG
   Serial.print("Brightness: ");

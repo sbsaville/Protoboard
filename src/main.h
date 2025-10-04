@@ -5,8 +5,6 @@
 #include <usb_keyboard.h>
 #include <usb_mouse.h>
 
-class CRGB;
-
 void L_check();
 
 const uint8_t rowsCount = 6;

@@ -1,10 +1,7 @@
 #ifndef RGBLEDS_H
 #define RGBLEDS_H
-#define FASTLED_INTERNAL
 
 #include <WS2812Serial.h>
-#define USE_WS2812SERIAL
-#include <FastLED.h>
 #include <cmath>
 #include <algorithm>
 
@@ -16,11 +13,19 @@ class rgbleds {
   public:
     static void setup();
     static void loop();
+    static void ledsINC();
+    static void ledsDEC();
+    static void updateLEDs();
 };
 
 #define NUM_LEDS 84
 #define DATA_PIN 1
 #define FPS 200
+
+// Create the LED objects
+byte drawingMemory[NUM_LEDS * 3];
+DMAMEM byte displayMemory[NUM_LEDS * 12];
+WS2812Serial leds(NUM_LEDS, displayMemory, drawingMemory, DATA_PIN, WS2812_BRG);
 
 bool isNumOn(){
   return (keyboard_leds & 1) == 1;
@@ -37,6 +42,8 @@ bool capsLockFound = false;
 bool scrollLockFound = false;
 
 int brightness;
+
+// Brightness level constants
 const int brt0 = 0;
 const int brt1 = 1;
 const int brt2 = 2;
@@ -49,23 +56,30 @@ const int brt8 = 20;
 const int brt9 = 24;
 const int brt10 = 32;
 
+// Helper function to apply brightness to a color
+uint32_t applyBrightness(uint32_t color, uint8_t br) {
+    if (br == 255) return color;
+    uint8_t r = (color >> 16) & 0xFF;
+    uint8_t g = (color >> 8) & 0xFF;
+    uint8_t b = color & 0xFF;
+    r = (r * br) >> 8;
+    g = (g * br) >> 8;
+    b = (b * br) >> 8;
+    return (r << 16) | (g << 8) | b;
+}
 
-inline void ledsINC () {
+void rgbleds::ledsINC () {
   int maxStep = 128; // You can tweak this value
   float norm = brightness / 255.0f;
   int step = std::max(1, static_cast<int>(pow(norm, 2) * maxStep));
   brightness = std::min(brightness + step, 255);
-  LEDS.setBrightness(brightness);
 }
-inline void ledsDEC () {
+void rgbleds::ledsDEC () {
   int maxStep = 128;
   float norm = brightness / 255.0f;
   int step = std::max(1, static_cast<int>(pow(norm, 2) * maxStep));
   brightness = std::max(brightness - step, 1);
-  LEDS.setBrightness(brightness);
 }
-
-CRGB leds[NUM_LEDS];
 
 int XYMatrix[rowsCount][columnsCount] = {
   {13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0},
@@ -106,7 +120,7 @@ void scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]) {
       }
 
       if (keyToUse != nullptr && keyToUse->ledColor != nullptr) {
-        leds[ledIndex] = *(keyToUse->ledColor);
+        leds.setPixel(ledIndex, applyBrightness(*(keyToUse->ledColor), brightness));
 
         if (keyToUse == NMLCK) {
           numLockFound = true;
@@ -116,7 +130,7 @@ void scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]) {
           scrollLockFound = true;
         }
       } else {
-        leds[ledIndex] = CRGB::Black;
+        leds.setPixel(ledIndex, 0x000000); // Black
       }
     }
   }
@@ -141,39 +155,37 @@ void rgbleds::setup() {
   // Load brightness from SD card (fallback to default if not found)
   brightness = sdconfig::loadBrightness(20);
 
-  LEDS.addLeds<WS2812SERIAL, DATA_PIN, BRG>(leds, NUM_LEDS);
-  LEDS.setBrightness(brightness);
+  leds.begin();
   leds0();
 
   // Flash all LEDs with Layer color twice at the end of setup
-  int originalBrightness = brightness;
-  LEDS.setBrightness(std::max(1, brightness / 4));  // Quarter brightness for startup flash
+  uint8_t startupBrightness = std::max(1, brightness / 4);
 
   for (int flash = 0; flash < 2; flash++) {
     for (int i = 0; i < NUM_LEDS; i++) {
-      leds[i] = LayerKey; // Changed from Layer
+      leds.setPixel(i, applyBrightness(LayerKey, startupBrightness));
     }
-    FastLED.show();
+    leds.show();
     delay(100);
 
     for (int i = 0; i < NUM_LEDS; i++) {
-      leds[i] = CRGB::Black;
+      leds.setPixel(i, 0x000000); // Black
     }
-    FastLED.show();
+    leds.show();
     delay(100);
   }
 
-  LEDS.setBrightness(originalBrightness);
-
   leds0();
-  FastLED.show();
+  leds.show();
 }
 
 
+unsigned long lastLedUpdateTime = 0;
 
 void rgbleds::loop() {
-  EVERY_N_MILLISECONDS(1000/FPS) {
-    FastLED.show();
+  if (millis() - lastLedUpdateTime > 1000 / FPS) {
+    leds.show();
+    lastLedUpdateTime = millis();
   }
 }
 
