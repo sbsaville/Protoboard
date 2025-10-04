@@ -443,7 +443,7 @@ Serial.print("  |  ");
     updateLayerMappings(); // This will call getActiveLayout()
 
     if (!trillbar::isLedOverride()) {
-      scanLEDs(currentLayout); // currentLayout is updated by updateLayerMappings()
+      rgbleds::scanLEDs(currentLayout); // currentLayout is updated by updateLayerMappings()
     }
     remapKeys(); // Update LEDs for toggles like ALT, CAPS_SLSH etc.
 

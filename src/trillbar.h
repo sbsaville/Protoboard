@@ -90,6 +90,7 @@ private:
   // Mouse movement buffer
   static int bufferedMouseX;
   static const unsigned int touchDebounceTime = 10;
+  static unsigned long lastBrightnessUpdate;
 
   static float calculateSensitivity(int rawDelta);
   static float applyFilter(float input);
@@ -151,6 +152,7 @@ int trillbar::keyBufferTail = 0;
 int trillbar::keyBufferCount = 0;
 unsigned long trillbar::lastKeySentTime = 0;
 int trillbar::bufferedMouseX = 0;
+unsigned long trillbar::lastBrightnessUpdate = 0;
 
 // Calculate adaptive sensitivity based on movement speed using a linear acceleration curve
 float trillbar::calculateSensitivity(int rawDelta) {
@@ -312,6 +314,7 @@ void trillbar::handleMode2(int actionUnits) {
   if (actionUnits == 0) return;
 
   ledsOverride = true;
+  leds0(); // Set the base layer color
 
   if (actionUnits > 0) {
     for (int i = 0; i < actionUnits; i++) {
@@ -323,7 +326,11 @@ void trillbar::handleMode2(int actionUnits) {
     }
   }
 
-  leds0();
+  unsigned long now = millis();
+  if (now - lastBrightnessUpdate > 50) { // Update LEDs at ~20Hz
+    leds0();
+    lastBrightnessUpdate = now;
+  }
 
   #if TRILL_DEBUG
   Serial.print("Brightness: ");

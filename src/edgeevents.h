@@ -503,11 +503,12 @@ void keyPressed(Key* key, LayoutKey* layout) {
       if (pressedKeyCode == brightnessLevels[i].code) {
         brightness = brightnessLevels[i].brightnessValue;
         sdconfig::saveBrightness(brightness); // Save on change
+        leds0();
         return;
       }
     }
-    if (pressedKeyCode == LEDS_INC) { rgbleds::ledsINC(); return; }
-    if (pressedKeyCode == LEDS_DEC) { rgbleds::ledsDEC(); return; }
+    if (pressedKeyCode == LEDS_INC) { rgbleds::ledsINC(); leds0(); return; }
+    if (pressedKeyCode == LEDS_DEC) { rgbleds::ledsDEC(); leds0(); return; }
 
     if (pressedKeyCode == TRILL_MODE1) { trillbar::setMode(trillbar::MODE_ARROWS); return; }
     if (pressedKeyCode == TRILL_MODE2) { trillbar::setMode(trillbar::MODE_SCROLL); return; }

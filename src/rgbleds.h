@@ -15,7 +15,7 @@ class rgbleds {
     static void loop();
     static void ledsINC();
     static void ledsDEC();
-    static void updateLEDs();
+    static void scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]);
 };
 
 #define NUM_LEDS 84
@@ -98,7 +98,7 @@ void updateLockStates() {
 }
 
 
-void scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]) {
+void rgbleds::scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]) {
   for (int row = 0; row < rowsCount; row++) {
     for (int col = 0; col < columnsCount; col++) {
       int ledIndex = XYMatrix[row][col];
@@ -139,15 +139,15 @@ void scanLEDs(KeyMapEntry layout[rowsCount][columnsCount]) {
   }
 }
 
-void leds0()         { scanLEDs(layer0); }
-void leds1()         { scanLEDs(layer1); }
-void leds2DT()       { scanLEDs(layer2DT); }
-void leds2()         { scanLEDs(layer2); }
-void ledsSymbols()   { scanLEDs(layerSymbols); }
-void leds3()         { scanLEDs(layerAppostrophe); }
-void leds3DT()       { scanLEDs(layer3DT); }
-void leds4()         { scanLEDs(layer4); }
-void leds4DT()       { scanLEDs(layer4DT); }
+void leds0()         { rgbleds::scanLEDs(layer0); }
+void leds1()         { rgbleds::scanLEDs(layer1); }
+void leds2DT()       { rgbleds::scanLEDs(layer2DT); }
+void leds2()         { rgbleds::scanLEDs(layer2); }
+void ledsSymbols()   { rgbleds::scanLEDs(layerSymbols); }
+void leds3()         { rgbleds::scanLEDs(layerAppostrophe); }
+void leds3DT()       { rgbleds::scanLEDs(layer3DT); }
+void leds4()         { rgbleds::scanLEDs(layer4); }
+void leds4DT()       { rgbleds::scanLEDs(layer4DT); }
 
 
 void rgbleds::setup() {
