@@ -6,27 +6,27 @@
 #include <stdint.h>
 using LedColor = uint32_t;
 
-const LedColor LayerKey = 0x00FFFF; // Renamed from Layer to avoid type collision
-const LedColor Letter   = 0x8000FF;
-const LedColor Number   = 0x0000FF;
-LedColor Numnav   = 0x0000FF;      // Non-const for dynamic color changes based on NumLock state
-const LedColor Chara1   = 0xFF2200;
-const LedColor Chara2   = 0xFF5500;
-const LedColor Modifier = 0xFF0000;
-LedColor Capslock = 0xFF0000;      // Non-const for dynamic color changes based on CapsLock state
-LedColor Numlock  = 0xFFFF00;       // Non-const for dynamic color changes based on NumLock state
-LedColor Scrlock  = 0xFFFF00;       // Non-const for dynamic color changes based on ScrollLock state
-const LedColor FKeys1   = 0xFF2200;
-const LedColor FKeys1b  = 0xFF0000;
-const LedColor FKeys2   = 0x3300FF;
-const LedColor FKeys2b  = 0xFF00FF;
-const LedColor Special  = 0xFFFF00;
-const LedColor Nav      = 0x0000FF;
-const LedColor LedAdj   = 0xFFFFFF;
-const LedColor LEDoff   = 0x000000;
-const LedColor Macro    = 0xFF69B4;
-const LedColor Toggle   = 0x00FF00;
-const LedColor VimNav   = 0x33FF33;
+LedColor LayerKey = 0x00FFFF;
+LedColor Letter   = 0x80FF00;
+LedColor Number   = 0x00FF00;
+LedColor Numnav   = 0x00FF00;
+LedColor Chara1   = 0xFF0022;
+LedColor Chara2   = 0xFF0055;
+LedColor Modifier = 0xFF0000;
+LedColor Capslock = 0xFF0000;
+LedColor Numlock  = 0xFF00FF;
+LedColor Scrlock  = 0xFF00FF;
+LedColor FKeys1   = 0xFF0022;
+LedColor FKeys1b  = 0xFF0000;
+LedColor FKeys2   = 0x33FF00;
+LedColor FKeys2b  = 0xFFFF00;
+LedColor Special  = 0xFF00FF;
+LedColor Nav      = 0x00FF00;
+LedColor LedAdj   = 0xFFFFFF;
+LedColor LEDoff   = 0x000000;
+LedColor Macro    = 0xFFB469;
+LedColor Toggle   = 0x0000FF;
+LedColor VimNav   = 0x3333FF;
 
 struct LayoutKey {
     uint16_t code;

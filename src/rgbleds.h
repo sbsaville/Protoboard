@@ -59,13 +59,13 @@ const int brt10 = 32;
 // Helper function to apply brightness to a color
 uint32_t applyBrightness(uint32_t color, uint8_t br) {
     if (br == 255) return color;
-    uint8_t r = (color >> 16) & 0xFF;
-    uint8_t g = (color >> 8) & 0xFF;
-    uint8_t b = color & 0xFF;
+    uint8_t r = (color >> 16) & 0xFF; // Red is still in the high bits
+    uint8_t b = (color >> 8) & 0xFF;  // Blue is now in the middle bits
+    uint8_t g = color & 0xFF;         // Green is now in the low bits
     r = (r * br) >> 8;
-    g = (g * br) >> 8;
     b = (b * br) >> 8;
-    return (r << 16) | (g << 8) | b;
+    g = (g * br) >> 8;
+    return (r << 16) | (b << 8) | g; // Reassemble in RRBBGG order
 }
 
 void rgbleds::ledsINC () {
@@ -190,10 +190,3 @@ void rgbleds::loop() {
 }
 
 #endif
-
-
-
-
-
-
-
