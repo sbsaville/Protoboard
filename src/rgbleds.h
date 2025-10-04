@@ -56,16 +56,16 @@ const int brt8 = 20;
 const int brt9 = 24;
 const int brt10 = 32;
 
-// Helper function to apply brightness to a color
+// This order is required by the SK6812 MINI-E
 uint32_t applyBrightness(uint32_t color, uint8_t br) {
     if (br == 255) return color;
-    uint8_t r = (color >> 16) & 0xFF; // Red is still in the high bits
-    uint8_t b = (color >> 8) & 0xFF;  // Blue is now in the middle bits
-    uint8_t g = color & 0xFF;         // Green is now in the low bits
-    r = (r * br) >> 8;
-    b = (b * br) >> 8;
-    g = (g * br) >> 8;
-    return (r << 16) | (b << 8) | g; // Reassemble in RRBBGG order
+    uint8_t r = (color >> 16) & 0xFF;
+    uint8_t b = (color >> 8) & 0xFF;
+    uint8_t g = color & 0xFF;    
+    r = (r && br) ? std::max(1, (int)((uint32_t)r * br) / 255) : 0;
+    b = (b && br) ? std::max(1, (int)((uint32_t)b * br) / 255) : 0;
+    g = (g && br) ? std::max(1, (int)((uint32_t)g * br) / 255) : 0;
+    return (r << 16) | (b << 8) | g;
 }
 
 void rgbleds::ledsINC () {
