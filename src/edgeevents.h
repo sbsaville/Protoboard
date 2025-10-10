@@ -467,6 +467,14 @@ void keyPressed(Key* key, LayoutKey* layout) {
                 Keyboard.press(KEY_LEFT_CTRL);
                 Keyboard.press(KEY_LEFT_SHIFT);
                 break;
+            case CTRL_ALT:
+                Keyboard.press(KEY_LEFT_CTRL);
+                Keyboard.press(KEY_LEFT_ALT);
+                break;
+            case SHIFT_ALT:
+                Keyboard.press(KEY_LEFT_SHIFT);
+                Keyboard.press(KEY_LEFT_ALT);
+                break;
             default:
                 break;
         }
@@ -490,6 +498,14 @@ void keyPressed(Key* key, LayoutKey* layout) {
             case CTRL_SHIFT:
                 Keyboard.release(KEY_LEFT_CTRL);
                 Keyboard.release(KEY_LEFT_SHIFT);
+                break;
+            case CTRL_ALT:
+                Keyboard.release(KEY_LEFT_CTRL);
+                Keyboard.release(KEY_LEFT_ALT);
+                break;
+            case SHIFT_ALT:
+                Keyboard.release(KEY_LEFT_SHIFT);
+                Keyboard.release(KEY_LEFT_ALT);
                 break;
             default:
                 break;
