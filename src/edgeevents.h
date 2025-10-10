@@ -448,8 +448,8 @@ void keyPressed(Key* key, LayoutKey* layout) {
     }
 
     // KeyAction execution
-    if (KeyAction* keyAction = dynamic_cast<KeyAction*>(primaryKey)) {
-        keyAction->execute();
+    if (primaryKey->type == ACTION_KEY) {
+        static_cast<KeyAction*>(primaryKey)->execute();
         return;
     }
 
