@@ -132,6 +132,8 @@ struct KeyMapEntry {
     // Constructor for double-tap key
     KeyMapEntry(LayoutKey* pKey, LayoutKey* dtKey) : primaryKey(pKey), doubleTapKey(dtKey) {}
 
+    KeyMapEntry(char ch);
+
     KeyMapEntry(std::initializer_list<LayoutKey*> keys) : primaryKey(nullptr), doubleTapKey(nullptr) {
         if (keys.size() > 0) {
             primaryKey = *keys.begin();
@@ -402,6 +404,109 @@ LayoutKey _SF22_       = {KEYSF22,          &FKeys2b};    LayoutKey* SF22    = &
 LayoutKey _SF23_       = {KEYSF23,          &FKeys2b};    LayoutKey* SF23    = &_SF23_;
 LayoutKey _SF24_       = {KEYSF24,          &FKeys2b};    LayoutKey* SF24    = &_SF24_;
 
+KeyMapEntry::KeyMapEntry(char ch) {
+    primaryKey = nullptr;
+    doubleTapKey = nullptr;
+    switch (ch) {
+        case 'a': primaryKey = A; break;
+        case 'b': primaryKey = B; break;
+        case 'c': primaryKey = C; break;
+        case 'd': primaryKey = D; break;
+        case 'e': primaryKey = E; break;
+        case 'f': primaryKey = F; break;
+        case 'g': primaryKey = G; break;
+        case 'h': primaryKey = H; break;
+        case 'i': primaryKey = I; break;
+        case 'j': primaryKey = J; break;
+        case 'k': primaryKey = K; break;
+        case 'l': primaryKey = L; break;
+        case 'm': primaryKey = M; break;
+        case 'n': primaryKey = N; break;
+        case 'o': primaryKey = O; break;
+        case 'p': primaryKey = P; break;
+        case 'q': primaryKey = Q; break;
+        case 'r': primaryKey = R; break;
+        case 's': primaryKey = S; break;
+        case 't': primaryKey = T; break;
+        case 'u': primaryKey = U; break;
+        case 'v': primaryKey = V; break;
+        case 'w': primaryKey = W; break;
+        case 'x': primaryKey = X; break;
+        case 'y': primaryKey = Y; break;
+        case 'z': primaryKey = Z; break;
+        case 'A': primaryKey = S_A; break;
+        case 'B': primaryKey = S_B; break;
+        case 'C': primaryKey = S_C; break;
+        case 'D': primaryKey = S_D; break;
+        case 'E': primaryKey = S_E; break;
+        case 'F': primaryKey = S_F; break;
+        case 'G': primaryKey = S_G; break;
+        case 'H': primaryKey = S_H; break;
+        case 'I': primaryKey = S_I; break;
+        case 'J': primaryKey = S_J; break;
+        case 'K': primaryKey = S_K; break;
+        case 'L': primaryKey = S_L; break;
+        case 'M': primaryKey = S_M; break;
+        case 'N': primaryKey = S_N; break;
+        case 'O': primaryKey = S_O; break;
+        case 'P': primaryKey = S_P; break;
+        case 'Q': primaryKey = S_Q; break;
+        case 'R': primaryKey = S_R; break;
+        case 'S': primaryKey = S_S; break;
+        case 'T': primaryKey = S_T; break;
+        case 'U': primaryKey = S_U; break;
+        case 'V': primaryKey = S_V; break;
+        case 'W': primaryKey = S_W; break;
+        case 'X': primaryKey = S_X; break;
+        case 'Y': primaryKey = S_Y; break;
+        case 'Z': primaryKey = S_Z; break;
+        case '1': primaryKey = NUM1; break;
+        case '2': primaryKey = NUM2; break;
+        case '3': primaryKey = NUM3; break;
+        case '4': primaryKey = NUM4; break;
+        case '5': primaryKey = NUM5; break;
+        case '6': primaryKey = NUM6; break;
+        case '7': primaryKey = NUM7; break;
+        case '8': primaryKey = NUM8; break;
+        case '9': primaryKey = NUM9; break;
+        case '0': primaryKey = NUM0; break;
+        case '!': primaryKey = S_1; break;
+        case '@': primaryKey = S_2; break;
+        case '#': primaryKey = S_3; break;
+        case '$': primaryKey = S_4; break;
+        case '%': primaryKey = S_5; break;
+        case '^': primaryKey = S_6; break;
+        case '&': primaryKey = S_7; break;
+        case '*': primaryKey = S_8; break;
+        case '(': primaryKey = S_9; break;
+        case ')': primaryKey = S_0; break;
+        case '-': primaryKey = MINUS; break;
+        case '=': primaryKey = EQUAL; break;
+        case '_': primaryKey = S_MINUS; break;
+        case '+': primaryKey = S_EQUAL; break;
+        case '[': primaryKey = LBRACK; break;
+        case ']': primaryKey = RBRACK; break;
+        case '{': primaryKey = S_LBRACK; break;
+        case '}': primaryKey = S_RBRACK; break;
+        case '\\': primaryKey = BSLSH; break;
+        case '|': primaryKey = S_BSLSH; break;
+        case ';': primaryKey = SMCLN; break;
+        case ':': primaryKey = S_SMCLN; break;
+        case '\'': primaryKey = QUOTE; break;
+        case '"': primaryKey = S_QUOTE; break;
+        case ',': primaryKey = COMMA; break;
+        case '.': primaryKey = PERIOD; break;
+        case '<': primaryKey = S_COMMA; break;
+        case '>': primaryKey = S_PERIOD; break;
+        case '/': primaryKey = SLASH; break;
+        case '?': primaryKey = S_SLASH; break;
+        case '`': primaryKey = TILDE; break;
+        case '~': primaryKey = S_TILDE; break;
+        case ' ': primaryKey = SPC; break;
+        default: primaryKey = NUL; break;
+    }
+}
+
 #define ACTION_KEY(name, baseKey, modifier) \
     KeyAction _##name##_ = KeyAction(baseKey, modifier); \
     LayoutKey* name = &_##name##_;
@@ -427,5 +532,32 @@ ACTION_KEY(S_COMMA, COMMA, SHIFT)
 ACTION_KEY(S_PERIOD, PERIOD, SHIFT)
 ACTION_KEY(S_SLASH, SLASH, SHIFT)
 ACTION_KEY(S_TILDE, TILDE, SHIFT)
+
+ACTION_KEY(S_A, A, SHIFT)
+ACTION_KEY(S_B, B, SHIFT)
+ACTION_KEY(S_C, C, SHIFT)
+ACTION_KEY(S_D, D, SHIFT)
+ACTION_KEY(S_E, E, SHIFT)
+ACTION_KEY(S_F, F, SHIFT)
+ACTION_KEY(S_G, G, SHIFT)
+ACTION_KEY(S_H, H, SHIFT)
+ACTION_KEY(S_I, I, SHIFT)
+ACTION_KEY(S_J, J, SHIFT)
+ACTION_KEY(S_K, K, SHIFT)
+ACTION_KEY(S_L, L, SHIFT)
+ACTION_KEY(S_M, M, SHIFT)
+ACTION_KEY(S_N, N, SHIFT)
+ACTION_KEY(S_O, O, SHIFT)
+ACTION_KEY(S_P, P, SHIFT)
+ACTION_KEY(S_Q, Q, SHIFT)
+ACTION_KEY(S_R, R, SHIFT)
+ACTION_KEY(S_S, S, SHIFT)
+ACTION_KEY(S_T, T, SHIFT)
+ACTION_KEY(S_U, U, SHIFT)
+ACTION_KEY(S_V, V, SHIFT)
+ACTION_KEY(S_W, W, SHIFT)
+ACTION_KEY(S_X, X, SHIFT)
+ACTION_KEY(S_Y, Y, SHIFT)
+ACTION_KEY(S_Z, Z, SHIFT)
 
 #endif

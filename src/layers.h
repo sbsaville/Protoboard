@@ -133,9 +133,9 @@ KeyMapEntry layerLNav[rowsCount][columnsCount] = {
 KeyMapEntry layerSymbols[rowsCount][columnsCount] = {
   {{CAPSESC,SET0},{SF13},  {SF14},  {SF15},  {SF16},  {SF17},  {SF18},  {SF19},  {SF20},  {SF21},  {SF22},  {SF23},  {SF24},  {NUL}},
   {{NUL},         {SS_1},  {SS_2},  {SS_3},  {SS_4},  {SS_5},  {SS_6},  {SS_7},  {SS_8},  {SS_9},  {SS_0},  {PLSMNS},{NOTEQL},{NUL}},
-  {{NUL},         {QUOTE}, {S_QUOTE}, {S_1},   {S_8},   {S_COMMA}, {S_PERIOD}, {S_MINUS}, {NUL},   {NUL},   {S_BSLSH}, {NUL},   {NUL},   {NUL}},
-  {{ESC},         {S_7},   {S_4},   {S_LBRACK},{LBRACK},{S_9},   {S_0},   {RBRACK},{S_RBRACK},{S_EQUAL}, {NUL},   {NUL},   {ENTER}, {NUL}},
-  {{LSHFT},       {DEGR},  {NUL},   {S_5},   {CMTST}, {BSLSH}, {S_3},   {CMTED}, {LSEQL}, {GREQL}, {NUL},   {RSHFT}, {NUL},   {NUL}},
+  {{NUL},         {'`'},   {'~'},   {'!'},   {'@'},   {'#'},   {'$'},   {'%'},   {'^'},   {'&'},   {'*'},   {'('},   {')'},   {NUL}},
+  {{ESC},         {'_'},   {'+'},   {'{'},   {'}'},   {'|'},   {':'},   {'"'},   {'<'},   {'>'},   {'?'},   {NUL},   {ENTER}, {NUL}},
+  {{LSHFT},       {DEGR},  {NUL},   {'%'},   {CMTST}, {BSLSH}, {'#'},   {CMTED}, {LSEQL}, {GREQL}, {NUL},   {RSHFT}, {NUL},   {NUL}},
   {{LCRTL},       {LGUI},  {LALT},  {LYR2},  {LYR2},  {DEL},   {BKSPC}, {LYR3},  {LYR4},  {RALT},  {RGUI},  {RCRTL}, {NUL},   {NUL}}
 };
 
