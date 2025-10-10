@@ -131,11 +131,11 @@ KeyMapEntry layerLNav[rowsCount][columnsCount] = {
 };
 
 KeyMapEntry layerSymbols[rowsCount][columnsCount] = {
-  {{CAPSESC,SET0},{SF13},  {SF14},  {SF15},  {SF16},  {SF17},  {SF18},  {SF19},  {SF20},  {SF21},  {SF22},  {SF23},  {SF24},  {NUL}},
+  {{CAPSESC,SET0},{S(F13)},{S(F14)},{S(F15)},{S(F16)},{S(F17)},{S(F18)},{S(F19)},{S(F20)},{S(F21)},{S(F22)},{S(F23)},{S(F24)},{NUL}},
   {{NUL},         {SS_1},  {SS_2},  {SS_3},  {SS_4},  {SS_5},  {SS_6},  {SS_7},  {SS_8},  {SS_9},  {SS_0},  {PLSMNS},{NOTEQL},{NUL}},
-  {{NUL},         {'`'},   {'~'},   {'!'},   {'@'},   {'#'},   {'$'},   {'%'},   {'^'},   {'&'},   {'*'},   {'('},   {')'},   {NUL}},
-  {{ESC},         {'_'},   {'+'},   {'{'},   {'}'},   {'|'},   {':'},   {'"'},   {'<'},   {'>'},   {'?'},   {NUL},   {ENTER}, {NUL}},
-  {{LSHFT},       {DEGR},  {NUL},   {'%'},   {CMTST}, {BSLSH}, {'#'},   {CMTED}, {LSEQL}, {GREQL}, {NUL},   {RSHFT}, {NUL},   {NUL}},
+  {{NUL},         {S(TILDE)}, {S(GRAVE)},   {S(NUM1)},   {S(NUM2)},   {S(NUM3)},   {S(NUM4)},   {S(NUM5)},   {S(NUM6)},   {S(NUM7)},   {S(NUM8)},   {S(NUM9)},   {S(NUM0)},   {NUL}},
+  {{ESC},         {S(MINUS)},   {S(EQUAL)},   {S(LBRACK)},   {S(RBRACK)},   {S(BSLSH)},   {S(SMCLN)},   {S(QUOTE)},   {S(COMMA)},   {S(PERIOD)},   {S(SLASH)},   {NUL},   {ENTER}, {NUL}},
+  {{LSHFT},       {DEGR},  {NUL},   {S(NUM5)},   {CMTST}, {BSLSH}, {S(NUM3)},   {CMTED}, {LSEQL}, {GREQL}, {NUL},   {RSHFT}, {NUL},   {NUL}},
   {{LCRTL},       {LGUI},  {LALT},  {LYR2},  {LYR2},  {DEL},   {BKSPC}, {LYR3},  {LYR4},  {RALT},  {RGUI},  {RCRTL}, {NUL},   {NUL}}
 };
 

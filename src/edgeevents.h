@@ -447,9 +447,53 @@ void keyPressed(Key* key, LayoutKey* layout) {
       return; // Do nothing for explicit NUL keys
     }
 
-    // KeyAction execution
-    if (primaryKey->type == ACTION_KEY) {
-        static_cast<KeyAction*>(primaryKey)->execute();
+    // Dynamic key action execution
+    if (currentKeyMapEntry.modifier != NONE) {
+        Modifier mod = currentKeyMapEntry.modifier;
+        switch (mod) {
+            case SHIFT:
+                Keyboard.press(KEY_LEFT_SHIFT);
+                break;
+            case CTRL:
+                Keyboard.press(KEY_LEFT_CTRL);
+                break;
+            case ALT:
+                Keyboard.press(KEY_LEFT_ALT);
+                break;
+            case GUI:
+                Keyboard.press(KEY_LEFT_GUI);
+                break;
+            case CTRL_SHIFT:
+                Keyboard.press(KEY_LEFT_CTRL);
+                Keyboard.press(KEY_LEFT_SHIFT);
+                break;
+            default:
+                break;
+        }
+
+        Keyboard.press(primaryKey->code);
+        Keyboard.release(primaryKey->code);
+
+        switch (mod) {
+            case SHIFT:
+                Keyboard.release(KEY_LEFT_SHIFT);
+                break;
+            case CTRL:
+                Keyboard.release(KEY_LEFT_CTRL);
+                break;
+            case ALT:
+                Keyboard.release(KEY_LEFT_ALT);
+                break;
+            case GUI:
+                Keyboard.release(KEY_LEFT_GUI);
+                break;
+            case CTRL_SHIFT:
+                Keyboard.release(KEY_LEFT_CTRL);
+                Keyboard.release(KEY_LEFT_SHIFT);
+                break;
+            default:
+                break;
+        }
         return;
     }
 

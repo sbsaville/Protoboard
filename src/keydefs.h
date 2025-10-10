@@ -34,22 +34,17 @@ LedColor GuiModifier = 0xFFFF00;
 LedColor CtrlShiftModifier = 0xFF00FF;
 
 
-enum KeyType {
-    STANDARD_KEY,
-    ACTION_KEY
-};
-
 struct LayoutKey {
     uint16_t code;
     const LedColor* ledColor;
     LedColor defaultColor;
-    KeyType type;
-    LayoutKey(uint16_t code, const LedColor* ledColor, KeyType type = STANDARD_KEY)
-        : code(code), ledColor(ledColor), defaultColor(*ledColor), type(type) {}
+    LayoutKey(uint16_t code, const LedColor* ledColor)
+        : code(code), ledColor(ledColor), defaultColor(*ledColor) {}
     virtual ~LayoutKey() {}
 };
 
 enum Modifier : uint8_t {
+    NONE,
     SHIFT,
     CTRL,
     ALT,
@@ -57,90 +52,22 @@ enum Modifier : uint8_t {
     CTRL_SHIFT,
 };
 
-struct ModifierKey {
-    const LedColor* ledColor;
-};
-
-extern ModifierKey modifierKeys[];
-
-ModifierKey modifierKeys[] = {
-    {&ShiftModifier},
-    {&CtrlModifier},
-    {&AltModifier},
-    {&GuiModifier},
-    {&CtrlShiftModifier},
-};
-
-class KeyAction : public LayoutKey {
-public:
-    KeyAction(LayoutKey* baseKey, Modifier modifier)
-        : LayoutKey(baseKey->code, modifierKeys[modifier].ledColor, ACTION_KEY), baseKey(baseKey), modifier(modifier) {}
-
-    void execute() {
-        // Press modifier
-        switch (modifier) {
-            case SHIFT:
-                Keyboard.press(KEY_LEFT_SHIFT);
-                break;
-            case CTRL:
-                Keyboard.press(KEY_LEFT_CTRL);
-                break;
-            case ALT:
-                Keyboard.press(KEY_LEFT_ALT);
-                break;
-            case GUI:
-                Keyboard.press(KEY_LEFT_GUI);
-                break;
-            case CTRL_SHIFT:
-                Keyboard.press(KEY_LEFT_CTRL);
-                Keyboard.press(KEY_LEFT_SHIFT);
-                break;
-        }
-
-        // Press and release base key
-        Keyboard.press(baseKey->code);
-        Keyboard.release(baseKey->code);
-
-        // Release modifier
-        switch (modifier) {
-            case SHIFT:
-                Keyboard.release(KEY_LEFT_SHIFT);
-                break;
-            case CTRL:
-                Keyboard.release(KEY_LEFT_CTRL);
-                break;
-            case ALT:
-                Keyboard.release(KEY_LEFT_ALT);
-                break;
-            case GUI:
-                Keyboard.release(KEY_LEFT_GUI);
-                break;
-            case CTRL_SHIFT:
-                Keyboard.release(KEY_LEFT_CTRL);
-                Keyboard.release(KEY_LEFT_SHIFT);
-                break;
-        }
-    }
-
-private:
-    LayoutKey* baseKey;
-    Modifier modifier;
-};
-
 // New struct for double-tap functionality
 struct KeyMapEntry {
     LayoutKey* primaryKey;
     LayoutKey* doubleTapKey;
+    Modifier modifier;
 
     // Constructor for single key
-    KeyMapEntry(LayoutKey* pKey = nullptr) : primaryKey(pKey), doubleTapKey(nullptr) {}
+    KeyMapEntry(LayoutKey* pKey = nullptr) : primaryKey(pKey), doubleTapKey(nullptr), modifier(NONE) {}
+
+    // Constructor for modified key
+    KeyMapEntry(LayoutKey* pKey, Modifier mod) : primaryKey(pKey), doubleTapKey(nullptr), modifier(mod) {}
 
     // Constructor for double-tap key
-    KeyMapEntry(LayoutKey* pKey, LayoutKey* dtKey) : primaryKey(pKey), doubleTapKey(dtKey) {}
+    KeyMapEntry(LayoutKey* pKey, LayoutKey* dtKey) : primaryKey(pKey), doubleTapKey(dtKey), modifier(NONE) {}
 
-    KeyMapEntry(char ch);
-
-    KeyMapEntry(std::initializer_list<LayoutKey*> keys) : primaryKey(nullptr), doubleTapKey(nullptr) {
+    KeyMapEntry(std::initializer_list<LayoutKey*> keys) : primaryKey(nullptr), doubleTapKey(nullptr), modifier(NONE) {
         if (keys.size() > 0) {
             primaryKey = *keys.begin();
         }
@@ -410,57 +337,10 @@ LayoutKey _SF22_       = {KEYSF22,          &FKeys2b};    LayoutKey* SF22    = &
 LayoutKey _SF23_       = {KEYSF23,          &FKeys2b};    LayoutKey* SF23    = &_SF23_;
 LayoutKey _SF24_       = {KEYSF24,          &FKeys2b};    LayoutKey* SF24    = &_SF24_;
 
-#define ACTION_KEY(name, baseKey, modifier) \
-    KeyAction _##name##_ = KeyAction(baseKey, modifier); \
-    LayoutKey* name = &_##name##_;
-
-ACTION_KEY(S_1, NUM1, SHIFT)
-ACTION_KEY(S_2, NUM2, SHIFT)
-ACTION_KEY(S_3, NUM3, SHIFT)
-ACTION_KEY(S_4, NUM4, SHIFT)
-ACTION_KEY(S_5, NUM5, SHIFT)
-ACTION_KEY(S_6, NUM6, SHIFT)
-ACTION_KEY(S_7, NUM7, SHIFT)
-ACTION_KEY(S_8, NUM8, SHIFT)
-ACTION_KEY(S_9, NUM9, SHIFT)
-ACTION_KEY(S_0, NUM0, SHIFT)
-ACTION_KEY(S_MINUS, MINUS, SHIFT)
-ACTION_KEY(S_EQUAL, EQUAL, SHIFT)
-ACTION_KEY(S_BSLSH, BSLSH, SHIFT)
-ACTION_KEY(S_LBRACK, LBRACK, SHIFT)
-ACTION_KEY(S_RBRACK, RBRACK, SHIFT)
-ACTION_KEY(S_SMCLN, SMCLN, SHIFT)
-ACTION_KEY(S_QUOTE, QUOTE, SHIFT)
-ACTION_KEY(S_COMMA, COMMA, SHIFT)
-ACTION_KEY(S_PERIOD, PERIOD, SHIFT)
-ACTION_KEY(S_SLASH, SLASH, SHIFT)
-ACTION_KEY(S_TILDE, TILDE, SHIFT)
-
-ACTION_KEY(S_A, A, SHIFT)
-ACTION_KEY(S_B, B, SHIFT)
-ACTION_KEY(S_C, C, SHIFT)
-ACTION_KEY(S_D, D, SHIFT)
-ACTION_KEY(S_E, E, SHIFT)
-ACTION_KEY(S_F, F, SHIFT)
-ACTION_KEY(S_G, G, SHIFT)
-ACTION_KEY(S_H, H, SHIFT)
-ACTION_KEY(S_I, I, SHIFT)
-ACTION_KEY(S_J, J, SHIFT)
-ACTION_KEY(S_K, K, SHIFT)
-ACTION_KEY(S_L, L, SHIFT)
-ACTION_KEY(S_M, M, SHIFT)
-ACTION_KEY(S_N, N, SHIFT)
-ACTION_KEY(S_O, O, SHIFT)
-ACTION_KEY(S_P, P, SHIFT)
-ACTION_KEY(S_Q, Q, SHIFT)
-ACTION_KEY(S_R, R, SHIFT)
-ACTION_KEY(S_S, S, SHIFT)
-ACTION_KEY(S_T, T, SHIFT)
-ACTION_KEY(S_U, U, SHIFT)
-ACTION_KEY(S_V, V, SHIFT)
-ACTION_KEY(S_W, W, SHIFT)
-ACTION_KEY(S_X, X, SHIFT)
-ACTION_KEY(S_Y, Y, SHIFT)
-ACTION_KEY(S_Z, Z, SHIFT)
+#define S(key) KeyMapEntry(key, SHIFT)
+#define C(key) KeyMapEntry(key, CTRL)
+#define A(key) KeyMapEntry(key, ALT)
+#define G(key) KeyMapEntry(key, GUI)
+#define CS(key) KeyMapEntry(key, CTRL_SHIFT)
 
 #endif
