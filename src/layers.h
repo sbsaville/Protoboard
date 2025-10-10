@@ -184,26 +184,27 @@ KeyMapEntry layer4DT[rowsCount][columnsCount] = {
   {{RLEASE},      {RBOOT}, {NUL},   {NUL},   {ALTL},  {SPC},   {ALTR},  {LYR3},  {LYR4},  {NUL},   {NUL},   {PREV},  {PLYPS}, {NEXT}}
 };
 
-/*
+
+// intentionally unused
 KeyMapEntry layoutNUL[rowsCount][columnsCount] = {
-  //  ESC       F1        F2        F3        F4        F5        F6        F7        F8        F9        F10       F11       F12       DEL      
-  {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
+  /*   ESC         F1          F2          F3          F4          F5          F6          F7          F8          F9          F10         F11         F12         DEL   */
+  {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   }},
 
-  //   ~         1         2         3         4         5         6         7         8         9         0         -         =        End
-  {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
+  /*    ~           1           2           3           4           5           6           7           8           9           0           -           =          Home  */
+  {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   }},
 
-  //  Tab        Q         W         E         R         T         Y         U         I         O         P         [         ]         |
-  {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
+  /*   Tab          Q           W           E           R           T           Y           U           I           O           P           [           ]           \    */
+  {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   }},
 
-  //  Caps       A         S         D         F         G         H         J         K         L         ;         '       Enter      Home
-  {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
+  /*   Caps         A           S           D           F           G           H           J           K           L           ;           '         Enter        End   */
+  {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   }},
 
-  // Shift       Z         X         C         V         B         N         M         ,         .         /       Shift      Up       Right
-  {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
+  /*  Shift         Z           X           C           V           B           N           M           ,           .           /         Shift         ↑           →    */
+  {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   }},
 
-  //  Ctrl      Gui       Alt                          Space     Backsp                         Alt       Gui       Ctrl      Left      Down
-  {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }}
+  /*   Ctrl        Gui         Alt                                Space       Backsp                               Alt         Gui         Ctrl         ←           ↓    */
+  {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   }}
 };
-*/
+
 
 #endif
