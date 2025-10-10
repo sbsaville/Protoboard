@@ -324,6 +324,18 @@ LayoutKey _BR10_       = {LEDS_BR10,        &LedAdj};     LayoutKey* BR10    = &
 LayoutKey _INCR_       = {LEDS_INC,         &LedAdj};     LayoutKey* INCR    = &_INCR_;
 LayoutKey _DECR_       = {LEDS_DEC,         &LedAdj};     LayoutKey* DECR    = &_DECR_;
 
+LayoutKey _SF13_       = {KEYSF13,          &FKeys2b};    LayoutKey* SF13    = &_SF13_;
+LayoutKey _SF14_       = {KEYSF14,          &FKeys2b};    LayoutKey* SF14    = &_SF14_;
+LayoutKey _SF15_       = {KEYSF15,          &FKeys2b};    LayoutKey* SF15    = &_SF15_;
+LayoutKey _SF16_       = {KEYSF16,          &FKeys2b};    LayoutKey* SF16    = &_SF16_;
+LayoutKey _SF17_       = {KEYSF17,          &FKeys2};     LayoutKey* SF17    = &_SF17_;
+LayoutKey _SF18_       = {KEYSF18,          &FKeys2};     LayoutKey* SF18    = &_SF18_;
+LayoutKey _SF19_       = {KEYSF19,          &FKeys2};     LayoutKey* SF19    = &_SF19_;
+LayoutKey _SF20_       = {KEYSF20,          &FKeys2};     LayoutKey* SF20    = &_SF20_;
+LayoutKey _SF21_       = {KEYSF21,          &FKeys2b};    LayoutKey* SF21    = &_SF21_;
+LayoutKey _SF22_       = {KEYSF22,          &FKeys2b};    LayoutKey* SF22    = &_SF22_;
+LayoutKey _SF23_       = {KEYSF23,          &FKeys2b};    LayoutKey* SF23    = &_SF23_;
+LayoutKey _SF24_       = {KEYSF24,          &FKeys2b};    LayoutKey* SF24    = &_SF24_;
 
 #define S(key) KeyMapEntry(key, SHIFT)
 #define C(key) KeyMapEntry(key, CTRL)

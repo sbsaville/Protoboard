@@ -131,11 +131,11 @@ KeyMapEntry layerLNav[rowsCount][columnsCount] = {
 };
 
 KeyMapEntry layerSymbols[rowsCount][columnsCount] = {
-  {{CAPSESC,SET0},{S(F13)},{S(F14)},{S(F15)},{S(F16)},{S(F17)},{S(F18)},{S(F19)},{S(F20)},{S(F21)},{S(F22)},{S(F23)},{S(F24)},{NUL}},
+  {{CAPSESC,SET0},{S(F13)},  {S(F14)},  {S(F15)},  {S(F16)},  {S(F17)},  {S(F18)},  {S(F19)},  {S(F20)},  {S(F21)},  {S(F22)},  {S(F23)},  {S(F24)},  {NUL}},
   {{NUL},         {SS_1},  {SS_2},  {SS_3},  {SS_4},  {SS_5},  {SS_6},  {SS_7},  {SS_8},  {SS_9},  {SS_0},  {PLSMNS},{NOTEQL},{NUL}},
-  {{NUL},         {S(TILDE)}, {S(GRAVE)},   {S(NUM1)},   {S(NUM2)},   {S(NUM3)},   {S(NUM4)},   {S(NUM5)},   {S(NUM6)},   {S(NUM7)},   {S(NUM8)},   {S(NUM9)},   {S(NUM0)},   {NUL}},
-  {{ESC},         {S(MINUS)},   {S(EQUAL)},   {S(LBRACK)},   {S(RBRACK)},   {S(BSLSH)},   {S(SMCLN)},   {S(QUOTE)},   {S(COMMA)},   {S(PERIOD)},   {S(SLASH)},   {NUL},   {ENTER}, {NUL}},
-  {{LSHFT},       {DEGR},  {NUL},   {S(NUM5)},   {CMTST}, {BSLSH}, {S(NUM3)},   {CMTED}, {LSEQL}, {GREQL}, {NUL},   {RSHFT}, {NUL},   {NUL}},
+  {{NUL},         {QUOTE}, {S(QUOTE)},  {S(NUM1)}, {S(NUM8)},  {S(COMMA)}, {S(PERIOD)}, {S(MINUS)},  {NUL},   {NUL},   {S(BSLSH)},  {NUL},   {NUL},   {NUL}},
+  {{ESC},         {S(NUM7)}, {S(NUM4)},  {S(LBRACK)},{LBRACK},{S(NUM9)},  {S(NUM0)},  {RBRACK},{S(RBRACK)},{S(EQUAL)},  {NUL},   {NUL},   {ENTER}, {NUL}},
+  {{LSHFT},       {DEGR},  {NUL},   {S(NUM5)}, {CMTST}, {BSLSH}, {S(NUM3)},  {CMTED}, {LSEQL}, {GREQL}, {NUL},   {RSHFT}, {NUL},   {NUL}},
   {{LCRTL},       {LGUI},  {LALT},  {LYR2},  {LYR2},  {DEL},   {BKSPC}, {LYR3},  {LYR4},  {RALT},  {RGUI},  {RCRTL}, {NUL},   {NUL}}
 };
 
@@ -149,7 +149,7 @@ KeyMapEntry layerAppostrophe[rowsCount][columnsCount] = {
 };
 
 KeyMapEntry layer3DT[rowsCount][columnsCount] = {
-  {{ESC,SET0},{S(F13)},{S(F14)},{S(F15)},{S(F16)},{S(F17)},{S(F18)},{S(F19)},{S(F20)},{S(F21)},{S(F22)},{S(F23)},{S(F24)},{NUL}},
+  {{ESC,SET0},{SF13},  {SF14},  {SF15},  {SF16},  {SF17},  {SF18},  {SF19},  {SF20},  {SF21},  {SF22},  {SF23},  {SF24},  {NUL}},
   {{NUL},     {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PMUL},  {PDIV},  {PADD},  {PSUB},  {NUL},   {NUL}},
   {{TAB},     {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PAD7},  {PAD8},  {PAD9},  {CARAT}, {NUL},   {NUL}},
   {{NUL},     {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {NUL},   {PAD4},  {PAD5},  {PAD6},  {NUL},   {ENTER}, {NUL}},
@@ -184,26 +184,26 @@ KeyMapEntry layer4DT[rowsCount][columnsCount] = {
   {{RLEASE},      {RBOOT}, {NUL},   {NUL},   {ALTL},  {SPC},   {ALTR},  {LYR3},  {LYR4},  {NUL},   {NUL},   {PREV},  {PLYPS}, {NEXT}}
 };
 
-
+/*
 KeyMapEntry layoutNUL[rowsCount][columnsCount] = {
-  /*   ESC         F1          F2          F3          F4          F5          F6          F7          F8          F9          F10         F11         F12         DEL   */
-  {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   }},
+  //  ESC       F1        F2        F3        F4        F5        F6        F7        F8        F9        F10       F11       F12       DEL
+  {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
 
-  /*    ~           1           2           3           4           5           6           7           8           9           0           -           =          Home  */
-  {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   }},
+  //   ~         1         2         3         4         5         6         7         8         9         0         -         =        End
+  {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
 
-  /*   Tab          Q           W           E           R           T           Y           U           I           O           P           [           ]           \    */
-  {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   }},
+  //  Tab        Q         W         E         R         T         Y         U         I         O         P         [         ]         |
+  {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
 
-  /*   Caps         A           S           D           F           G           H           J           K           L           ;           '         Enter        End   */
-  {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   }},
+  //  Caps       A         S         D         F         G         H         J         K         L         ;         '       Enter      Home
+  {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
 
-  /*  Shift         Z           X           C           V           B           N           M           ,           .           /         Shift         ↑           →    */
-  {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   }},
+  // Shift       Z         X         C         V         B         N         M         ,         .         /       Shift      Up       Right
+  {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }},
 
-  /*   Ctrl        Gui         Alt                                Space       Backsp                               Alt         Gui         Ctrl         ←           ↓    */
-  {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   }}
+  //  Ctrl      Gui       Alt                          Space     Backsp                         Alt       Gui       Ctrl      Left      Down
+  {{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  },{  NUL  }}
 };
-
+*/
 
 #endif
