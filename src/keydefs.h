@@ -12,7 +12,7 @@ LedColor Number   = 0x00FF00;
 LedColor Numnav   = 0x00FF00;
 LedColor Chara1   = 0xFF0022;
 LedColor Chara2   = 0xFF0055;
-LedColor Modifier = 0xFF0000;
+LedColor ModifierColor = 0xFF0000;
 LedColor Capslock = 0xFF0000;
 LedColor Numlock  = 0xFF00FF;
 LedColor Scrlock  = 0xFF00FF;
@@ -27,6 +27,12 @@ LedColor LEDoff   = 0x000000;
 LedColor Macro    = 0xFFB469;
 LedColor Toggle   = 0x0000FF;
 LedColor VimNav   = 0x3333FF;
+LedColor ShiftModifier = 0xFF0000;
+LedColor CtrlModifier = 0x00FF00;
+LedColor AltModifier = 0x0000FF;
+LedColor GuiModifier = 0xFFFF00;
+LedColor CtrlShiftModifier = 0xFF00FF;
+
 
 struct LayoutKey {
     uint16_t code;
@@ -34,20 +40,37 @@ struct LayoutKey {
     LedColor defaultColor;
     LayoutKey(uint16_t code, const LedColor* ledColor)
         : code(code), ledColor(ledColor), defaultColor(*ledColor) {}
+    virtual ~LayoutKey() {}
+};
+
+enum Modifier : uint8_t {
+    NONE,
+    SHIFT,
+    CTRL,
+    ALT,
+    GUI,
+    CTRL_SHIFT,
+    CTRL_ALT,
+    SHIFT_ALT,
+    CTRL_SHIFT_ALT,
 };
 
 // New struct for double-tap functionality
 struct KeyMapEntry {
     LayoutKey* primaryKey;
     LayoutKey* doubleTapKey;
+    Modifier modifier;
 
     // Constructor for single key
-    KeyMapEntry(LayoutKey* pKey = nullptr) : primaryKey(pKey), doubleTapKey(nullptr) {}
+    KeyMapEntry(LayoutKey* pKey = nullptr) : primaryKey(pKey), doubleTapKey(nullptr), modifier(NONE) {}
+
+    // Constructor for modified key
+    KeyMapEntry(LayoutKey* pKey, Modifier mod) : primaryKey(pKey), doubleTapKey(nullptr), modifier(mod) {}
 
     // Constructor for double-tap key
-    KeyMapEntry(LayoutKey* pKey, LayoutKey* dtKey) : primaryKey(pKey), doubleTapKey(dtKey) {}
+    KeyMapEntry(LayoutKey* pKey, LayoutKey* dtKey) : primaryKey(pKey), doubleTapKey(dtKey), modifier(NONE) {}
 
-    KeyMapEntry(std::initializer_list<LayoutKey*> keys) : primaryKey(nullptr), doubleTapKey(nullptr) {
+    KeyMapEntry(std::initializer_list<LayoutKey*> keys) : primaryKey(nullptr), doubleTapKey(nullptr), modifier(NONE) {
         if (keys.size() > 0) {
             primaryKey = *keys.begin();
         }
@@ -97,7 +120,7 @@ LayoutKey _MLLSEQ_     = {ML_LSEQ,         &Macro};       LayoutKey* MLLSEQ  = &
 LayoutKey _MLUNN_      = {ML_UNN,          &Macro};       LayoutKey* MLUNN   = &_MLUNN_;
 
 
-LayoutKey _ESC_        = {KEY_ESC,         &Modifier};    LayoutKey* ESC     = &_ESC_;
+LayoutKey _ESC_        = {KEY_ESC,         &ModifierColor};    LayoutKey* ESC     = &_ESC_;
 LayoutKey _F1_         = {KEY_F1,          &FKeys1};      LayoutKey* F1      = &_F1_;
 LayoutKey _F2_         = {KEY_F2,          &FKeys1};      LayoutKey* F2      = &_F2_;
 LayoutKey _F3_         = {KEY_F3,          &FKeys1};      LayoutKey* F3      = &_F3_;
@@ -143,11 +166,11 @@ LayoutKey _BSLSH_      = {KEY_BACKSLASH,   &Chara1};      LayoutKey* BSLSH   = &
 LayoutKey _BKSPC_      = {KEY_BACKSPACE,   &Letter};      LayoutKey* BKSPC   = &_BKSPC_;
 
 LayoutKey _INSRT_      = {KEY_INSERT,      &Chara1};      LayoutKey* INSRT   = &_INSRT_;
-LayoutKey _DEL_        = {KEY_DELETE,      &Modifier};    LayoutKey* DEL     = &_DEL_;
-LayoutKey _HOME_       = {KEY_HOME,        &Modifier};    LayoutKey* HOME    = &_HOME_;
-LayoutKey _END_        = {KEY_END,         &Modifier};    LayoutKey* END     = &_END_;
-LayoutKey _PGUP_       = {KEY_PAGE_UP,     &Modifier};    LayoutKey* PGUP    = &_PGUP_;
-LayoutKey _PGDN_       = {KEY_PAGE_DOWN,   &Modifier};    LayoutKey* PGDN    = &_PGDN_;
+LayoutKey _DEL_        = {KEY_DELETE,      &ModifierColor};    LayoutKey* DEL     = &_DEL_;
+LayoutKey _HOME_       = {KEY_HOME,        &ModifierColor};    LayoutKey* HOME    = &_HOME_;
+LayoutKey _END_        = {KEY_END,         &ModifierColor};    LayoutKey* END     = &_END_;
+LayoutKey _PGUP_       = {KEY_PAGE_UP,     &ModifierColor};    LayoutKey* PGUP    = &_PGUP_;
+LayoutKey _PGDN_       = {KEY_PAGE_DOWN,   &ModifierColor};    LayoutKey* PGDN    = &_PGDN_;
 LayoutKey _UP_         = {KEY_UP_ARROW,    &Nav};         LayoutKey* UP      = &_UP_;
 LayoutKey _DOWN_       = {KEY_DOWN_ARROW,  &Nav};         LayoutKey* DOWN    = &_DOWN_;
 LayoutKey _LEFT_       = {KEY_LEFT_ARROW,  &Nav};         LayoutKey* LEFT    = &_LEFT_;
@@ -171,15 +194,15 @@ LayoutKey _PAD8_       = {KEYPAD_8,        &Numnav};      LayoutKey* PAD8    = &
 LayoutKey _PAD9_       = {KEYPAD_9,        &Number};      LayoutKey* PAD9    = &_PAD9_;
 LayoutKey _PDOT_       = {KEYPAD_PERIOD,   &Chara2};      LayoutKey* PDOT    = &_PDOT_;
 
-LayoutKey _TAB_        = {KEY_TAB,         &Modifier};    LayoutKey* TAB     = &_TAB_;
+LayoutKey _TAB_        = {KEY_TAB,         &ModifierColor};    LayoutKey* TAB     = &_TAB_;
 LayoutKey _TILDE_      = {KEY_TILDE,       &Chara1};      LayoutKey* TILDE   = &_TILDE_;
 LayoutKey _CAPS_       = {KEY_CAPS_LOCK,   &Capslock};    LayoutKey* CAPS    = &_CAPS_;
 LayoutKey _LSHFT_      = {KEY_LEFT_SHIFT,  &Capslock};    LayoutKey* LSHFT   = &_LSHFT_;
-LayoutKey _LCRTL_      = {KEY_LEFT_CTRL,   &Modifier};    LayoutKey* LCRTL   = &_LCRTL_;
-LayoutKey _LGUI_       = {KEY_LEFT_GUI,    &Modifier};    LayoutKey* LGUI    = &_LGUI_;
-LayoutKey _LALT_       = {KEY_LEFT_ALT,    &Modifier};    LayoutKey* LALT    = &_LALT_;
-LayoutKey _HYPER_      = {KEY_HYPER,       &Modifier};    LayoutKey* HYPER   = &_HYPER_;
-LayoutKey _MEH_        = {KEY_MEH,         &Modifier};    LayoutKey* MEH     = &_MEH_;
+LayoutKey _LCRTL_      = {KEY_LEFT_CTRL,   &ModifierColor};    LayoutKey* LCRTL   = &_LCRTL_;
+LayoutKey _LGUI_       = {KEY_LEFT_GUI,    &ModifierColor};    LayoutKey* LGUI    = &_LGUI_;
+LayoutKey _LALT_       = {KEY_LEFT_ALT,    &ModifierColor};    LayoutKey* LALT    = &_LALT_;
+LayoutKey _HYPER_      = {KEY_HYPER,       &ModifierColor};    LayoutKey* HYPER   = &_HYPER_;
+LayoutKey _MEH_        = {KEY_MEH,         &ModifierColor};    LayoutKey* MEH     = &_MEH_;
 LayoutKey _SPC_        = {KEY_SPACE,       &Letter};      LayoutKey* SPC     = &_SPC_;
 
 LayoutKey _Q_          = {KEY_Q,           &Letter};      LayoutKey* Q       = &_Q_;
@@ -218,47 +241,26 @@ LayoutKey _COMMA_      = {KEY_COMMA,        &Chara1};     LayoutKey* COMMA   = &
 LayoutKey _PERIOD_     = {KEY_PERIOD,       &Chara1};     LayoutKey* PERIOD  = &_PERIOD_;
 LayoutKey _SLASH_      = {KEY_SLASH,        &Chara1};     LayoutKey* SLASH   = &_SLASH_;
 LayoutKey _RSHFT_      = {KEY_RIGHT_SHIFT,  &Capslock};   LayoutKey* RSHFT   = &_RSHFT_;
-LayoutKey _RCRTL_      = {KEY_RIGHT_CTRL,   &Modifier};   LayoutKey* RCRTL   = &_RCRTL_;
-LayoutKey _RGUI_       = {KEY_RIGHT_GUI,    &Modifier};   LayoutKey* RGUI    = &_RGUI_;
-LayoutKey _RALT_       = {KEY_RIGHT_ALT,    &Modifier};   LayoutKey* RALT    = &_RALT_;
+LayoutKey _RCRTL_      = {KEY_RIGHT_CTRL,   &ModifierColor};   LayoutKey* RCRTL   = &_RCRTL_;
+LayoutKey _RGUI_       = {KEY_RIGHT_GUI,    &ModifierColor};   LayoutKey* RGUI    = &_RGUI_;
+LayoutKey _RALT_       = {KEY_RIGHT_ALT,    &ModifierColor};   LayoutKey* RALT    = &_RALT_;
 LayoutKey _MENU_       = {KEY_MENU,         &Macro};      LayoutKey* MENU    = &_MENU_;
 
-LayoutKey _MUTE_       = {KEY_MEDIA_MUTE,         &Modifier}; LayoutKey* MUTE  = &_MUTE_;
+LayoutKey _MUTE_       = {KEY_MEDIA_MUTE,         &ModifierColor}; LayoutKey* MUTE  = &_MUTE_;
 LayoutKey _PREV_       = {KEY_MEDIA_PREV_TRACK,   &Special};  LayoutKey* PREV  = &_PREV_;
 LayoutKey _NEXT_       = {KEY_MEDIA_NEXT_TRACK,   &Special};  LayoutKey* NEXT  = &_NEXT_;
 LayoutKey _RWND_       = {KEY_MEDIA_REWIND,       &Special};  LayoutKey* RWND  = &_RWND_;
 LayoutKey _FFWD_       = {KEY_MEDIA_FAST_FORWARD, &Special};  LayoutKey* FFWD  = &_FFWD_;
 LayoutKey _REC_        = {KEY_MEDIA_RECORD,       &Special};  LayoutKey* REC   = &_REC_;
 LayoutKey _PLYPS_      = {KEY_MEDIA_PLAY_PAUSE,   &Special};  LayoutKey* PLYPS = &_PLYPS_;
-LayoutKey _VUP_        = {KEY_MEDIA_VOLUME_INC,   &Modifier}; LayoutKey* VUP   = &_VUP_;
-LayoutKey _VDN_        = {KEY_MEDIA_VOLUME_DEC,   &Modifier}; LayoutKey* VDN   = &_VDN_;
+LayoutKey _VUP_        = {KEY_MEDIA_VOLUME_INC,   &ModifierColor}; LayoutKey* VUP   = &_VUP_;
+LayoutKey _VDN_        = {KEY_MEDIA_VOLUME_DEC,   &ModifierColor}; LayoutKey* VDN   = &_VDN_;
 
-LayoutKey _EXCLM_      = {EXCLMAMATION,     &Chara2};     LayoutKey* EXCLM   = &_EXCLM_;
-LayoutKey _AT_         = {KEY_AT,           &Chara2};     LayoutKey* AT      = &_AT_;
-LayoutKey _HASH_       = {KEY_HASH,         &Chara2};     LayoutKey* HASH    = &_HASH_;
-LayoutKey _DLLR_       = {KEY_DOLLAR,       &Chara2};     LayoutKey* DLLR    = &_DLLR_;
-LayoutKey _PRCNT_      = {KEY_PERCENT,      &Chara2};     LayoutKey* PRCNT   = &_PRCNT_;
-LayoutKey _CARAT_      = {KEY_CARAT,        &Chara2};     LayoutKey* CARAT   = &_CARAT_;
-LayoutKey _AMPRS_      = {AMPERSAND,        &Chara2};     LayoutKey* AMPRS   = &_AMPRS_;
-LayoutKey _ASTR_       = {KEY_ASTERISK,     &Chara2};     LayoutKey* ASTR    = &_ASTR_;
-LayoutKey _LPAR_       = {L_PARENTHESIS,    &Chara2};     LayoutKey* LPAR    = &_LPAR_;
-LayoutKey _RPAR_       = {R_PARENTHESIS,    &Chara2};     LayoutKey* RPAR    = &_RPAR_;
-LayoutKey _UNDS_       = {UNDERSCORE,       &Chara2};     LayoutKey* UNDS    = &_UNDS_;
-LayoutKey _PIPE_       = {KEY_PIPE,         &Chara2};     LayoutKey* PIPE    = &_PIPE_;
-LayoutKey _LCHEV_      = {LEFT_CHEVRON,     &Chara2};     LayoutKey* LCHEV   = &_LCHEV_;
-LayoutKey _RCHEV_      = {RIGHT_CHEVRON,    &Chara2};     LayoutKey* RCHEV   = &_RCHEV_;
 LayoutKey _GREQL_      = {GREAT_EQUAL,      &Chara2};     LayoutKey* GREQL   = &_GREQL_;
 LayoutKey _LSEQL_      = {LESS_EQUAL,       &Chara2};     LayoutKey* LSEQL   = &_LSEQL_;
 LayoutKey _NOTEQL_     = {NOT_EQUAL,        &Chara2};     LayoutKey* NOTEQL  = &_NOTEQL_;
 LayoutKey _APPROX_     = {KEY_APPROX,       &Chara2};     LayoutKey* APPROX  = &_APPROX_;
 LayoutKey _PLSMNS_     = {PLUSORMINUS,      &Chara2};     LayoutKey* PLSMNS  = &_PLSMNS_;
-LayoutKey _QSTN_       = {QUESTION_MARK,    &Chara2};     LayoutKey* QSTN    = &_QSTN_;
-LayoutKey _COLN_       = {KEY_COLON,        &Chara2};     LayoutKey* COLN    = &_COLN_;
-LayoutKey _DBLQ_       = {KEY_DBLQUOTE,     &Chara2};     LayoutKey* DBLQ    = &_DBLQ_;
-LayoutKey _LBRACE_     = {CURL_L_BRACE,     &Chara2};     LayoutKey* LBRACE  = &_LBRACE_;
-LayoutKey _RBRACE_     = {CURL_R_BRACE,     &Chara2};     LayoutKey* RBRACE  = &_RBRACE_;
-LayoutKey _TILD_       = {SHIFT_TILDE,      &Chara2};     LayoutKey* TILD    = &_TILD_;
-LayoutKey _PLUS_       = {KEY_PLUS,         &Chara2};     LayoutKey* PLUS    = &_PLUS_;
 LayoutKey _DEGR_       = {KEY_DEGREES,      &Chara2};     LayoutKey* DEGR    = &_DEGR_;
 LayoutKey _EMCRN_      = {E_MACRON,         &Letter};     LayoutKey* EMCRN   = &_EMCRN_;
 LayoutKey _INFNY_      = {KEY_INFINITY,     &Chara2};     LayoutKey* INFNY   = &_INFNY_;
@@ -325,21 +327,13 @@ LayoutKey _BR10_       = {LEDS_BR10,        &LedAdj};     LayoutKey* BR10    = &
 LayoutKey _INCR_       = {LEDS_INC,         &LedAdj};     LayoutKey* INCR    = &_INCR_;
 LayoutKey _DECR_       = {LEDS_DEC,         &LedAdj};     LayoutKey* DECR    = &_DECR_;
 
-LayoutKey _SF13_       = {KEYSF13,          &FKeys2b};    LayoutKey* SF13    = &_SF13_;
-LayoutKey _SF14_       = {KEYSF14,          &FKeys2b};    LayoutKey* SF14    = &_SF14_;
-LayoutKey _SF15_       = {KEYSF15,          &FKeys2b};    LayoutKey* SF15    = &_SF15_;
-LayoutKey _SF16_       = {KEYSF16,          &FKeys2b};    LayoutKey* SF16    = &_SF16_;
-LayoutKey _SF17_       = {KEYSF17,          &FKeys2};     LayoutKey* SF17    = &_SF17_;
-LayoutKey _SF18_       = {KEYSF18,          &FKeys2};     LayoutKey* SF18    = &_SF18_;
-LayoutKey _SF19_       = {KEYSF19,          &FKeys2};     LayoutKey* SF19    = &_SF19_;
-LayoutKey _SF20_       = {KEYSF20,          &FKeys2};     LayoutKey* SF20    = &_SF20_;
-LayoutKey _SF21_       = {KEYSF21,          &FKeys2b};    LayoutKey* SF21    = &_SF21_;
-LayoutKey _SF22_       = {KEYSF22,          &FKeys2b};    LayoutKey* SF22    = &_SF22_;
-LayoutKey _SF23_       = {KEYSF23,          &FKeys2b};    LayoutKey* SF23    = &_SF23_;
-LayoutKey _SF24_       = {KEYSF24,          &FKeys2b};    LayoutKey* SF24    = &_SF24_;
 
-
-
-
+#define C(key) KeyMapEntry(key, CTRL)
+#define S(key) KeyMapEntry(key, SHIFT)
+#define A(key) KeyMapEntry(key, ALT)
+#define G(key) KeyMapEntry(key, GUI)
+#define CS(key) KeyMapEntry(key, CTRL_SHIFT)
+#define CA(key) KeyMapEntry(key, CTRL_ALT)
+#define SA(key) KeyMapEntry(key, SHIFT_ALT)
 
 #endif

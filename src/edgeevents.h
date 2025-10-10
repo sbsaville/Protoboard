@@ -40,17 +40,6 @@ void pressAndRelease(int key) {
 }
 
 
-void shiftedKey(int key) {
-  Keyboard.press(KEY_LEFT_SHIFT);
-  Keyboard.press(key);
-  Keyboard.release(key);
-  Keyboard.release(KEY_LEFT_SHIFT);
-}
-
-void shiftedFKey(int fKey) {
-  shiftedKey(fKey);
-}
-
 void pressHyper() {
   Keyboard.press(KEY_LEFT_GUI);
   Keyboard.press(KEY_LEFT_SHIFT);
@@ -220,41 +209,6 @@ const BrightnessLevel brightnessLevels[] = {
   {LEDS_BR8,  brt8},
   {LEDS_BR9,  brt9},
   {LEDS_BR10, brt10},
-};
-
-const SimpleKeyAction shiftedKeys[] = {
-  {EXCLMAMATION,   KEY_1},
-  {KEY_AT,         KEY_2},
-  {KEY_HASH,       KEY_3},
-  {KEY_DOLLAR,     KEY_4},
-  {KEY_PERCENT,    KEY_5},
-  {KEY_CARAT,      KEY_6},
-  {AMPERSAND,      KEY_7},
-  {KEY_ASTERISK,   KEY_8},
-  {L_PARENTHESIS,  KEY_9},
-  {R_PARENTHESIS,  KEY_0},
-  {UNDERSCORE,     KEY_MINUS},
-  {KEY_PLUS,       KEY_EQUAL},
-  {KEY_PIPE,       KEY_BACKSLASH},
-  {KEY_DBLQUOTE,   KEY_QUOTE},
-  {LEFT_CHEVRON,   KEY_COMMA},
-  {RIGHT_CHEVRON,  KEY_PERIOD},
-  {QUESTION_MARK,  KEY_SLASH},
-  {KEY_COLON,      KEY_SEMICOLON},
-  {CURL_L_BRACE,   KEY_LEFT_BRACE},
-  {CURL_R_BRACE,   KEY_RIGHT_BRACE},
-  {SHIFT_TILDE,    KEY_TILDE},
-  {KEYSF13,        KEY_F13},
-  {KEYSF14,        KEY_F14},
-  {KEYSF15,        KEY_F15},
-  {KEYSF16,        KEY_F16},
-  {KEYSF17,        KEY_F17},
-  {KEYSF18,        KEY_F18},
-  {KEYSF19,        KEY_F19},
-  {KEYSF20,        KEY_F20},
-  {KEYSF21,        KEY_F21},
-  {KEYSF22,        KEY_F22},
-  {KEYSF23,        KEY_F23},
 };
 
 void keyPressed(Key* key, LayoutKey* layout) {
@@ -493,6 +447,72 @@ void keyPressed(Key* key, LayoutKey* layout) {
       return; // Do nothing for explicit NUL keys
     }
 
+    // Dynamic key action execution
+    if (currentKeyMapEntry.modifier != NONE) {
+        Modifier mod = currentKeyMapEntry.modifier;
+        switch (mod) {
+            case SHIFT:
+                Keyboard.press(KEY_LEFT_SHIFT);
+                break;
+            case CTRL:
+                Keyboard.press(KEY_LEFT_CTRL);
+                break;
+            case ALT:
+                Keyboard.press(KEY_LEFT_ALT);
+                break;
+            case GUI:
+                Keyboard.press(KEY_LEFT_GUI);
+                break;
+            case CTRL_SHIFT:
+                Keyboard.press(KEY_LEFT_CTRL);
+                Keyboard.press(KEY_LEFT_SHIFT);
+                break;
+            case CTRL_ALT:
+                Keyboard.press(KEY_LEFT_CTRL);
+                Keyboard.press(KEY_LEFT_ALT);
+                break;
+            case SHIFT_ALT:
+                Keyboard.press(KEY_LEFT_SHIFT);
+                Keyboard.press(KEY_LEFT_ALT);
+                break;
+            default:
+                break;
+        }
+
+        Keyboard.press(primaryKey->code);
+        Keyboard.release(primaryKey->code);
+
+        switch (mod) {
+            case SHIFT:
+                Keyboard.release(KEY_LEFT_SHIFT);
+                break;
+            case CTRL:
+                Keyboard.release(KEY_LEFT_CTRL);
+                break;
+            case ALT:
+                Keyboard.release(KEY_LEFT_ALT);
+                break;
+            case GUI:
+                Keyboard.release(KEY_LEFT_GUI);
+                break;
+            case CTRL_SHIFT:
+                Keyboard.release(KEY_LEFT_CTRL);
+                Keyboard.release(KEY_LEFT_SHIFT);
+                break;
+            case CTRL_ALT:
+                Keyboard.release(KEY_LEFT_CTRL);
+                Keyboard.release(KEY_LEFT_ALT);
+                break;
+            case SHIFT_ALT:
+                Keyboard.release(KEY_LEFT_SHIFT);
+                Keyboard.release(KEY_LEFT_ALT);
+                break;
+            default:
+                break;
+        }
+        return;
+    }
+
     // Macro execution
     if (macroManager.executeMacro(pressedKeyCode)) {
       return; // Macro handled it
@@ -534,13 +554,6 @@ void keyPressed(Key* key, LayoutKey* layout) {
       Keyboard.release(KEY_TAB);
       L2AltTab = true;
       return; 
-    }
-
-    for (uint8_t i = 0; i < sizeof(shiftedKeys) / sizeof(SimpleKeyAction); i++) {
-      if (pressedKeyCode == shiftedKeys[i].code) {
-        shiftedKey(shiftedKeys[i].keyToPress);
-        return;
-      }
     }
 
     // Emergency Layer Reset (KEY_SET0)
@@ -744,9 +757,6 @@ void keyReleased(Key* key, LayoutKey* layout) {
         releasedKeyCode == TRILL_MODE1 || releasedKeyCode == TRILL_MODE2 || releasedKeyCode == TRILL_MODE3 ||
         releasedKeyCode == KEY_RELEASE || releasedKeyCode == KEY_REBOOT || releasedKeyCode == KEY_SET0) {
         isControlKey = true;
-    }
-     for (uint8_t i = 0; i < sizeof(shiftedKeys) / sizeof(SimpleKeyAction); i++) { // Shifted keys are also single shot
-        if (releasedKeyCode == shiftedKeys[i].code) {isControlKey = true; break;}
     }
 
     if (isControlKey) return;

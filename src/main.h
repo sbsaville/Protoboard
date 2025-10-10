@@ -60,39 +60,6 @@ const uint16_t KEY_MEH                       = 23  | 0xA000;
 
 // I arbitrarily decided that alt+[KEY] should descend from 99 while shift+[KEY] should ascend from 100
 const uint16_t KEY_ALT_TAB                   = 99  | 0xA000;
-const uint16_t EXCLMAMATION                  = 100 | 0xA000; // !
-const uint16_t KEY_AT                        = 101 | 0xA000; // @
-const uint16_t KEY_HASH                      = 102 | 0xA000; // #
-const uint16_t KEY_DOLLAR                    = 103 | 0xA000; // $
-const uint16_t KEY_PERCENT                   = 104 | 0xA000; // %
-const uint16_t KEY_CARAT                     = 105 | 0xA000; // ^
-const uint16_t AMPERSAND                     = 106 | 0xA000; // &
-const uint16_t KEY_ASTERISK                  = 107 | 0xA000; // *
-const uint16_t L_PARENTHESIS                 = 108 | 0xA000; // (
-const uint16_t R_PARENTHESIS                 = 109 | 0xA000; // )
-const uint16_t UNDERSCORE                    = 110 | 0xA000; // _
-const uint16_t KEY_PIPE                      = 111 | 0xA000; // |
-const uint16_t LEFT_CHEVRON                  = 112 | 0xA000; // <
-const uint16_t RIGHT_CHEVRON                 = 113 | 0xA000; // >
-const uint16_t QUESTION_MARK                 = 114 | 0xA000; // ?
-const uint16_t KEY_COLON                     = 115 | 0xA000; // :
-const uint16_t KEY_DBLQUOTE                  = 116 | 0xA000; // "
-const uint16_t CURL_L_BRACE                  = 117 | 0xA000; // {
-const uint16_t CURL_R_BRACE                  = 118 | 0xA000; // }
-const uint16_t SHIFT_TILDE                   = 119 | 0xA000; // ~
-const uint16_t KEY_PLUS                      = 120 | 0xA000; // +
-const uint16_t KEYSF13                       = 121 | 0xA000;
-const uint16_t KEYSF14                       = 122 | 0xA000;
-const uint16_t KEYSF15                       = 123 | 0xA000;
-const uint16_t KEYSF16                       = 124 | 0xA000;
-const uint16_t KEYSF17                       = 125 | 0xA000;
-const uint16_t KEYSF18                       = 126 | 0xA000;
-const uint16_t KEYSF19                       = 127 | 0xA000;
-const uint16_t KEYSF20                       = 128 | 0xA000;
-const uint16_t KEYSF21                       = 129 | 0xA000;
-const uint16_t KEYSF22                       = 130 | 0xA000;
-const uint16_t KEYSF23                       = 131 | 0xA000;
-const uint16_t KEYSF24                       = 132 | 0xA000;
 
 //                            alt-codes
 const uint16_t E_MACRON                      = 200 | 0xA000; // ē

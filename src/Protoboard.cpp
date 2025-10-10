@@ -262,13 +262,13 @@ void remapKeys() {
 
   // Update LED colors based on toggle states
   if (ALT_L == 1) {
-    ALTL->ledColor = &Modifier; 
+    ALTL->ledColor = &ModifierColor;
   } else {
     ALTL->ledColor = &ALTL->defaultColor; // Assuming LayoutKey struct has defaultColor
   }
 
   if (ALT_R == 1) {
-    ALTR->ledColor = &Modifier;
+    ALTR->ledColor = &ModifierColor;
   } else {
     ALTR->ledColor = &ALTR->defaultColor; // Assuming LayoutKey struct has defaultColor
   }
