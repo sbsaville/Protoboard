@@ -27,6 +27,12 @@ LedColor LEDoff   = 0x000000;
 LedColor Macro    = 0xFFB469;
 LedColor Toggle   = 0x0000FF;
 LedColor VimNav   = 0x3333FF;
+LedColor ShiftModifier = 0xFF0000;
+LedColor CtrlModifier = 0x00FF00;
+LedColor AltModifier = 0x0000FF;
+LedColor GuiModifier = 0xFFFF00;
+LedColor CtrlShiftModifier = 0xFF00FF;
+
 
 struct LayoutKey {
     uint16_t code;
@@ -34,6 +40,85 @@ struct LayoutKey {
     LedColor defaultColor;
     LayoutKey(uint16_t code, const LedColor* ledColor)
         : code(code), ledColor(ledColor), defaultColor(*ledColor) {}
+    virtual ~LayoutKey() {}
+};
+
+enum Modifier : uint8_t {
+    SHIFT,
+    CTRL,
+    ALT,
+    GUI,
+    CTRL_SHIFT,
+};
+
+struct ModifierKey {
+    const LedColor* ledColor;
+};
+
+extern ModifierKey modifierKeys[];
+
+ModifierKey modifierKeys[] = {
+    {&ShiftModifier},
+    {&CtrlModifier},
+    {&AltModifier},
+    {&GuiModifier},
+    {&CtrlShiftModifier},
+};
+
+class KeyAction : public LayoutKey {
+public:
+    KeyAction(LayoutKey* baseKey, Modifier modifier)
+        : LayoutKey(baseKey->code, modifierKeys[modifier].ledColor), baseKey(baseKey), modifier(modifier) {}
+
+    void execute() {
+        // Press modifier
+        switch (modifier) {
+            case SHIFT:
+                Keyboard.press(KEY_LEFT_SHIFT);
+                break;
+            case CTRL:
+                Keyboard.press(KEY_LEFT_CTRL);
+                break;
+            case ALT:
+                Keyboard.press(KEY_LEFT_ALT);
+                break;
+            case GUI:
+                Keyboard.press(KEY_LEFT_GUI);
+                break;
+            case CTRL_SHIFT:
+                Keyboard.press(KEY_LEFT_CTRL);
+                Keyboard.press(KEY_LEFT_SHIFT);
+                break;
+        }
+
+        // Press and release base key
+        Keyboard.press(baseKey->code);
+        Keyboard.release(baseKey->code);
+
+        // Release modifier
+        switch (modifier) {
+            case SHIFT:
+                Keyboard.release(KEY_LEFT_SHIFT);
+                break;
+            case CTRL:
+                Keyboard.release(KEY_LEFT_CTRL);
+                break;
+            case ALT:
+                Keyboard.release(KEY_LEFT_ALT);
+                break;
+            case GUI:
+                Keyboard.release(KEY_LEFT_GUI);
+                break;
+            case CTRL_SHIFT:
+                Keyboard.release(KEY_LEFT_CTRL);
+                Keyboard.release(KEY_LEFT_SHIFT);
+                break;
+        }
+    }
+
+private:
+    LayoutKey* baseKey;
+    Modifier modifier;
 };
 
 // New struct for double-tap functionality
@@ -233,32 +318,11 @@ LayoutKey _PLYPS_      = {KEY_MEDIA_PLAY_PAUSE,   &Special};  LayoutKey* PLYPS =
 LayoutKey _VUP_        = {KEY_MEDIA_VOLUME_INC,   &Modifier}; LayoutKey* VUP   = &_VUP_;
 LayoutKey _VDN_        = {KEY_MEDIA_VOLUME_DEC,   &Modifier}; LayoutKey* VDN   = &_VDN_;
 
-LayoutKey _EXCLM_      = {EXCLMAMATION,     &Chara2};     LayoutKey* EXCLM   = &_EXCLM_;
-LayoutKey _AT_         = {KEY_AT,           &Chara2};     LayoutKey* AT      = &_AT_;
-LayoutKey _HASH_       = {KEY_HASH,         &Chara2};     LayoutKey* HASH    = &_HASH_;
-LayoutKey _DLLR_       = {KEY_DOLLAR,       &Chara2};     LayoutKey* DLLR    = &_DLLR_;
-LayoutKey _PRCNT_      = {KEY_PERCENT,      &Chara2};     LayoutKey* PRCNT   = &_PRCNT_;
-LayoutKey _CARAT_      = {KEY_CARAT,        &Chara2};     LayoutKey* CARAT   = &_CARAT_;
-LayoutKey _AMPRS_      = {AMPERSAND,        &Chara2};     LayoutKey* AMPRS   = &_AMPRS_;
-LayoutKey _ASTR_       = {KEY_ASTERISK,     &Chara2};     LayoutKey* ASTR    = &_ASTR_;
-LayoutKey _LPAR_       = {L_PARENTHESIS,    &Chara2};     LayoutKey* LPAR    = &_LPAR_;
-LayoutKey _RPAR_       = {R_PARENTHESIS,    &Chara2};     LayoutKey* RPAR    = &_RPAR_;
-LayoutKey _UNDS_       = {UNDERSCORE,       &Chara2};     LayoutKey* UNDS    = &_UNDS_;
-LayoutKey _PIPE_       = {KEY_PIPE,         &Chara2};     LayoutKey* PIPE    = &_PIPE_;
-LayoutKey _LCHEV_      = {LEFT_CHEVRON,     &Chara2};     LayoutKey* LCHEV   = &_LCHEV_;
-LayoutKey _RCHEV_      = {RIGHT_CHEVRON,    &Chara2};     LayoutKey* RCHEV   = &_RCHEV_;
 LayoutKey _GREQL_      = {GREAT_EQUAL,      &Chara2};     LayoutKey* GREQL   = &_GREQL_;
 LayoutKey _LSEQL_      = {LESS_EQUAL,       &Chara2};     LayoutKey* LSEQL   = &_LSEQL_;
 LayoutKey _NOTEQL_     = {NOT_EQUAL,        &Chara2};     LayoutKey* NOTEQL  = &_NOTEQL_;
 LayoutKey _APPROX_     = {KEY_APPROX,       &Chara2};     LayoutKey* APPROX  = &_APPROX_;
 LayoutKey _PLSMNS_     = {PLUSORMINUS,      &Chara2};     LayoutKey* PLSMNS  = &_PLSMNS_;
-LayoutKey _QSTN_       = {QUESTION_MARK,    &Chara2};     LayoutKey* QSTN    = &_QSTN_;
-LayoutKey _COLN_       = {KEY_COLON,        &Chara2};     LayoutKey* COLN    = &_COLN_;
-LayoutKey _DBLQ_       = {KEY_DBLQUOTE,     &Chara2};     LayoutKey* DBLQ    = &_DBLQ_;
-LayoutKey _LBRACE_     = {CURL_L_BRACE,     &Chara2};     LayoutKey* LBRACE  = &_LBRACE_;
-LayoutKey _RBRACE_     = {CURL_R_BRACE,     &Chara2};     LayoutKey* RBRACE  = &_RBRACE_;
-LayoutKey _TILD_       = {SHIFT_TILDE,      &Chara2};     LayoutKey* TILD    = &_TILD_;
-LayoutKey _PLUS_       = {KEY_PLUS,         &Chara2};     LayoutKey* PLUS    = &_PLUS_;
 LayoutKey _DEGR_       = {KEY_DEGREES,      &Chara2};     LayoutKey* DEGR    = &_DEGR_;
 LayoutKey _EMCRN_      = {E_MACRON,         &Letter};     LayoutKey* EMCRN   = &_EMCRN_;
 LayoutKey _INFNY_      = {KEY_INFINITY,     &Chara2};     LayoutKey* INFNY   = &_INFNY_;
@@ -338,8 +402,30 @@ LayoutKey _SF22_       = {KEYSF22,          &FKeys2b};    LayoutKey* SF22    = &
 LayoutKey _SF23_       = {KEYSF23,          &FKeys2b};    LayoutKey* SF23    = &_SF23_;
 LayoutKey _SF24_       = {KEYSF24,          &FKeys2b};    LayoutKey* SF24    = &_SF24_;
 
+#define ACTION_KEY(name, baseKey, modifier) \
+    KeyAction _##name##_ = KeyAction(baseKey, modifier); \
+    LayoutKey* name = &_##name##_;
 
-
-
+ACTION_KEY(S_1, NUM1, SHIFT)
+ACTION_KEY(S_2, NUM2, SHIFT)
+ACTION_KEY(S_3, NUM3, SHIFT)
+ACTION_KEY(S_4, NUM4, SHIFT)
+ACTION_KEY(S_5, NUM5, SHIFT)
+ACTION_KEY(S_6, NUM6, SHIFT)
+ACTION_KEY(S_7, NUM7, SHIFT)
+ACTION_KEY(S_8, NUM8, SHIFT)
+ACTION_KEY(S_9, NUM9, SHIFT)
+ACTION_KEY(S_0, NUM0, SHIFT)
+ACTION_KEY(S_MINUS, MINUS, SHIFT)
+ACTION_KEY(S_EQUAL, EQUAL, SHIFT)
+ACTION_KEY(S_BSLSH, BSLSH, SHIFT)
+ACTION_KEY(S_LBRACK, LBRACK, SHIFT)
+ACTION_KEY(S_RBRACK, RBRACK, SHIFT)
+ACTION_KEY(S_SMCLN, SMCLN, SHIFT)
+ACTION_KEY(S_QUOTE, QUOTE, SHIFT)
+ACTION_KEY(S_COMMA, COMMA, SHIFT)
+ACTION_KEY(S_PERIOD, PERIOD, SHIFT)
+ACTION_KEY(S_SLASH, SLASH, SHIFT)
+ACTION_KEY(S_TILDE, TILDE, SHIFT)
 
 #endif

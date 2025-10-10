@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include <vector>
+#include "keydefs.h"
 
 struct SimpleMacro {
   uint16_t id;
