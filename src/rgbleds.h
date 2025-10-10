@@ -91,7 +91,7 @@ int XYMatrix[rowsCount][columnsCount] = {
 };
 
 void updateLockStates() {
-  Capslock = (keyboard_leds & 2) ? Toggle : Modifier;
+  Capslock = (keyboard_leds & 2) ? Toggle : ModifierColor;
   Numlock = (keyboard_leds & 1) ? Toggle : Special;
   Numnav  = (keyboard_leds & 1) ? Number : Toggle;
   Scrlock = (keyboard_leds & 4) ? Toggle : Special;
