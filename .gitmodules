@@ -1,0 +1,3 @@
+[submodule "deej"]
+	path = deej
+	url = https://github.com/sbsaville/deej.git
