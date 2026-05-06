@@ -193,15 +193,22 @@ KeyMapEntry (*getActiveLayout())[columnsCount] {
             // TODO: This trillbar mode setting needs to be more robust.
             // Maybe add a trillbarMode field to the Layer struct. Or compare keymap pointers.
             // For now, use keymap pointers for a more stable comparison than names.
-            if (activeLayers[i].keymap == layer1 || activeLayers[i].keymap == layer4) {
+            if (activeLayers[i].keymap == layerSymbols) {
                 trillbar::setMode(trillbar::MODE_BRIGHTNESS);
-            } else if (activeLayers[i].keymap == layer2) {
+            }
+            else if (activeLayers[i].keymap == layer1) {
+                trillbar::setMode(trillbar::MODE_VERTARROWS);
+            }
+             else if (activeLayers[i].keymap == layer2) {
                 trillbar::setMode(trillbar::MODE_SCROLL);
-            } else if (activeLayers[i].keymap == layerMouse) {
+            }
+             else if (activeLayers[i].keymap == layerMouse) {
                 trillbar::setMode(trillbar::MODE_MOUSE);
-            } else if (activeLayers[i].keymap == layer2DT || activeLayers[i].keymap == layer3DT) {
+            }
+             else if (activeLayers[i].keymap == layer2DT || activeLayers[i].keymap == layer3DT) {
                 trillbar::setMode(trillbar::MODE_ARROWS);
-            } else {
+            }
+             else {
                 trillbar::setMode(trillbar::MODE_ARROWS); // Default for other layers or unhandled ones
             }
             return selectedLayout; // Return the highest priority active layer found

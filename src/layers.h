@@ -90,8 +90,8 @@ KeyMapEntry layer1[rowsCount][columnsCount] = {
   {{   BR0   },{   BR1   },{   BR2   },{   BR3   },{   BR4   },{   BR5   },{   BR6   },{   BR7   },{   BR8   },{   BR9   },{  BR10   },{   NUL    },{    NUL   },{   INCR    }},
   {{  C(TAB) },{   NUL   },{   NUL   },{  EMCRN  },{  PRNT   },{   NUL   },{   NUL   },{   NUL   },{  INSRT  },{   NUL   },{  PSBRK  },{   NUL    },{    NUL   },{    NUL    }},
   {{  LYR1B  },{  AMRN   },{   NUL   },{   NUL   },{   NUL   },{  GMAIL  },{   NUL   },{   NUL   },{   NUL   },{ SCRLLK  },{   NUL   },{   NUL    },{  ENTER   },{   DECR    }},
-  {{  LSHFT  },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{  LNBRK  },{  NMLCK  },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   RWND   },{    REC   },{   FFWD    }},
-  {{  LCRTL  },{  LGUI   },{  LALT   },{  LYR1   },{  LYR2   },{   SPC   },{  BKSPC  },{  LYR3   },{  LYR4   },{   NUL   },{   NUL   },{   PREV   },{   PLYPS  },{   NEXT    }}
+  {{  HYPER  },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{  LNBRK  },{  NMLCK  },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   RWND   },{    REC   },{   FFWD    }},
+  {{   MEH   },{  LGUI   },{  LALT   },{  LYR1   },{  LYR2   },{   SPC   },{  BKSPC  },{  LYR3   },{  LYR4   },{   NUL   },{   NUL   },{   PREV   },{   PLYPS  },{   NEXT    }}
 };
 
 KeyMapEntry layer1b[rowsCount][columnsCount] = {
@@ -107,9 +107,9 @@ KeyMapEntry layer2[rowsCount][columnsCount] = {
   {{ESC,SET0 },{   F13   },{   F14   },{   F15   },{   F16   },{   F17   },{   F18   },{   F19   },{   F20   },{   F21   },{   F22   },{   F23    },{   F24    },{    NUL    }},
   {{ S(NUM9) },{  PMUL   },{  PDIV   },{  PADD   },{  PSUB   },{ S(NUM0) },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL    },{    NUL   },{    NUL    }},
   {{ ALTTAB  },{  PAD7   },{  PAD8   },{  PAD9   },{ S(NUM6) },{   NUL   },{  HOME   },{  PGDN   },{  PGUP   },{   END   },{   NUL   },{   NUL    },{    NUL   },{    NUL    }},
-  {{  LYR2B  },{  PAD4   },{  PAD5   },{  PAD6   },{  EQUAL  },{  PENT   },{  LEFT   },{  DOWN   },{   UP    },{  RIGHT  },{   NUL   },{   NUL    },{  ENTER   },{   LCLK    }},
-  {{  HYPER  },{  PAD1   },{  PAD2   },{  PAD3   },{  PDOT   },{  PENT   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{  RSHFT   },{    NUL   },{   NMLCK   }},
-  {{   MEH   },{  PAD0   },{  PAD0   },{  LYR1   },{  LYR2   },{   DEL   },{  BKSPC  },{  LYR3   },{   NUL   },{  RALT   },{  RGUI   },{  RCRTL   },{    NUL   },{    NUL    }}
+  {{  LYR2B  },{  PAD4   },{  PAD5   },{  PAD6   },{  EQUAL  },{  PENT   },{  LEFT   },{  DOWN   },{   UP    },{  RIGHT  },{  QUOTE  },{   NUL    },{  ENTER   },{   LCLK    }},
+  {{  LSHFT  },{  PAD1   },{  PAD2   },{  PAD3   },{  PDOT   },{  PENT   },{   NUL   },{   NUL   },{   NUL   },{ PERIOD  },{   NUL   },{  RSHFT   },{    NUL   },{   NMLCK   }},
+  {{  LCRTL  },{  PAD0   },{  PAD0   },{  LYR1   },{  LYR2   },{   DEL   },{  BKSPC  },{  LYR3   },{   NUL   },{  RALT   },{  RGUI   },{  RCRTL   },{    NUL   },{    NUL    }}
 };
 
 KeyMapEntry layer2DT[rowsCount][columnsCount] = {
@@ -160,9 +160,9 @@ KeyMapEntry layer3DT[rowsCount][columnsCount] = {
 KeyMapEntry layerMouse[rowsCount][columnsCount] = {
   {{ESC,SET0 },{   F13   },{   F14   },{   F15   },{   F16   },{   F17   },{   F18   },{   F19   },{   F20   },{   F21   },{   F22   },{   F23    },{   F24    },{    NUL    }},
   {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL    },{    NUL   },{    NUL    }},
-  {{   TAB   },{   NUL   },{   NUL   },{   MMU   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{  MCLK   },{   NUL   },{   NUL    },{    NUL   },{    NUL    }},
-  {{   NUL   },{   NUL   },{   MML   },{   MMD   },{   MMR   },{   NUL   },{   NUL   },{   NUL   },{  LCLK   },{  RCLK   },{   NUL   },{  LYR3B   },{  ENTER   },{    NUL    }},
-  {{  LSHFT  },{   NUL   },{   NUL   },{   NUL   },{  PENT   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{  RSHFT   },{   PGUP   },{   NMLCK   }},
+  {{   TAB   },{   NUL   },{   NUL   },{   MMU   },{   NUL   },{   NUL   },{   NUL   },{  PGUP   },{  HOME   },{   UP    },{   END   },{   NUL    },{    NUL   },{    NUL    }},
+  {{   NUL   },{   NUL   },{   MML   },{   MMD   },{   MMR   },{   NUL   },{   NUL   },{  PGDN   },{  LEFT   },{  DOWN   },{  RIGHT  },{  LYR3B   },{  ENTER   },{    NUL    }},
+  {{  LSHFT  },{   NUL   },{   NUL   },{   NUL   },{  PENT   },{   NUL   },{   NUL   },{   NUL   },{  LCLK   },{  RCLK   },{  MCLK   },{  RSHFT   },{   PGUP   },{   NMLCK   }},
   {{  LCRTL  },{  LGUI   },{  LALT   },{  LCRTL  },{  LALT   },{   DEL   },{  BKSPC  },{  LYR3   },{   NUL   },{  RALT   },{  RGUI   },{  RCRTL   },{   PGDN   },{   PGDN    }}
 };
 

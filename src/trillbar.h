@@ -7,7 +7,7 @@
   #define TRILL_DEBUG 0
   #define TRILL_MOMENTUM_DEBUG 0
   #define ACCEL_DEBUG 0
-  #define RATE_DEBUG 1
+  #define RATE_DEBUG 0
   #define BUFFER_DEBUG 0
 #endif
 
@@ -30,6 +30,7 @@ public:
   static const int MODE_BRIGHTNESS = 2;
   static const int MODE_SCROLL = 3;
   static const int MODE_MOUSE = 4;
+  static const int MODE_VERTARROWS = 5;
 
 private:
   static Trill sensor;
@@ -98,11 +99,14 @@ private:
   static void sendKeyPress(int key, int repeats);
   static void sendLeftKeys(int count);
   static void sendRightKeys(int count);
+  static void sendUpKeys(int count);
+  static void sendDownKeys(int count);
   static void handleScrolling(int direction, int magnitude);
   static void handleMode1(int actionUnits);   // Arrows
   static void handleMode2(int actionUnits);   // Brightness
   static void handleMode3(int actionUnits);   // Scrolling
   static void handleMode4(int actionUnits);   // Mouse movement
+  static void handleMode5(int actionUnits);   // Vertical arrows
   static void handleDualTouch();              // Volume control
   static void handleTripleTouch();            // Media control
   static void handleQuadTouch();              // Mute control
@@ -242,6 +246,16 @@ void trillbar::sendRightKeys(int count) {
   sendKeyPress(KEY_RIGHT, abs(count));
 }
 
+void trillbar::sendUpKeys(int count) {
+  if (count == 0) return;
+  sendKeyPress(KEY_UP, abs(count));
+}
+
+void trillbar::sendDownKeys(int count) {
+  if (count == 0) return;
+  sendKeyPress(KEY_DOWN, abs(count));
+}
+
 // Helper for mouse scrolling
 void trillbar::handleScrolling(int direction, int magnitude) {
   if (magnitude == 0) return;
@@ -371,6 +385,16 @@ void trillbar::handleMode4(int actionUnits) {
   Serial.print(", mouseUnits: ");
   Serial.println(mouseUnits);
   #endif
+}
+
+void trillbar::handleMode5(int actionUnits) {
+  if (actionUnits == 0) return;
+
+  if (actionUnits > 0) {
+    sendDownKeys(actionUnits);
+  } else {
+    sendUpKeys(-actionUnits);
+  }
 }
 
 // Handle dual touch (volume control)
@@ -669,6 +693,7 @@ Serial.print("  |  ");
             case MODE_BRIGHTNESS: handleMode2(actionUnits); break;
             case MODE_SCROLL: handleMode3(actionUnits); break;;
             case MODE_MOUSE: handleMode4(actionUnits); break;
+            case MODE_VERTARROWS: handleMode5(actionUnits); break;
           }
         }
 

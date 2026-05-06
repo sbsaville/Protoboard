@@ -161,6 +161,10 @@ const uint16_t LEDS_BR9                      = 914 | 0xA000;
 const uint16_t LEDS_BR10                     = 915 | 0xA000;
 const uint16_t LEDS_INC                      = 916 | 0xA000;
 const uint16_t LEDS_DEC                      = 917 | 0xA000;
+// const uint16_t DEEJ_0                        = 918 | 0xA000;
+// const uint16_t DEEJ_1                        = 919 | 0xA000;
+// const uint16_t DEEJ_2                        = 920 | 0xA000;
+// const uint16_t DEEJ_3                        = 921 | 0xA000;
 
 
 #endif
