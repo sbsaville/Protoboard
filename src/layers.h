@@ -160,8 +160,8 @@ KeyMapEntry layer3DT[rowsCount][columnsCount] = {
 KeyMapEntry layerMouse[rowsCount][columnsCount] = {
   {{ESC,SET0 },{   F13   },{   F14   },{   F15   },{   F16   },{   F17   },{   F18   },{   F19   },{   F20   },{   F21   },{   F22   },{   F23    },{   F24    },{    NUL    }},
   {{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL   },{   NUL    },{    NUL   },{    NUL    }},
-  {{   TAB   },{   NUL   },{   NUL   },{   MMU   },{   NUL   },{   NUL   },{   NUL   },{  PGUP   },{  HOME   },{   UP    },{   END   },{   NUL    },{    NUL   },{    NUL    }},
-  {{   NUL   },{   NUL   },{   MML   },{   MMD   },{   MMR   },{   NUL   },{   NUL   },{  PGDN   },{  LEFT   },{  DOWN   },{  RIGHT  },{  LYR3B   },{  ENTER   },{    NUL    }},
+  {{   TAB   },{   NUL   },{   NUL   },{   MMU   },{   NUL   },{   NUL   },{   NUL   },{  HOME   },{  PGDN   },{  PGUP   },{   END   },{   NUL    },{    NUL   },{    NUL    }},
+  {{   NUL   },{   NUL   },{   MML   },{   MMD   },{   MMR   },{   NUL   },{   NUL   },{  LEFT   },{  DOWN   },{   UP    },{  RIGHT  },{  LYR3B   },{  ENTER   },{    NUL    }},
   {{  LSHFT  },{   NUL   },{   NUL   },{   NUL   },{  PENT   },{   NUL   },{   NUL   },{   NUL   },{  LCLK   },{  RCLK   },{  MCLK   },{  RSHFT   },{   PGUP   },{   NMLCK   }},
   {{  LCRTL  },{  LGUI   },{  LALT   },{  LCRTL  },{  LALT   },{   DEL   },{  BKSPC  },{  LYR3   },{   NUL   },{  RALT   },{  RGUI   },{  RCRTL   },{   PGDN   },{   PGDN    }}
 };
